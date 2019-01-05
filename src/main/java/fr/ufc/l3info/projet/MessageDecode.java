@@ -5,11 +5,10 @@ class MessageDecode {
     private String repeatIndicator;
     private String MMSI;
     private String navigationStatus;
-    private String rateOfTurn;
     private String speedOverGround;
     private String positiontionAccuracy;
-    private String longitude;
-    private String latitude;
+    private double longitude;
+    private double latitude;
     private String courseOverGroud;
     private String trueHeading;
     private String timeStamp;
@@ -18,12 +17,11 @@ class MessageDecode {
     private String RAIMflag;
     private String radioStatus;
 
-    MessageDecode(String messageType, String repeatIndicator, String MMSI, String navigationStatus, String rateOfTurn, String speedOverGround, String positiontionAccuracy, String longitude, String latitude, String courseOverGroud, String trueHeading, String timeStamp, String maneuverIndicator, String spare, String RAIMflag, String radioStatus) {
+    MessageDecode(String messageType, String repeatIndicator, String MMSI, String navigationStatus, String speedOverGround, String positiontionAccuracy, double longitude, double latitude, String courseOverGroud, String trueHeading, String timeStamp, String maneuverIndicator, String spare, String RAIMflag, String radioStatus) {
         this.messageType = messageType;
         this.repeatIndicator = repeatIndicator;
         this.MMSI = MMSI;
         this.navigationStatus = navigationStatus;
-        this.rateOfTurn = rateOfTurn;
         this.speedOverGround = speedOverGround;
         this.positiontionAccuracy = positiontionAccuracy;
         this.longitude = longitude;
@@ -54,10 +52,6 @@ class MessageDecode {
         return navigationStatus;
     }
 
-    public String getRateOfTurn() {
-        return rateOfTurn;
-    }
-
     public String getSpeedOverGround() {
         return speedOverGround;
     }
@@ -66,11 +60,11 @@ class MessageDecode {
         return positiontionAccuracy;
     }
 
-    public String getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
-    public String getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
@@ -110,7 +104,6 @@ class MessageDecode {
                 ", \n\trepeatIndicator='" + repeatIndicator + '\'' +
                 ", \n\tMMSI='" + MMSI + '\'' +
                 ", \n\tnavigationStatus='" + navigationStatus + '\'' +
-                ", \n\trateOfTurn='" + rateOfTurn + '\'' +
                 ", \n\tspeedOverGround='" + speedOverGround + '\'' +
                 ", \n\tpositiontionAccuracy='" + positiontionAccuracy + '\'' +
                 ", \n\tlongitude='" + longitude + '\'' +
