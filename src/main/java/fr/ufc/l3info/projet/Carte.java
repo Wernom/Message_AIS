@@ -23,15 +23,22 @@ public class Carte extends JFrame implements JMapViewerEventListener {
     private JLabel mperpLabelName;
     private JLabel mperpLabelValue;
 
+// list of all ships
+    public ArrayList<Ship> myTrafic;
 
     /**
      * Setups the JFrame layout, sets some default options for the JMapViewerTree and displays a map in the window.
      */
-    public Carte() {
+    public Carte(ArrayList<Ship> trafic) {
+
+
         super("JMapViewer Test");
         treeMap = new JMapViewerTree("Zones");
         setupJFrame();
         setupPanels();
+
+        // initialisation du trafic
+        this.myTrafic=trafic;
 
         // Listen to the map viewer for user operations so components will
         // receive events and updates
@@ -43,14 +50,7 @@ public class Carte extends JFrame implements JMapViewerEventListener {
         map().setMapMarkerVisible(true);
         map().setZoomContolsVisible(true);
 
-        //print a ship
-            //----- demo ----
-        Ship vessel = new Ship("0","0");
-        vessel.setNewCurrentPosition(new Coordinate("1","1"));
-        vessel.setNewCurrentPosition(new Coordinate("2","2"));
-        vessel.setNewCurrentPosition(new Coordinate("3","3"));
-        vessel.setNewCurrentPosition(new Coordinate("4","4"));
-        printShip(vessel);
+        printTrafic();
 
         // activate map in window
         treeMap.setTreeVisible(true);
@@ -117,10 +117,12 @@ public class Carte extends JFrame implements JMapViewerEventListener {
     }
 
     /**
-     * @param args Main program arguments
+     * print all ships
      */
-    public static void main(String[] args) {
-        new Carte().setVisible(true);
+    public void printTrafic(){
+        for (Ship vessel:myTrafic) {
+            printShip(vessel);
+        }
     }
 
     /**
@@ -381,15 +383,10 @@ class Ship{
 class Coordinate{
     private String str_latitude;
     private String str_longitude;
-    private double d_latitude;
-    private double d_longitude;
 
     Coordinate(String latitude,String longitude){
         setStr_latitude(latitude);
         setStr_longitude(longitude);
-        setD_latitude(Float.parseFloat(this.str_latitude));
-        setD_longitude(Float.parseFloat(this.str_longitude));
-
     }
 
     public void setStr_latitude(String lat) {
@@ -408,19 +405,11 @@ class Coordinate{
         return str_longitude;
     }
 
-    public void setD_latitude(double d_latitude) {
-        this.d_latitude = d_latitude;
-    }
-
     public double getD_latitude() {
-        return d_latitude;
-    }
-
-    public void setD_longitude(double d_longitude) {
-        this.d_longitude = d_longitude;
+        return Double.parseDouble(str_latitude);
     }
 
     public double getD_longitude() {
-        return d_longitude;
+        return Double.parseDouble(str_longitude);
     }
 }
