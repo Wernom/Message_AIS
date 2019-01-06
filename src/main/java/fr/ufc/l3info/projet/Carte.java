@@ -121,6 +121,7 @@ public class Carte extends JFrame implements JMapViewerEventListener {
      */
     public void printTrafic(){
         for (Ship vessel:myTrafic) {
+            System.out.println(vessel);
             printShip(vessel);
         }
     }
@@ -360,8 +361,8 @@ class Ship{
 
     @Override
     public String toString() {
-        return "Vessel:" +
-                ", \n\tMMSI='" + myMMSI +
+        return myName+":" +
+                " \n\tMMSI='" + myMMSI +
                 ", \n\tnavigationStatus='" + myNavigationStatus +
                 ", \n\tspeedOverGround='" + mySpeedOverGround +
                 ", \n\tpositiontionAccuracy='" + myPositiontionAccuracy +
@@ -374,7 +375,7 @@ class Ship{
               /*  ", \n\tspare='" + mySpare +
                 ", \n\tRAIMflag='" + RAIMflag +
                 ", \n\tradioStatus='" + myRadioStatus +
-              */ "\n\t}";
+              */ "\n";
     }
 }
 
@@ -389,27 +390,27 @@ class Coordinate{
         setStr_longitude(longitude);
     }
 
-    public void setStr_latitude(String lat) {
+    private void setStr_latitude(String lat) {
         this.str_latitude = lat;
     }
 
-    public String getStr_latitude() {
+    String getStr_latitude() {
         return str_latitude;
     }
 
-    public void setStr_longitude(String lon) {
+    private void setStr_longitude(String lon) {
         this.str_longitude = lon;
     }
 
-    public String getStr_longitude() {
+    String getStr_longitude() {
         return str_longitude;
     }
 
-    public double getD_latitude() {
+    double getD_latitude() {
         return Double.parseDouble(str_latitude);
     }
 
-    public double getD_longitude() {
+    double getD_longitude() {
         return Double.parseDouble(str_longitude);
     }
 }
