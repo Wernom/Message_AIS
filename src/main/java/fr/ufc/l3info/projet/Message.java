@@ -18,7 +18,6 @@ class Message {
             res += 64;
 
         return Integer.toString(res);
-
     }
 
     private String binaryToString(String binary) {
@@ -83,7 +82,7 @@ class Message {
         double longitudeDegre = Integer.parseInt(ais.getRawDataPayloadBin().substring(61, 89), 2);
         longitudeDegre /= 600000;
         if (longitudeDegre > 180) {
-            longitudeDegre = -1 * (longitudeDegre % 180);
+            longitudeDegre = (longitudeDegre % 180 -180);
         }
         return longitudeDegre;
     }
@@ -92,7 +91,7 @@ class Message {
         double latitudeDegre = Integer.parseInt(ais.getRawDataPayloadBin().substring(89, 116), 2);
         latitudeDegre /= 600000;
         if (latitudeDegre > 180) {
-            latitudeDegre = -1 * (latitudeDegre % 180);
+            latitudeDegre = (latitudeDegre % 180 - 180);
         }
         return latitudeDegre;
     }
