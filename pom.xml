@@ -18,7 +18,23 @@
     <maven.compiler.target>1.7</maven.compiler.target>
   </properties>
 
+  <repositories>
+    <!-- JMapViewer -->
+    <repository>
+      <id>josm-public</id>
+      <name>josm public releases</name>
+      <url>https://josm.openstreetmap.de/nexus/content/groups/public</url>
+    </repository>
+  </repositories>
+
   <dependencies>
+    <!-- JMapViewer -->
+    <dependency>
+      <groupId>org.openstreetmap.jmapviewer</groupId>
+      <artifactId>jmapviewer</artifactId>
+      <version>2.0</version>
+    </dependency>
+    <!-- other dependencies -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
