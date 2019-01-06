@@ -1,5 +1,7 @@
 package fr.ufc.l3info.projet;
 
+import java.io.*;
+
 class MessageDecode {
     private String messageType;
     private String repeatIndicator;
@@ -96,6 +98,33 @@ class MessageDecode {
         return radioStatus;
     }
 
+    void printMessage(String fileName) {
+
+        String content = this.messageType +',' + this.repeatIndicator +',' + this.MMSI +',' + this.navigationStatus +',' + this.speedOverGround +',' + this.positiontionAccuracy +',' + this.longitude +',' + this.latitude +',' + this.courseOverGroud +',' + this.trueHeading +',' + this.timeStamp +',' + this.maneuverIndicator +',' + this.spare +',' + this.RAIMflag +',' + this.radioStatus;
+        try {
+
+
+
+            File file = new File(fileName);
+
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+
+            FileWriter fw = new FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(content);
+            bw.close();
+            fw.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public String toString() {
