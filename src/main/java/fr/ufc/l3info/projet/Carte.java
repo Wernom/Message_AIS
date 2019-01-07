@@ -23,13 +23,13 @@ public class Carte extends JFrame implements JMapViewerEventListener {
     private JLabel mperpLabelName;
     private JLabel mperpLabelValue;
 
-// list of all ships
-    public ArrayList<Ship> myTrafic;
+    // list of all ships
+    private ArrayList<Ship> myTrafic;
 
     /**
      * Setups the JFrame layout, sets some default options for the JMapViewerTree and displays a map in the window.
      */
-    public Carte(ArrayList<Ship> trafic) {
+    Carte(ArrayList<Ship> trafic) {
 
 
         super("JMapViewer Test");
@@ -76,8 +76,11 @@ public class Carte extends JFrame implements JMapViewerEventListener {
         JPanel panelBottom = new JPanel();
         JPanel helpPanel = new JPanel();
 
+        // echelle de la carte
         mperpLabelName = new JLabel("Meters/Pixels: ");
         mperpLabelValue = new JLabel(String.format("%s", map().getMeterPerPixel()));
+
+        // zoom
         zoomLabel = new JLabel("Zoom: ");
         zoomValue = new JLabel(String.format("%s", map().getZoom()));
 
@@ -106,10 +109,10 @@ public class Carte extends JFrame implements JMapViewerEventListener {
      * print a ship with his old position
      * @param vessel Ship 
      */
-    public void printShip(Ship vessel){
-        map().addMapMarker(new MapMarkerDot(vessel.getMyCurrentPosition().getD_latitude(),vessel.getMyCurrentPosition().getD_longitude()));
+    private void printShip(Ship vessel){
+        map().addMapMarker(new MapMarkerDot(vessel.getMyCurrentPosition().getLatitude(),vessel.getMyCurrentPosition().getLongitude()));
         for (Coordinate oldCoordinate: vessel.getOldPositionsList()) {
-            MapMarkerCircle oldPosition = new  MapMarkerCircle(oldCoordinate.getD_latitude(),oldCoordinate.getD_longitude(),0.03);
+            MapMarkerCircle oldPosition = new  MapMarkerCircle(oldCoordinate.getLatitude(),oldCoordinate.getLongitude(),0.03);
             oldPosition.setColor(Color.black);
             oldPosition.setBackColor(Color.black);
             map().addMapMarker(oldPosition);
@@ -119,7 +122,7 @@ public class Carte extends JFrame implements JMapViewerEventListener {
     /**
      * print all ships
      */
-    public void printTrafic(){
+    private void printTrafic(){
         for (Ship vessel:myTrafic) {
             System.out.println(vessel);
             printShip(vessel);
@@ -153,264 +156,99 @@ public class Carte extends JFrame implements JMapViewerEventListener {
 
 
 class Ship{
-
+    private MessageDecode myInfoShip;
     private Coordinate myCurrentPosition;
     private ArrayList<Coordinate> oldPositionsList; // faire une list de Ship pour garder en mémoire les anciennes info de navigations ?
-    private String myName;
-    private String myMMSI;
-    private String myNavigationStatus;
-    private String myRateOfTurn;
-    private String mySpeedOverGround;
-    private String myPositiontionAccuracy;
-    private String myCourseOverGround;
-    private String myTrueHeading;
-    private String myTimeStamp;
-    private String myManeuverIndicator;
-    //other information
 
     //------
     // constructor
     //------
-    Ship(){
-        this("0","0");
+
+    Ship(double latitude,double longitude){ // for testing
+        this.oldPositionsList = new ArrayList<>();
+        setMyCurrentPosition(new Coordinate(latitude,longitude));
     }
 
-    Ship(String latitude,String longitude){
-        this(new Coordinate(latitude,longitude));
-    }
+    Ship(MessageDecode infoShip){
+        this.myInfoShip = infoShip;
+        this.oldPositionsList = new ArrayList<>();
+        setMyCurrentPosition((myInfoShip==null) ? new Coordinate(0,0) : new Coordinate(myInfoShip.getLatitude(),myInfoShip.getLongitude()));
 
-    Ship(String latitude,String longitude,String name){
-        this(new Coordinate(latitude,longitude),name);
-    }
-
-    Ship(Coordinate coordinate){
-        this(coordinate,"GhostShip");
-    }
-
-    Ship(Coordinate coordinate,String name){
-        this(coordinate,name,"000000000");
-    }
-
-    Ship(Coordinate coordinate,String name,String MMSI){
-        this(coordinate,name,MMSI,"","","","","","","","");
-    }
-
-    Ship(Coordinate coordinate,String name,String MMSI, String navigationStatus, String rateOfTurn, String speedOverGround, String positiontionAccuracy, String courseOverGround, String trueHeading, String timeStamp, String maneuverIndicator){
-        setCurrentCoordinate(coordinate);
-        setMyName(name);
-        setMyMMSI(MMSI);
-        setMyNavigationStatus(navigationStatus);
-        setMyRateOfTurn(rateOfTurn);
-        setMySpeedOverGround(speedOverGround);
-        setMyPositiontionAccuracy(positiontionAccuracy);
-        setMyCourseOverGround(courseOverGround);
-        setMyTrueHeading(trueHeading);
-        setMyTimeStamp(timeStamp);
-        setMyManeuverIndicator(maneuverIndicator);
-        oldPositionsList = new ArrayList<>();
     }
 
     //------
     // coordinate
     //------
-    public void setCurrentCoordinate(Coordinate coordinate) {
+    private void setMyCurrentPosition(Coordinate coordinate) {
         this.myCurrentPosition = coordinate;
     }
 
-    public void setCurrentCoordinate(String latitude,String longitude) {
-        this.myCurrentPosition = new Coordinate(latitude,longitude);
-    }
-
-    public Coordinate getCurrentCoordinate() {
+    Coordinate getMyCurrentPosition() {
         return myCurrentPosition;
     }
 
-    public void addToOldPosition(Coordinate coordinate){
+    private void addToOldPosition(Coordinate coordinate){
         oldPositionsList.add(coordinate);
     }
 
-    public void setNewCurrentPosition(Coordinate coordinate){
+    void setNewCurrentPosition(Coordinate coordinate){
         addToOldPosition(this.myCurrentPosition);
-        setCurrentCoordinate(coordinate);
+        setMyCurrentPosition(coordinate);
     }
 
-    public ArrayList<Coordinate> getOldPositionsList() {
+    ArrayList<Coordinate> getOldPositionsList() {
         return oldPositionsList;
     }
 
-    public Coordinate getMyCurrentPosition() {
-        return myCurrentPosition;
-    }
-    //------
-    // name
-    //------
-    public void setMyName(String name) {
-        this.myName = name;
-    }
 
-    public String getMyName() {
-        return myName;
-    }
-    //------
-    // MMSI
-    //------
-
-    public void setMyMMSI(String myMMSI) {
-        this.myMMSI = myMMSI;
-    }
-
-    public String getMyMMSI() {
-        return myMMSI;
-    }
-
-    //------
-    // navigationStatus
-    //------
-
-    public void setMyNavigationStatus(String myNavigationStatus) {
-        this.myNavigationStatus = myNavigationStatus;
-    }
-
-    public String getMyNavigationStatus() {
-        return myNavigationStatus;
-    }
-
-    //------
-    // rateOfTurn
-    //------
-
-    public void setMyRateOfTurn(String myRateOfTurn) {
-        this.myRateOfTurn = myRateOfTurn;
-    }
-
-    public String getMyRateOfTurn() {
-        return myRateOfTurn;
-    }
-
-    //------
-    // speedOverGround
-    //------
-
-    public void setMySpeedOverGround(String mySpeedOverGround) {
-        this.mySpeedOverGround = mySpeedOverGround;
-    }
-
-    public String getMySpeedOverGround() {
-        return mySpeedOverGround;
-    }
-
-    //------
-    // positiontionAccuracy
-    //------
-
-    public void setMyPositiontionAccuracy(String myPositiontionAccuracy) {
-        this.myPositiontionAccuracy = myPositiontionAccuracy;
-    }
-
-    public String getMyPositiontionAccuracy() {
-        return myPositiontionAccuracy;
-    }
-
-    //------
-    //  courseOverGroud
-    //------
-
-    public void setMyCourseOverGround(String myCourseOverGround) {
-        this.myCourseOverGround = myCourseOverGround;
-    }
-
-    public String getMyCourseOverGround() {
-        return myCourseOverGround;
-    }
-
-    //------
-    // trueHeading
-    //------
-
-    public void setMyTrueHeading(String myTrueHeading) {
-        this.myTrueHeading = myTrueHeading;
-    }
-
-    public String getMyTrueHeading() {
-        return myTrueHeading;
-    }
-
-    //------
-    // timeStamp
-    //------
-
-    public void setMyTimeStamp(String myTimeStamp) {
-        this.myTimeStamp = myTimeStamp;
-    }
-
-    public String getMyTimeStamp() {
-        return myTimeStamp;
-    }
-
-    //------
-    // maneuverIndicator
-    //------
-
-    public void setMyManeuverIndicator(String myManeuverIndicator) {
-        this.myManeuverIndicator = myManeuverIndicator;
-    }
-
-    public String getMyManeuverIndicator() {
-        return myManeuverIndicator;
-    }
 
     @Override
     public String toString() {
-        return myName+":" +
-                " \n\tMMSI='" + myMMSI +
-                ", \n\tnavigationStatus='" + myNavigationStatus +
-                ", \n\tspeedOverGround='" + mySpeedOverGround +
-                ", \n\tpositiontionAccuracy='" + myPositiontionAccuracy +
-                ", \n\tlongitude='" + myCurrentPosition.getStr_longitude() +
-                ", \n\tlatitude='" + myCurrentPosition.getStr_latitude() +
-                ", \n\tcourseOverGround='" + myCourseOverGround +
-                ", \n\ttrueHeading='" + myTrueHeading +
-                ", \n\ttimeStamp='" + myTimeStamp +
-                ", \n\tmaneuverIndicator='" + myManeuverIndicator +
-              /*  ", \n\tspare='" + mySpare +
-                ", \n\tRAIMflag='" + RAIMflag +
-                ", \n\tradioStatus='" + myRadioStatus +
-              */ "\n";
+        if(myInfoShip==null)
+            return "GhostShip\n";
+        return "Ship:" +
+                " \n\tMMSI=" + myInfoShip.getMMSI() +
+                ", \n\tnavigationStatus=" + myInfoShip.getNavigationStatus() +
+                ", \n\tspeedOverGround=" + myInfoShip.getSpeedOverGround() +
+                ", \n\tpositiontionAccuracy=" + myInfoShip.getPositiontionAccuracy() +
+                ", \n\tlongitude=" + myCurrentPosition.getLongitude() +
+                ", \n\tlatitude=" + myCurrentPosition.getLatitude() +
+                ", \n\tcourseOverGround=" + myInfoShip.getCourseOverGroud() +
+                ", \n\ttrueHeading=" + myInfoShip.getTrueHeading() +
+                ", \n\ttimeStamp=" + myInfoShip.getTimeStamp() +
+                ", \n\tmaneuverIndicator=" + myInfoShip.getManeuverIndicator() +
+                //", \n\tspare=" + myInfoShip.getSpare() +
+                //", \n\tRAIMflag'" + myInfoShip.getRAIMflag() +
+                ", \n\tradioStatus=" + myInfoShip.getRadioStatus() +
+                 "\n";
     }
 }
 
 
 
 class Coordinate{
-    private String str_latitude;
-    private String str_longitude;
+    private double latitude;
+    private double longitude;
 
-    Coordinate(String latitude,String longitude){
-        setStr_latitude(latitude);
-        setStr_longitude(longitude);
+    Coordinate(double latitude,double longitude){
+        setLatitude(latitude);
+        setlongitude(longitude);
     }
 
-    private void setStr_latitude(String lat) {
-        this.str_latitude = lat;
+    private void setLatitude(double lat) {
+        this.latitude = lat;
     }
 
-    String getStr_latitude() {
-        return str_latitude;
+    double getLatitude() {
+        return latitude;
     }
 
-    private void setStr_longitude(String lon) {
-        this.str_longitude = lon;
+    private void setlongitude(double lon) {
+        this.longitude = lon;
     }
 
-    String getStr_longitude() {
-        return str_longitude;
+    double getLongitude() {
+        return longitude;
     }
 
-    double getD_latitude() {
-        return Double.parseDouble(str_latitude);
-    }
-
-    double getD_longitude() {
-        return Double.parseDouble(str_longitude);
-    }
 }
