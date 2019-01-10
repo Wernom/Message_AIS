@@ -4,16 +4,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
-/**
- * Hello world!
- *
- */
+
 public class App 
 {
 
     public static void main( String[] args )
     {
-        System.out.println( "Hello World!" );
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menu = new JMenu("Importer");
+         JMenu menu_2 = new JMenu("Exporter");
 
 
         //------- demo carte -------
@@ -26,14 +25,15 @@ public class App
         fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         fenetre.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-            //creation du trafic
-            ArrayList<Ship> trafic=new ArrayList<>();
+        //creation du trafic
+        ArrayList<Ship> trafic=new ArrayList<>();
 
-            // creation de la carte
+        // creation de la carte
         Carte map = new Carte(trafic);
-            // affichage de la map
+        // affichage de la map
         fenetre.add(map, BorderLayout.CENTER);
-
+        menuBar.add(menu);
+        menuBar.add(menu_2);
 
         fenetre.setVisible(true);
 

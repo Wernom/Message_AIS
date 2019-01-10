@@ -6,8 +6,6 @@ import org.openstreetmap.gui.jmapviewer.interfaces.JMapViewerEventListener;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 
 import javax.swing.*;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,9 +37,8 @@ public class Carte extends JPanel implements JMapViewerEventListener{
      */
     Carte(ArrayList<Ship> trafic) {
 
-       // super("JMapViewer Test");
+
         treeMap = new JMapViewerTree("Zones666");
-        //setupJFrame();
         setupPanels();
 
         // initialisation du trafic
@@ -62,8 +59,7 @@ public class Carte extends JPanel implements JMapViewerEventListener{
         // activate map in window
         treeMap.setTreeVisible(true);
 
-
-
+        panel.add(treeMap, BorderLayout.CENTER);
     }
 
     /*/**
@@ -83,7 +79,6 @@ public class Carte extends JPanel implements JMapViewerEventListener{
 
 
         JPanel panelTop = new JPanel();
-        JPanel panelBottom = new JPanel();
         JPanel helpPanel = new JPanel();
 
         // echelle de la carte
@@ -97,7 +92,6 @@ public class Carte extends JPanel implements JMapViewerEventListener{
         add(panel, BorderLayout.NORTH);
         panel.add(helpPanel, BorderLayout.SOUTH);
         panel.add(panelTop, BorderLayout.NORTH);
-       // panel.add(panelBottom, BorderLayout.SOUTH);
         JLabel helpLabel = new JLabel("Use right mouse button to move,\n "
                 + "left double click or mouse wheel to zoom.");
         helpPanel.add(helpLabel);
