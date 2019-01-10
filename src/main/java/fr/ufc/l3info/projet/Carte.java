@@ -111,12 +111,14 @@ public class Carte extends JFrame implements JMapViewerEventListener {
      */
     private void printShip(Ship vessel){
         map().addMapMarker(new MapMarkerDot(vessel.getMyCurrentPosition().getLatitude(),vessel.getMyCurrentPosition().getLongitude()));
-        for (Coordinate oldCoordinate: vessel.getOldPositionsList()) {
+       /*
+       for (Coordinate oldCoordinate: vessel.getOldPositionsList()) {
             MapMarkerCircle oldPosition = new  MapMarkerCircle(oldCoordinate.getLatitude(),oldCoordinate.getLongitude(),0.03);
             oldPosition.setColor(Color.black);
             oldPosition.setBackColor(Color.black);
             map().addMapMarker(oldPosition);
         }
+        */
     }
 
     /**
@@ -157,36 +159,36 @@ public class Carte extends JFrame implements JMapViewerEventListener {
 
 class Ship{
     private MessageDecode myInfoShip;
-    private Coordinate myCurrentPosition;
-    private ArrayList<Coordinate> oldPositionsList; // faire une list de Ship pour garder en mémoire les anciennes info de navigations ?
+    //private Coordinate myCurrentPosition;
+   // private ArrayList<Coordinate> oldPositionsList; // faire une list de Ship pour garder en mémoire les anciennes info de navigations ?
 
     //------
     // constructor
     //------
 
     Ship(double latitude,double longitude){ // for testing
-        this.oldPositionsList = new ArrayList<>();
-        setMyCurrentPosition(new Coordinate(latitude,longitude));
+       // this.oldPositionsList = new ArrayList<>();
+       // setMyCurrentPosition(new Coordinate(latitude,longitude));
     }
 
     Ship(MessageDecode infoShip){
         this.myInfoShip = infoShip;
-        this.oldPositionsList = new ArrayList<>();
-        setMyCurrentPosition((myInfoShip==null) ? new Coordinate(0,0) : new Coordinate(myInfoShip.getLatitude(),myInfoShip.getLongitude()));
+        //this.oldPositionsList = new ArrayList<>();
+        //setMyCurrentPosition((myInfoShip==null) ? new Coordinate(0,0) : new Coordinate(myInfoShip.getLatitude(),myInfoShip.getLongitude()));
 
     }
 
     //------
     // coordinate
     //------
-    private void setMyCurrentPosition(Coordinate coordinate) {
+   /* private void setMyCurrentPosition(Coordinate coordinate) {
         this.myCurrentPosition = coordinate;
-    }
+    }*/
 
     Coordinate getMyCurrentPosition() {
-        return myCurrentPosition;
+        return new Coordinate(myInfoShip.getLatitude(),myInfoShip.getLongitude());
     }
-
+/*
     private void addToOldPosition(Coordinate coordinate){
         oldPositionsList.add(coordinate);
     }
@@ -199,7 +201,7 @@ class Ship{
     ArrayList<Coordinate> getOldPositionsList() {
         return oldPositionsList;
     }
-
+*/
 
 
     @Override
@@ -211,8 +213,8 @@ class Ship{
                 ", \n\tnavigationStatus=" + myInfoShip.getNavigationStatus() +
                 ", \n\tspeedOverGround=" + myInfoShip.getSpeedOverGround() +
                 ", \n\tpositiontionAccuracy=" + myInfoShip.getPositiontionAccuracy() +
-                ", \n\tlongitude=" + myCurrentPosition.getLongitude() +
-                ", \n\tlatitude=" + myCurrentPosition.getLatitude() +
+                ", \n\tlongitude=" + myInfoShip.getLongitude() +
+                ", \n\tlatitude=" + myInfoShip.getLatitude() +
                 ", \n\tcourseOverGround=" + myInfoShip.getCourseOverGroud() +
                 ", \n\ttrueHeading=" + myInfoShip.getTrueHeading() +
                 ", \n\ttimeStamp=" + myInfoShip.getTimeStamp() +
