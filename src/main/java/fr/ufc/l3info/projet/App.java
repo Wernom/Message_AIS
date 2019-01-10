@@ -10,32 +10,12 @@ public class App
 
     public static void main( String[] args )
     {
-        JMenuBar menuBar = new JMenuBar();
-        JMenu menu = new JMenu("Importer");
-         JMenu menu_2 = new JMenu("Exporter");
-
-
-        //------- demo carte -------
-
-
-        JFrame fenetre=new JFrame();
-        Menu test = new Menu(fenetre);
-        fenetre.setSize(400, 400);
-        fenetre.setLayout(new BorderLayout());
-        fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        fenetre.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         //creation du trafic
+        Message msg = new Message("!AIVDM,1,1,,A,13u?etPv2;0n:dDPwUM1U1Cb069D,0*23");
         ArrayList<Ship> trafic=new ArrayList<>();
-
-        // creation de la carte
-        Carte map = new Carte(trafic);
-        // affichage de la map
-        fenetre.add(map, BorderLayout.CENTER);
-        menuBar.add(menu);
-        menuBar.add(menu_2);
-
-        fenetre.setVisible(true);
+        trafic.add(new Ship(msg.getDecode()));
+        new Fenetre(trafic);
 
     }
 }
