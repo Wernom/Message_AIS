@@ -21,7 +21,7 @@ public class Carte extends JPanel implements JMapViewerEventListener{
 
     private static final long serialVersionUID = 1L;
 
-    private JMapViewerTree treeMap;
+    private JMapViewer myMap;
     private JPanel panel = new JPanel(new BorderLayout());
     private JLabel zoomLabel;
     private JLabel zoomValue;
@@ -38,7 +38,7 @@ public class Carte extends JPanel implements JMapViewerEventListener{
     Carte(ArrayList<Ship> trafic) {
 
 
-        treeMap = new JMapViewerTree("Zones666");
+        myMap = new JMapViewer();
         setupPanels();
 
         // initialisation du trafic
@@ -46,20 +46,21 @@ public class Carte extends JPanel implements JMapViewerEventListener{
 
         // Listen to the map viewer for user operations so components will
         // receive events and updates
-        map().addJMVListener(this);
+        myMap.addJMVListener(this);
 
         // Set some options, e.g. tile source and that markers are visible
-        map().setTileSource(new OsmTileSource.Mapnik());
-        map().setTileLoader(new OsmTileLoader(map()));
-        map().setMapMarkerVisible(true);
-        map().setZoomContolsVisible(true);
+        myMap.setTileSource(new OsmTileSource.Mapnik());
+        myMap.setTileLoader(new OsmTileLoader(myMap));
+        myMap.setMapMarkerVisible(true);
+        myMap.setZoomContolsVisible(true);
 
         printTrafic();
 
         // activate map in window
-        treeMap.setTreeVisible(true);
+        myMap.setVisible(true);
 
-        panel.add(treeMap, BorderLayout.CENTER);
+        panel.add(myMap, BorderLayout.CENTER);
+
     }
 
     /*/**
@@ -76,20 +77,20 @@ public class Carte extends JPanel implements JMapViewerEventListener{
      * setup JPanel
      */
     private void setupPanels() {
-
+        add(panel, BorderLayout.CENTER);
 
         JPanel panelTop = new JPanel();
         JPanel helpPanel = new JPanel();
 
         // echelle de la carte
         mperpLabelName = new JLabel("Meters/Pixels: ");
-        mperpLabelValue = new JLabel(String.format("%s", map().getMeterPerPixel()));
+        mperpLabelValue = new JLabel(String.format("%s", myMap.getMeterPerPixel()));
 
         // zoom
         zoomLabel = new JLabel("Zoom: ");
-        zoomValue = new JLabel(String.format("%s", map().getZoom()));
+        zoomValue = new JLabel(String.format("%s", myMap.getZoom()));
 
-        add(panel, BorderLayout.NORTH);
+
         panel.add(helpPanel, BorderLayout.SOUTH);
         panel.add(panelTop, BorderLayout.NORTH);
         JLabel helpLabel = new JLabel("Use right mouse button to move,\n "
@@ -100,24 +101,53 @@ public class Carte extends JPanel implements JMapViewerEventListener{
         panelTop.add(zoomValue);
         panelTop.add(mperpLabelName);
         panelTop.add(mperpLabelValue);
+        panelTop.add(setCheckBox(),BorderLayout.NORTH);
+    }
+
+     private JPanel setCheckBox(){
+        JPanel checkBoxPanel = new JPanel();
+        final JCheckBox showMapMarker = new JCheckBox("Map markers visible");
+        showMapMarker.setSelected(myMap.getMapMarkersVisible());
+        showMapMarker.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                myMap.setMapMarkerVisible(showMapMarker.isSelected());
+            }
+        });
+        checkBoxPanel.add(showMapMarker);
+        final JCheckBox showTileGrid = new JCheckBox("Tile grid visible");
+        showTileGrid.setSelected(myMap.isTileGridVisible());
+        showTileGrid.addActionListener(new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                myMap.setTileGridVisible(showTileGrid.isSelected());
+            }
+        });
+        checkBoxPanel.add(showTileGrid);
+        final JCheckBox showZoomControls = new JCheckBox("Show zoom controls");
+        showZoomControls.setSelected(myMap.getZoomControlsVisible());
+        showZoomControls.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                myMap.setZoomContolsVisible(showZoomControls.isSelected());
+            }
+        });
+        checkBoxPanel.add(showZoomControls);
+        return checkBoxPanel;
     }
 
 
-
-
-    /**
+   /* /**
      * @return JMapViewerTree a tree map
-     */
+     *//*
     private JMapViewer map() {
-        return treeMap.getViewer();
-    }
+        return myMap.getViewer();
+    }*/
 
     /**
      * print a ship with his old position
      * @param vessel Ship 
      */
     private void printShip(Ship vessel){
-        map().addMapMarker(new MapMarkerDot(vessel.getMyCurrentPosition().getLatitude(),vessel.getMyCurrentPosition().getLongitude()));
+        myMap.addMapMarker(new MapMarkerDot(vessel.getMyCurrentPosition().getLatitude(),vessel.getMyCurrentPosition().getLongitude()));
        /*
        for (Coordinate oldCoordinate: vessel.getOldPositionsList()) {
             MapMarkerCircle oldPosition = new  MapMarkerCircle(oldCoordinate.getLatitude(),oldCoordinate.getLongitude(),0.03);
@@ -143,9 +173,9 @@ public class Carte extends JPanel implements JMapViewerEventListener{
      */
     private void updateZoomParameters() {
         if (mperpLabelValue != null)
-            mperpLabelValue.setText(String.format("%s", map().getMeterPerPixel()));
+            mperpLabelValue.setText(String.format("%s", myMap.getMeterPerPixel()));
         if (zoomValue != null)
-            zoomValue.setText(String.format("%s", map().getZoom()));
+            zoomValue.setText(String.format("%s", myMap.getZoom()));
     }
 
     /**
