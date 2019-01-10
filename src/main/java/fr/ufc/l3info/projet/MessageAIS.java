@@ -1,5 +1,10 @@
 package fr.ufc.l3info.projet;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
 class MessageAIS {
     private String rawData;
     private String rawDataPayloadBin;
@@ -35,6 +40,31 @@ class MessageAIS {
     String getRawDataPayloadBin() {
         return rawDataPayloadBin;
     }
+
+    void printMessage(String fileName) {
+
+        String content = this.rawData;
+        try {
+            File file = new File(fileName);
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            FileWriter fw = new FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(content);
+            bw.close();
+            fw.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public String toString() {
