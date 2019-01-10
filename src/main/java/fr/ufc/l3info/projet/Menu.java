@@ -38,7 +38,6 @@ class Menu extends JFrame {
                         buff.close();
                     } catch (Exception ex) {
                         System.out.println(e.toString());
-
                     }
                 }
             }
