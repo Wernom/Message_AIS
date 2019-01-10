@@ -10,8 +10,12 @@ import java.util.ArrayList;
  */
 public class App 
 {
+
     public static void main( String[] args )
     {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menu = new JMenu("Importer");
+         JMenu menu_2 = new JMenu("Exporter");
         System.out.println( "Hello World!" );
 
 
@@ -19,6 +23,7 @@ public class App
 
 
         JFrame fenetre=new JFrame();
+        fenetre.setJMenuBar(menuBar);
         fenetre.setSize(400, 400);
         fenetre.setLayout(new BorderLayout());
         fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -31,6 +36,9 @@ public class App
         Carte map = new Carte(trafic);
             // affichage de la map
         fenetre.add(map, BorderLayout.CENTER);
+        menuBar.add(menu);
+        menuBar.add(menu_2);
+
         fenetre.setVisible(true);
 
     }

@@ -6,6 +6,8 @@ import org.openstreetmap.gui.jmapviewer.interfaces.JMapViewerEventListener;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 
 import javax.swing.*;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,6 +29,7 @@ public class Carte extends JPanel implements JMapViewerEventListener, ActionList
     private JLabel zoomValue;
     private JLabel mperpLabelName;
     private JLabel mperpLabelValue;
+
 
     // list of all ships
     private ArrayList<Ship> myTrafic;
@@ -59,7 +62,8 @@ public class Carte extends JPanel implements JMapViewerEventListener, ActionList
         // activate map in window
         treeMap.setTreeVisible(true);
 
-        panel.add(treeMap, BorderLayout.CENTER);
+
+
     }
 
     /*/**
@@ -76,6 +80,7 @@ public class Carte extends JPanel implements JMapViewerEventListener, ActionList
      * setup JPanel
      */
     private void setupPanels() {
+
 
         JPanel panelTop = new JPanel();
         JPanel panelBottom = new JPanel();
@@ -106,6 +111,7 @@ public class Carte extends JPanel implements JMapViewerEventListener, ActionList
         panelTop.add(mperpLabelName);
         panelTop.add(mperpLabelValue);
     }
+
 
     /**
      *
