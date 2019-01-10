@@ -7,17 +7,22 @@ import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
 
-public class Carte extends JFrame implements JMapViewerEventListener {
+public class Carte extends JPanel implements JMapViewerEventListener, ActionListener{
+    //public class Carte extends JFrame implements JMapViewerEventListener {
 
     private static final long serialVersionUID = 1L;
 
     private JMapViewerTree treeMap;
+    private JPanel panel = new JPanel(new BorderLayout());
     private JLabel zoomLabel;
     private JLabel zoomValue;
     private JLabel mperpLabelName;
@@ -31,10 +36,9 @@ public class Carte extends JFrame implements JMapViewerEventListener {
      */
     Carte(ArrayList<Ship> trafic) {
 
-
-        super("JMapViewer Test");
-        treeMap = new JMapViewerTree("Zones");
-        setupJFrame();
+       // super("JMapViewer Test");
+        treeMap = new JMapViewerTree("Zones666");
+        //setupJFrame();
         setupPanels();
 
         // initialisation du trafic
@@ -54,24 +58,25 @@ public class Carte extends JFrame implements JMapViewerEventListener {
 
         // activate map in window
         treeMap.setTreeVisible(true);
-        add(treeMap, BorderLayout.CENTER);
+
+        panel.add(treeMap, BorderLayout.CENTER);
     }
 
-    /**
+    /*/**
      * setup JFrame
      */
-    private void setupJFrame() {
+  /*  private void setupJFrame() {
         setSize(400, 400);
         setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
-    }
+    }*/
 
     /**
      * setup JPanel
      */
     private void setupPanels() {
-        JPanel panel = new JPanel(new BorderLayout());
+
         JPanel panelTop = new JPanel();
         JPanel panelBottom = new JPanel();
         JPanel helpPanel = new JPanel();
@@ -85,17 +90,39 @@ public class Carte extends JFrame implements JMapViewerEventListener {
         zoomValue = new JLabel(String.format("%s", map().getZoom()));
 
         add(panel, BorderLayout.NORTH);
-        add(helpPanel, BorderLayout.SOUTH);
+        panel.add(helpPanel, BorderLayout.SOUTH);
         panel.add(panelTop, BorderLayout.NORTH);
-        panel.add(panelBottom, BorderLayout.SOUTH);
+       // panel.add(panelBottom, BorderLayout.SOUTH);
         JLabel helpLabel = new JLabel("Use right mouse button to move,\n "
                 + "left double click or mouse wheel to zoom.");
         helpPanel.add(helpLabel);
+
+        JButton button = new JButton("Importer");
+        button.addActionListener( this);
+        panelTop.add(button,BorderLayout.NORTH);
 
         panelTop.add(zoomLabel);
         panelTop.add(zoomValue);
         panelTop.add(mperpLabelName);
         panelTop.add(mperpLabelValue);
+    }
+
+    /**
+     *
+     * @param e ActionEvent
+     */
+    public void actionPerformed(ActionEvent e) {
+        //objet pour différencier les 2 boutons
+        Object  source=e.getSource();
+
+        JFileChooser fc = new JFileChooser();
+        if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
+            try {
+
+                Desktop.getDesktop().open(fc.getSelectedFile());
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
     }
 
     /**

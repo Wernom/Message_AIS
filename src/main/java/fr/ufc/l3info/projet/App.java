@@ -1,5 +1,7 @@
 package fr.ufc.l3info.projet;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 
 /**
@@ -14,23 +16,22 @@ public class App
 
 
         //------- demo carte -------
+
+
+        JFrame fenetre=new JFrame();
+        fenetre.setSize(400, 400);
+        fenetre.setLayout(new BorderLayout());
+        fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        fenetre.setExtendedState(JFrame.MAXIMIZED_BOTH);
+
             //creation du trafic
             ArrayList<Ship> trafic=new ArrayList<>();
-            // creation des navires
-            Ship Titanic = new Ship(0,0);
-            Ship QueensAnneRevenge = new Ship(-10,-10);
-            //deplacement d'un navire
-            /*
-            Titanic.setNewCurrentPosition(new Coordinate(1,1));
-            Titanic.setNewCurrentPosition(new Coordinate(1.5,1.5));
-            Titanic.setNewCurrentPosition(new Coordinate(3,3));
-            */
-            //ajout des navires
-            trafic.add(Titanic);
-            trafic.add(QueensAnneRevenge);
+
             // creation de la carte
-            Carte map = new Carte(trafic);
+        Carte map = new Carte(trafic);
             // affichage de la map
-            map.setVisible(true);
+        fenetre.add(map, BorderLayout.CENTER);
+        fenetre.setVisible(true);
+
     }
 }
