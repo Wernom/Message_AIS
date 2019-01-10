@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 
-public class Carte extends JPanel implements JMapViewerEventListener, ActionListener{
+public class Carte extends JPanel implements JMapViewerEventListener{
     //public class Carte extends JFrame implements JMapViewerEventListener {
 
     private static final long serialVersionUID = 1L;
@@ -102,10 +102,6 @@ public class Carte extends JPanel implements JMapViewerEventListener, ActionList
                 + "left double click or mouse wheel to zoom.");
         helpPanel.add(helpLabel);
 
-        JButton button = new JButton("Importer");
-        button.addActionListener( this);
-        panelTop.add(button,BorderLayout.NORTH);
-
         panelTop.add(zoomLabel);
         panelTop.add(zoomValue);
         panelTop.add(mperpLabelName);
@@ -113,23 +109,7 @@ public class Carte extends JPanel implements JMapViewerEventListener, ActionList
     }
 
 
-    /**
-     *
-     * @param e ActionEvent
-     */
-    public void actionPerformed(ActionEvent e) {
-        //objet pour différencier les 2 boutons
-        Object  source=e.getSource();
 
-        JFileChooser fc = new JFileChooser();
-        if (fc.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
-            try {
-
-                Desktop.getDesktop().open(fc.getSelectedFile());
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-    }
 
     /**
      * @return JMapViewerTree a tree map
