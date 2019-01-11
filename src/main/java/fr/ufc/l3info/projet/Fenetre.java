@@ -21,9 +21,17 @@ class Fenetre {
 
         // creation de la carte
         Carte map = new Carte(trafic);
-        // affichage de la map
 
+        // creation du menu deroulant (liste bateau) a gauche
+        MenuDeroulant menuDeroulant = new MenuDeroulant();
+
+        // creation de la partie modification des message AIS en bas
+        ModificationMessage modificationMessage = new ModificationMessage();
+
+        // affichage
+        fenetre.add(menuDeroulant,BorderLayout.WEST);
         fenetre.add(map, BorderLayout.CENTER);
+        fenetre.add(modificationMessage,BorderLayout.SOUTH);
         fenetre.setVisible(true);
     }
 

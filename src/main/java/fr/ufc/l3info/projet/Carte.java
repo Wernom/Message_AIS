@@ -17,7 +17,6 @@ import java.util.LinkedList;
 
 
 public class Carte extends JPanel implements JMapViewerEventListener{
-    //public class Carte extends JFrame implements JMapViewerEventListener {
 
     private static final long serialVersionUID = 1L;
 
@@ -104,6 +103,10 @@ public class Carte extends JPanel implements JMapViewerEventListener{
         panelTop.add(setCheckBox(),BorderLayout.NORTH);
     }
 
+    /**
+     * set the CheckBox option for the map
+     * @return Jpanel
+     */
      private JPanel setCheckBox(){
         JPanel checkBoxPanel = new JPanel();
         final JCheckBox showMapMarker = new JCheckBox("Map markers visible");
@@ -133,14 +136,6 @@ public class Carte extends JPanel implements JMapViewerEventListener{
         checkBoxPanel.add(showZoomControls);
         return checkBoxPanel;
     }
-
-
-   /* /**
-     * @return JMapViewerTree a tree map
-     *//*
-    private JMapViewer map() {
-        return myMap.getViewer();
-    }*/
 
     /**
      * print a ship with his old position
