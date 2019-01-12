@@ -9,11 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.sql.Time;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 
 public class Carte extends JPanel implements JMapViewerEventListener{
@@ -28,20 +24,13 @@ public class Carte extends JPanel implements JMapViewerEventListener{
     private JLabel mperpLabelValue;
 
 
-    // list of all ships
-    private ArrayList<Ship> myTrafic;
-
     /**
      * Setups the JFrame layout, sets some default options for the JMapViewerTree and displays a map in the window.
      */
-    Carte(ArrayList<Ship> trafic) {
-
+    Carte() {
 
         myMap = new JMapViewer();
         setupPanels();
-
-        // initialisation du trafic
-        this.myTrafic=trafic;
 
         // Listen to the map viewer for user operations so components will
         // receive events and updates
@@ -53,53 +42,72 @@ public class Carte extends JPanel implements JMapViewerEventListener{
         myMap.setMapMarkerVisible(true);
         myMap.setZoomContolsVisible(true);
 
-        printTrafic();
-
         // activate map in window
         myMap.setVisible(true);
 
         panel.add(myMap, BorderLayout.CENTER);
-
     }
 
-    /*/**
-     * setup JFrame
+    //----------------- default source code in Demo of JMapViewer librairy
+    /**
+     * update zoom parameters
      */
-  /*  private void setupJFrame() {
-        setSize(400, 400);
-        setLayout(new BorderLayout());
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
-    }*/
+    private void updateZoomParameters() {
+        if (mperpLabelValue != null)
+            mperpLabelValue.setText(String.format("%s", myMap.getMeterPerPixel()));
+        if (zoomValue != null)
+            zoomValue.setText(String.format("%s", myMap.getZoom()));
+    }
+
+    /**
+     *
+     * @param command JMVCommandEvent
+     */
+    @Override
+    public void processCommand(JMVCommandEvent command) {
+        if (command.getCommand().equals(JMVCommandEvent.COMMAND.ZOOM) ||
+                command.getCommand().equals(JMVCommandEvent.COMMAND.MOVE)) {
+            updateZoomParameters();
+        }
+    }
+
 
     /**
      * setup JPanel
      */
-    private void setupPanels() {
+    private void setupPanels() { // this fonction some modification by ourself
+        add(panel, BorderLayout.NORTH);
         add(panel, BorderLayout.CENTER);
+        add(panel, BorderLayout.SOUTH);
 
-        JPanel panelTop = new JPanel();
+        JPanel panelTop = new JPanel(new BorderLayout());
+        add(panelTop, BorderLayout.NORTH);
+        add(panelTop, BorderLayout.SOUTH);
+
+        // help
         JPanel helpPanel = new JPanel();
+        JLabel helpLabel = new JLabel("Use right mouse button to move,\n "
+                + "left double click or mouse wheel to zoom.");
+        helpPanel.add(helpLabel);
 
         // echelle de la carte
         mperpLabelName = new JLabel("Meters/Pixels: ");
         mperpLabelValue = new JLabel(String.format("%s", myMap.getMeterPerPixel()));
 
         // zoom
+        JPanel panelZoom=new JPanel();
         zoomLabel = new JLabel("Zoom: ");
         zoomValue = new JLabel(String.format("%s", myMap.getZoom()));
 
-
         panel.add(helpPanel, BorderLayout.SOUTH);
         panel.add(panelTop, BorderLayout.NORTH);
-        JLabel helpLabel = new JLabel("Use right mouse button to move,\n "
-                + "left double click or mouse wheel to zoom.");
-        helpPanel.add(helpLabel);
 
-        panelTop.add(zoomLabel);
-        panelTop.add(zoomValue);
-        panelTop.add(mperpLabelName);
-        panelTop.add(mperpLabelValue);
+        panelZoom.add(zoomLabel,BorderLayout.SOUTH);
+        panelZoom.add(zoomValue,BorderLayout.SOUTH);
+        panelZoom.add(mperpLabelName,BorderLayout.SOUTH);
+        panelZoom.add(mperpLabelValue,BorderLayout.SOUTH);
+
+        panelTop.add(panelZoom,BorderLayout.SOUTH);
         panelTop.add(setCheckBox(),BorderLayout.NORTH);
     }
 
@@ -107,7 +115,7 @@ public class Carte extends JPanel implements JMapViewerEventListener{
      * set the CheckBox option for the map
      * @return Jpanel
      */
-     private JPanel setCheckBox(){
+    private JPanel setCheckBox(){
         JPanel checkBoxPanel = new JPanel();
         final JCheckBox showMapMarker = new JCheckBox("Map markers visible");
         showMapMarker.setSelected(myMap.getMapMarkersVisible());
@@ -136,13 +144,14 @@ public class Carte extends JPanel implements JMapViewerEventListener{
         checkBoxPanel.add(showZoomControls);
         return checkBoxPanel;
     }
+    //---------------------
 
     /**
      * print a ship with his old position
      * @param vessel Ship 
      */
-    private void printShip(Ship vessel){
-        myMap.addMapMarker(new MapMarkerDot(vessel.getMyCurrentPosition().getLatitude(),vessel.getMyCurrentPosition().getLongitude()));
+    private void printShip(MessageDecode vessel){
+        myMap.addMapMarker(new MapMarkerDot(vessel.getLatitude(),vessel.getLongitude()));
        /*
        for (Coordinate oldCoordinate: vessel.getOldPositionsList()) {
             MapMarkerCircle oldPosition = new  MapMarkerCircle(oldCoordinate.getLatitude(),oldCoordinate.getLongitude(),0.03);
@@ -156,88 +165,28 @@ public class Carte extends JPanel implements JMapViewerEventListener{
     /**
      * print all ships
      */
-    private void printTrafic(){
-        for (Ship vessel:myTrafic) {
-            System.out.println(vessel);
-            printShip(vessel);
+    private void printTrafic(ArrayList<Message> trafic){
+        if (trafic==null)
+            return;
+        for (Message vessel:trafic) {
+            printShip(vessel.getDecode());
         }
     }
 
     /**
-     * update zoom parameters
+     * Reload the map to display ship
+     * @param trafic ArrayList<Message>
      */
-    private void updateZoomParameters() {
-        if (mperpLabelValue != null)
-            mperpLabelValue.setText(String.format("%s", myMap.getMeterPerPixel()));
-        if (zoomValue != null)
-            zoomValue.setText(String.format("%s", myMap.getZoom()));
-    }
-
-    /**
-     *
-     * @param command JMVCommandEvent
-     */
-    @Override
-    public void processCommand(JMVCommandEvent command) {
-        if (command.getCommand().equals(JMVCommandEvent.COMMAND.ZOOM) ||
-                command.getCommand().equals(JMVCommandEvent.COMMAND.MOVE)) {
-            updateZoomParameters();
-        }
+    void reloadMap(ArrayList<Message> trafic){
+        myMap.removeAllMapMarkers();
+        printTrafic(trafic);
     }
 }
 
 
-
-
-class Ship{
-    private MessageDecode myInfoShip;
-    //private Coordinate myCurrentPosition;
-   // private ArrayList<Coordinate> oldPositionsList; // faire une list de Ship pour garder en mémoire les anciennes info de navigations ?
-
-    //------
-    // constructor
-    //------
-
-    Ship(double latitude,double longitude){ // for testing
-       // this.oldPositionsList = new ArrayList<>();
-       // setMyCurrentPosition(new Coordinate(latitude,longitude));
-    }
-
-    Ship(MessageDecode infoShip){
-        this.myInfoShip = infoShip;
-        //this.oldPositionsList = new ArrayList<>();
-        //setMyCurrentPosition((myInfoShip==null) ? new Coordinate(0,0) : new Coordinate(myInfoShip.getLatitude(),myInfoShip.getLongitude()));
-
-    }
-
-    //------
-    // coordinate
-    //------
-   /* private void setMyCurrentPosition(Coordinate coordinate) {
-        this.myCurrentPosition = coordinate;
-    }*/
-
-    Coordinate getMyCurrentPosition() {
-        return new Coordinate(myInfoShip.getLatitude(),myInfoShip.getLongitude());
-    }
 /*
-    private void addToOldPosition(Coordinate coordinate){
-        oldPositionsList.add(coordinate);
-    }
 
-    void setNewCurrentPosition(Coordinate coordinate){
-        addToOldPosition(this.myCurrentPosition);
-        setMyCurrentPosition(coordinate);
-    }
-
-    ArrayList<Coordinate> getOldPositionsList() {
-        return oldPositionsList;
-    }
-*/
-
-
-    @Override
-    public String toString() {
+    public String printVessel() {
         if(myInfoShip==null)
             return "GhostShip\n";
         return "Ship:" +
@@ -256,33 +205,4 @@ class Ship{
                 ", \n\tradioStatus=" + myInfoShip.getRadioStatus() +
                  "\n";
     }
-}
-
-
-
-class Coordinate{
-    private double latitude;
-    private double longitude;
-
-    Coordinate(double latitude,double longitude){
-        setLatitude(latitude);
-        setlongitude(longitude);
-    }
-
-    private void setLatitude(double lat) {
-        this.latitude = lat;
-    }
-
-    double getLatitude() {
-        return latitude;
-    }
-
-    private void setlongitude(double lon) {
-        this.longitude = lon;
-    }
-
-    double getLongitude() {
-        return longitude;
-    }
-
-}
+*/
