@@ -185,6 +185,14 @@ public class Carte extends JPanel implements JMapViewerEventListener{
         printTrafic(trafic);
     }
 
+    void reloadMap(HashMap<String,Message> trafic,String MMSI){
+        this.reloadMap(trafic);
+        MapMarkerDot ship=new MapMarkerDot(trafic.get(MMSI).getDecode().getLatitude(),trafic.get(MMSI).getDecode().getLongitude());
+        ship.setColor(Color.BLACK);
+        ship.setBackColor(Color.RED);
+        myMap.addMapMarker(ship);
+    }
+
     /**
      * @return JPanel
      */

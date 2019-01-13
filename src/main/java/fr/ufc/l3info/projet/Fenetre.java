@@ -121,7 +121,6 @@ class Fenetre {
      */
     private void reloadMap(){
         map.reloadMap(menuBar.getMessages());
-
     }
 
 
@@ -130,9 +129,11 @@ class Fenetre {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if(!e.getValueIsAdjusting()){
-                    modificationMessage.affichage(menuBar.getMessages().get((String)menuDeroulant.getListDeroulante().getSelectedValue()));
+                    Message ship= menuBar.getMessages().get((String)menuDeroulant.getListDeroulante().getSelectedValue());
+                    modificationMessage.affichage(ship);
                     modificationMessage.getPanel().revalidate();
                     modificationMessage.getPanel().updateUI();
+                    map.reloadMap(menuBar.getMessages(),ship.getDecode().getMMSI());
                 }
 
             }
