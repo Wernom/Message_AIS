@@ -69,41 +69,15 @@ class Menu extends JMenuBar {
         return menuBar;
     }
 
-    void addListenerToItemMenu(final Fenetre fenetre){
-        menuItem.addActionListener(new ActionListener(){
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
 
-                JFileChooser fc = new JFileChooser();
-                if (fc.showOpenDialog(menu) == JFileChooser.APPROVE_OPTION) {
-                    try {
-                        InputStream flux = new FileInputStream(fc.getSelectedFile());
-                        InputStreamReader lecture = new InputStreamReader(flux);
-                        BufferedReader buff = new BufferedReader(lecture);
-                        String ligne;
-                        while ((ligne = buff.readLine()) != null) {
-                            System.out.println(ligne);
-
-                            //---------
-                            messages.add(new Message(ligne));
-                            //---------
-                            break; // les autres lignes du fichier ne sont peut etre pas encore traité
-                        }
-                        buff.close();
-                    } catch (Exception ex) {
-                        System.out.println(e.toString());
-                    }
-                    fenetre.reloadMap();
-                }
-            }
-        });
-    }
 
     JMenuItem getMenuItem() {
         return menuItem;
     }
-
+    JMenuItem getMenuItemExporter() {
+        return menuItem2;
+    }
     JMenu getMenu() {
         return menu;
     }

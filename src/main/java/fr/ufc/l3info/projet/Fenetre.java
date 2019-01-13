@@ -8,10 +8,7 @@ import javax.swing.event.ListSelectionListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 
 class Fenetre {
 
@@ -61,6 +58,33 @@ class Fenetre {
             }
         });
 
+        menuBar.getMenuItemExporter().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fc = new JFileChooser();
+                if (fc.showOpenDialog(menuBar.getMenu()) == JFileChooser.APPROVE_OPTION) {
+                    final String chemin = fc.getSelectedFile().getAbsolutePath();
+                    final File fichier = new File(chemin);
+                    System.out.println(chemin);
+                    try {
+                        fichier.createNewFile();
+                        final FileWriter writer = new FileWriter(fichier);
+                        try {
+                            /*for (menuBar.getMessages() :
+                                 ) {
+                                
+                            }*/
+                            writer.write("Test\n");
+                        } finally {
+                            writer.close();
+                        }
+                    } catch (Exception ex) {
+                        System.out.println("Impossible de creer le fichier");
+                    }
+                }
+            }
+
+        });
 
         BorderLayout layout= new BorderLayout(4,4);
         fenetre.setLayout(layout);
