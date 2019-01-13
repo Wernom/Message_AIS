@@ -77,7 +77,7 @@ class Fenetre {
 
         // creation de la partie modification des message AIS en bas
         modificationMessage = new ModificationMessage();
-        modificationMessage.getPanel().setPreferredSize(new Dimension(0,500));
+        modificationMessage.getPanel().setPreferredSize(new Dimension(0,125));
         // affichage
         //----------
         fenetre.setJMenuBar(menuBar.getMenuBar());
