@@ -38,16 +38,16 @@ class Fenetre {
                         String ligne;
                         int ENLEVEMOI=0;
                         while ((ligne = buff.readLine()) != null) {
+                            //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                             ++ENLEVEMOI;
-                            System.out.println(ligne);
-
-                            //---------
+                            //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                             Message msg=new Message(ligne);
-                            menuBar.getMessages().add(msg);
+                            menuBar.getMessages().put(msg.getDecode().getMMSI(),msg);
                             menuDeroulant.getDefaultList().addElement(msg.getDecode().getMMSI());
-                            //---------
+                            //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                             if(ENLEVEMOI==3)
                                 break; // les autres lignes du fichier ne sont peut etre pas encore traité
+                            //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                         }
                         buff.close();
                     } catch (Exception ex) {
@@ -97,11 +97,12 @@ class Fenetre {
 
         // creation du menu deroulant (liste bateau) a gauche
         menuDeroulant = new MenuDeroulant();
+        menuDeroulant.setPreferredSize(new Dimension(100,0));
         menuDeroulant.getListDeroulante().addListSelectionListener(addSelectListener());
 
         // creation de la partie modification des message AIS en bas
         modificationMessage = new ModificationMessage();
-        modificationMessage.getPanel().setPreferredSize(new Dimension(0,125));
+        modificationMessage.getPanel().setPreferredSize(new Dimension(0,150));
         // affichage
         //----------
         fenetre.setJMenuBar(menuBar.getMenuBar());
@@ -129,8 +130,7 @@ class Fenetre {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 if(!e.getValueIsAdjusting()){
-                    System.out.println(e);
-                    modificationMessage.affichage(modificationMessage.getInformation(menuBar.getMessages(),(String)menuDeroulant.getListDeroulante().getSelectedValue()));
+                    modificationMessage.affichage(menuBar.getMessages().get((String)menuDeroulant.getListDeroulante().getSelectedValue()));
                     modificationMessage.getPanel().revalidate();
                     modificationMessage.getPanel().updateUI();
                 }

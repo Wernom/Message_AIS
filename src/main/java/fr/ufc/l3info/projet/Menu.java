@@ -3,13 +3,11 @@ package fr.ufc.l3info.projet;
 
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.*;
 
 //class Menu extends JFrame {
 class Menu extends JMenuBar {
@@ -17,36 +15,17 @@ class Menu extends JMenuBar {
     private JMenu menu = new JMenu("Fichier");
     private JMenuItem menuItem = new JMenuItem("Importer");
     private JMenuItem menuItem2 = new JMenuItem("Exporter");
-    private ArrayList<Message> messages;
+    private HashMap<String,Message> messages;
 
     public static final String FRAME_BOUNDS = "frameBounds";
     public static final String FIELD_TEXT = "fieldText";
 
     Menu(/*Fenetre fenetre*/) {
         //---------
-        messages = new ArrayList<>();
-
+        messages = new HashMap<>();
         menuBar.add(menu);
-
-      /*----------------
-      addListenerToItemMenu(fenetre);
-       */
-
-        menuItem2.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                /*try(BufferedWriter writer = Files.newBufferedWriter(applicationDataFile) ) {
-                    writer.write("test");
-                    writer.write('=');
-                    writer.write("lol");
-                    writer.newLine();
-                }*/
-            }
-        });
         menu.add(menuItem);
         menu.add(menuItem2);
-        //---------
-        //fenetre.setJMenuBar(menuBar);
     }
 
     private Path getApplicationDataFile(boolean create) throws IOException {
@@ -61,7 +40,7 @@ class Menu extends JMenuBar {
 
 
     //--------------
-    ArrayList<Message> getMessages() {
+    HashMap<String,Message> getMessages() {
         return messages;
     }
 

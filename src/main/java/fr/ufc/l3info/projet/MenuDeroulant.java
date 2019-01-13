@@ -16,7 +16,7 @@ class MenuDeroulant extends JPanel {
         add(panel,BorderLayout.NORTH);
         add(panel,BorderLayout.CENTER);
 
-        JLabel testList = new JLabel("liste des navires :");
+        JLabel testList = new JLabel("Ship List :");
         panel.add(testList,BorderLayout.NORTH);
         initList();
     }
@@ -27,11 +27,6 @@ class MenuDeroulant extends JPanel {
         listDeroulante.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         listDeroulante.setLayoutOrientation(JList.VERTICAL);
         panel.add(listDeroulante,BorderLayout.CENTER);
-    }
-
-
-    public JPanel getPanel() {
-        return panel;
     }
 
     JList getListDeroulante() {

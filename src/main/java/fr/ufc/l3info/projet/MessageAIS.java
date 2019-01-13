@@ -41,6 +41,10 @@ class MessageAIS {
         return rawDataPayloadBin;
     }
 
+    String getRawData() {
+        return rawData;
+    }
+
     void printMessage(String fileName) {
 
         String content = this.rawData;

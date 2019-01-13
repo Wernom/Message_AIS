@@ -10,7 +10,7 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class Carte extends JPanel implements JMapViewerEventListener{
@@ -168,10 +168,10 @@ public class Carte extends JPanel implements JMapViewerEventListener{
     /**
      * print all ships
      */
-    private void printTrafic(ArrayList<Message> trafic){
+    private void printTrafic(HashMap<String,Message> trafic){
         if (trafic==null)
             return;
-        for (Message vessel:trafic) {
+        for (Message vessel:trafic.values()) {
             printShip(vessel.getDecode());
         }
     }
@@ -180,7 +180,7 @@ public class Carte extends JPanel implements JMapViewerEventListener{
      * Reload the map to display ship
      * @param trafic ArrayList<Message>
      */
-    void reloadMap(ArrayList<Message> trafic){
+    void reloadMap(HashMap<String,Message> trafic){
         myMap.removeAllMapMarkers();
         printTrafic(trafic);
     }

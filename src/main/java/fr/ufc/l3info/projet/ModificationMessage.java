@@ -2,97 +2,113 @@ package fr.ufc.l3info.projet;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 class ModificationMessage extends JPanel {
 
    private JPanel panel = new JPanel(new BorderLayout());
-   private JPanel info=new JPanel();
+   private JPanel info=new JPanel(new BorderLayout());
 
    ModificationMessage(){
         add(panel,BorderLayout.NORTH);
-        add(panel,BorderLayout.SOUTH);
-       add(panel,BorderLayout.CENTER);
-        JLabel entete=new JLabel("  Corps du message :");
+        add(panel,BorderLayout.CENTER);
+        add(info,BorderLayout.NORTH);
+        add(info,BorderLayout.CENTER);
+        JLabel entete=new JLabel("  Message Body :");
+
         panel.add(entete,BorderLayout.NORTH);
         panel.add(info,BorderLayout.CENTER);
    }
 
-    MessageDecode getInformation(ArrayList<Message> msg,String select){
-       if (msg!=null) {
-           for (Message vessel : msg) {
-               if (vessel.getDecode().getMMSI() == select) {
-                   return vessel.getDecode();
-               }
-           }
-       }
-       return null;
-   }
+   void affichage(Message ais){
+        info.removeAll();
+        MessageDecode vessel = ais.getDecode();
 
-   void affichage(MessageDecode vessel){
-       // Label
+        JLabel AISraw=new JLabel(" Raw AIS : "+ais.getAis().getRawData());
+        info.add(AISraw,BorderLayout.NORTH);
+
+        JPanel panelValue=new JPanel();
+
+        // messageType
         JLabel messageTypeLabel = new JLabel("Message Type");
+        JTextField messageTypeText = new JTextField((vessel==null)?"":vessel.getMessageType());
+        panelValue.add(initPanelInfo(messageTypeLabel,messageTypeText));
+
+        //repeatIndicator
         JLabel repeatIndicatorLabel = new JLabel("Repeat Indicator");
+        JTextField repeatIndicatorText = new JTextField((vessel==null)?"":vessel.getRepeatIndicator());
+        panelValue.add(initPanelInfo(repeatIndicatorLabel,repeatIndicatorText));
+
+        // MMSI
         JLabel MMSILabel = new JLabel("MMSI");
+        JTextField MMSIText = new JTextField((vessel==null)?"":vessel.getMMSI());
+        panelValue.add(initPanelInfo(MMSILabel,MMSIText));
+
+
+        // navigationStatus
         JLabel navigationStatusLabel = new JLabel("Navigation Status");
+        JTextField navigationStatusText = new JTextField((vessel==null)?"":vessel.getNavigationStatus());
+        panelValue.add(initPanelInfo(navigationStatusLabel,navigationStatusText));
+
+        // speedOverGround
         JLabel speedOverGroundLabel = new JLabel("Speed Over Ground");
+        JTextField speedOverGroundText = new JTextField((vessel==null)?"":String.valueOf(vessel.getSpeedOverGround()));
+        panelValue.add(initPanelInfo(speedOverGroundLabel,speedOverGroundText));
+
+        // positiontionAccuracy
         JLabel positiontionAccuracyLabel = new JLabel("Position Accuracy");
+        JTextField positiontionAccuracyText = new JTextField((vessel==null)?"":vessel.getPositiontionAccuracy());
+        panelValue.add(initPanelInfo(positiontionAccuracyLabel,positiontionAccuracyText));
+
+        // longitude
         JLabel longitudeLabel = new JLabel("Longitude");
+        JTextField longitudeText = new JTextField((vessel==null)?"":String.valueOf(vessel.getLongitude()));
+        panelValue.add(initPanelInfo(longitudeLabel,longitudeText));
+
+        // latitude
         JLabel latitudeLabel = new JLabel("Latitude");
+        JTextField latitudeText = new JTextField((vessel==null)?"":String.valueOf(vessel.getLatitude()));
+        panelValue.add(initPanelInfo(latitudeLabel,latitudeText));
+
+        // trueHeading
         JLabel trueHeadingLabel = new JLabel("True Heading");
+        JTextField trueHeadingText = new JTextField((vessel==null)?"":vessel.getTrueHeading());
+        panelValue.add(initPanelInfo(trueHeadingLabel,trueHeadingText));
+
+        // timeStamp
         JLabel timeStampLabel = new JLabel("Time Stamp");
+        JTextField timeStampText = new JTextField((vessel==null)?"":vessel.getTimeStamp());
+        panelValue.add(initPanelInfo(timeStampLabel,timeStampText));
+
+        // maneuverIndicator
         JLabel maneuverIndicatorLabel = new JLabel("Maneuver Indicator");
+        JTextField maneuverIndicatorText = new JTextField((vessel==null)?"":vessel.getManeuverIndicator());
+        panelValue.add(initPanelInfo(maneuverIndicatorLabel,maneuverIndicatorText));
+
+        // spare
         JLabel spareLabel = new JLabel("Spare");
+        JTextField spareText = new JTextField((vessel==null)?"":vessel.getSpare());
+        panelValue.add(initPanelInfo(spareLabel,spareText));
+
+        // RAIMflag
         JLabel RAIMflagLabel = new JLabel("RAIM Flag");
+        JTextField RAIMflagText = new JTextField((vessel==null)?"":vessel.getRAIMflag());
+        panelValue.add(initPanelInfo(RAIMflagLabel,RAIMflagText));
+
+        // radioStatus
         JLabel radioStatusLabel = new JLabel("Radio Status");
+        JTextField radioStatusText = new JTextField((vessel==null)?"":vessel.getRadioStatus());
+        panelValue.add(initPanelInfo(radioStatusLabel,radioStatusText));
 
-        // TextField
-       JTextField messageTypeText = new JTextField((vessel==null)?"":vessel.getMessageType());
-       JTextField repeatIndicatorText = new JTextField((vessel==null)?"":vessel.getRepeatIndicator());
-       JTextField MMSIText = new JTextField((vessel==null)?"":vessel.getMMSI());
-       JTextField navigationStatusText = new JTextField((vessel==null)?"":vessel.getNavigationStatus());
-       JTextField speedOverGroundText = new JTextField((vessel==null)?"":String.valueOf(vessel.getSpeedOverGround()));
-       JTextField positiontionAccuracyText = new JTextField((vessel==null)?"":vessel.getPositiontionAccuracy());
-       JTextField longitudeText = new JTextField((vessel==null)?"":String.valueOf(vessel.getLongitude()));
-       JTextField latitudeText = new JTextField((vessel==null)?"":String.valueOf(vessel.getLatitude()));
-       JTextField trueHeadingText = new JTextField((vessel==null)?"":vessel.getTrueHeading());
-       JTextField timeStampText = new JTextField((vessel==null)?"":vessel.getTimeStamp());
-       JTextField maneuverIndicatorText = new JTextField((vessel==null)?"":vessel.getManeuverIndicator());
-       JTextField spareText = new JTextField((vessel==null)?"":vessel.getSpare());
-       JTextField RAIMflagText = new JTextField((vessel==null)?"":vessel.getRAIMflag());
-       JTextField radioStatusText = new JTextField((vessel==null)?"":vessel.getRadioStatus());
-
-       info.removeAll();
-
-       info.add(messageTypeLabel);
-       info.add(messageTypeText);
-       info.add(repeatIndicatorLabel);
-       info.add(repeatIndicatorText);
-       info.add(MMSILabel);
-       info.add(MMSIText);
-       info.add(navigationStatusLabel);
-       info.add(navigationStatusText);
-       info.add(speedOverGroundLabel);
-       info.add(speedOverGroundText);
-       info.add(positiontionAccuracyLabel);
-       info.add(positiontionAccuracyText);
-       info.add(longitudeLabel);
-       info.add(longitudeText);
-       info.add(latitudeLabel);
-       info.add(latitudeText);
-       info.add(trueHeadingLabel);
-       info.add(trueHeadingText);
-       info.add(timeStampLabel);
-       info.add(timeStampText);
-       info.add(maneuverIndicatorLabel);
-       info.add(maneuverIndicatorText);
-       info.add(spareLabel);
-       info.add(spareText);
-       info.add(RAIMflagLabel);
-       info.add(RAIMflagText);
-       info.add(radioStatusLabel);
-       info.add(radioStatusText);
+       info.add(panelValue,BorderLayout.CENTER);
    }
+
+    private JPanel initPanelInfo(JLabel label, JTextField textField){
+        JPanel returnPanel=new JPanel();
+        returnPanel.add(label);
+        returnPanel.add(textField);
+        return returnPanel;
+   }
+
 
     JPanel getPanel() {
         return panel;
