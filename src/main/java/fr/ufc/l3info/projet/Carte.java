@@ -19,6 +19,7 @@ public class Carte extends JPanel implements JMapViewerEventListener{
 
     private JMapViewer myMap;
     private JPanel panel = new JPanel(new BorderLayout());
+    private JPanel panelZoom;
     private JLabel zoomLabel;
     private JLabel zoomValue;
     private JLabel mperpLabelName;
@@ -98,20 +99,25 @@ public class Carte extends JPanel implements JMapViewerEventListener{
         mperpLabelValue = new JLabel(String.format("%s", myMap.getMeterPerPixel()));
 
         // zoom
-        JPanel panelZoom=new JPanel();
-        zoomLabel = new JLabel("Zoom: ");
-        zoomValue = new JLabel(String.format("%s", myMap.getZoom()));
+        panelZoom=new JPanel();
+        setupZoomPanel();
+        panelTop.add(panelZoom,BorderLayout.SOUTH);
+
+        panelTop.add(setCheckBox(),BorderLayout.NORTH);
 
         panel.add(helpPanel, BorderLayout.SOUTH);
         panel.add(panelTop, BorderLayout.NORTH);
+    }
+
+    private void setupZoomPanel(){
+        panelZoom.removeAll();
+        zoomLabel = new JLabel("Zoom: ");
+        zoomValue = new JLabel(String.format("%s", myMap.getZoom()));
 
         panelZoom.add(zoomLabel,BorderLayout.SOUTH);
         panelZoom.add(zoomValue,BorderLayout.SOUTH);
         panelZoom.add(mperpLabelName,BorderLayout.SOUTH);
         panelZoom.add(mperpLabelValue,BorderLayout.SOUTH);
-
-        panelTop.add(panelZoom,BorderLayout.SOUTH);
-        panelTop.add(setCheckBox(),BorderLayout.NORTH);
     }
 
     /**
@@ -191,6 +197,8 @@ public class Carte extends JPanel implements JMapViewerEventListener{
         ship.setColor(Color.BLACK);
         ship.setBackColor(Color.RED);
         myMap.addMapMarker(ship);
+        myMap.setDisplayPosition(ship.getCoordinate(),3);
+        setupZoomPanel();
     }
 
     /**
