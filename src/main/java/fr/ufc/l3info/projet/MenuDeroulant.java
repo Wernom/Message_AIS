@@ -2,7 +2,6 @@ package fr.ufc.l3info.projet;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 
 class MenuDeroulant extends JPanel {
     /*
@@ -12,7 +11,7 @@ class MenuDeroulant extends JPanel {
     private JList listDeroulante;
     private DefaultListModel<String> defaultList;
 
-    MenuDeroulant(ArrayList<Message> trafic) {
+    MenuDeroulant() {
         panel = new JPanel(new BorderLayout());
         add(panel,BorderLayout.NORTH);
         add(panel,BorderLayout.CENTER);
@@ -20,7 +19,6 @@ class MenuDeroulant extends JPanel {
         JLabel testList = new JLabel("liste des navires :");
         panel.add(testList,BorderLayout.NORTH);
         initList();
-        panel.add(listDeroulante,BorderLayout.CENTER);
     }
 
     private void initList() {
@@ -31,7 +29,12 @@ class MenuDeroulant extends JPanel {
         panel.add(listDeroulante,BorderLayout.CENTER);
     }
 
-    public JList getListDeroulante() {
+
+    public JPanel getPanel() {
+        return panel;
+    }
+
+    JList getListDeroulante() {
         return listDeroulante;
     }
 

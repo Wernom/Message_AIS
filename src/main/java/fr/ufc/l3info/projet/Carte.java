@@ -6,6 +6,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.JMapViewerEventListener;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -44,8 +45,10 @@ public class Carte extends JPanel implements JMapViewerEventListener{
 
         // activate map in window
         myMap.setVisible(true);
-
+        Border test ;
+        test = BorderFactory.createLineBorder(Color.black);
         panel.add(myMap, BorderLayout.CENTER);
+        panel.setBorder(test);
     }
 
     //----------------- default source code in Demo of JMapViewer librairy
@@ -181,28 +184,11 @@ public class Carte extends JPanel implements JMapViewerEventListener{
         myMap.removeAllMapMarkers();
         printTrafic(trafic);
     }
-}
 
-
-/*
-
-    public String printVessel() {
-        if(myInfoShip==null)
-            return "GhostShip\n";
-        return "Ship:" +
-                " \n\tMMSI=" + myInfoShip.getMMSI() +
-                ", \n\tnavigationStatus=" + myInfoShip.getNavigationStatus() +
-                ", \n\tspeedOverGround=" + myInfoShip.getSpeedOverGround() +
-                ", \n\tpositiontionAccuracy=" + myInfoShip.getPositiontionAccuracy() +
-                ", \n\tlongitude=" + myInfoShip.getLongitude() +
-                ", \n\tlatitude=" + myInfoShip.getLatitude() +
-                ", \n\tcourseOverGround=" + myInfoShip.getCourseOverGroud() +
-                ", \n\ttrueHeading=" + myInfoShip.getTrueHeading() +
-                ", \n\ttimeStamp=" + myInfoShip.getTimeStamp() +
-                ", \n\tmaneuverIndicator=" + myInfoShip.getManeuverIndicator() +
-                //", \n\tspare=" + myInfoShip.getSpare() +
-                //", \n\tRAIMflag'" + myInfoShip.getRAIMflag() +
-                ", \n\tradioStatus=" + myInfoShip.getRadioStatus() +
-                 "\n";
+    /**
+     * @return JPanel
+     */
+    JPanel getPanel() {
+        return panel;
     }
-*/
+}
