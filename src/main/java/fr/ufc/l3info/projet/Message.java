@@ -39,6 +39,7 @@ class Message {
         String repeatIndicator = decodeRepeatIndicator();
         String MMSI = decodeMMSI();
         String navigationStatus = decodeNavigationStatus();
+        double rateOverTurn = decodeRateOverTurn();
         double speedOverGround = decodeSpeedOverGround();
         String positiontionAccuracy = decodePositionAccuracy();
         double longitude = decodeLongitude();
@@ -51,7 +52,7 @@ class Message {
         String RAIMflag = decodeRAIMflag();
         String radioStatus = decodeRadioStatus();
 
-        return new MessageDecode(messageType, repeatIndicator, MMSI, navigationStatus, speedOverGround, positiontionAccuracy, longitude, latitude, courseOverGroud, trueHeading, timeStamp, maneuverIndicator, spare, RAIMflag, radioStatus);
+        return new MessageDecode(messageType, repeatIndicator, MMSI, navigationStatus, rateOverTurn, speedOverGround, positiontionAccuracy, longitude, latitude, courseOverGroud, trueHeading, timeStamp, maneuverIndicator, spare, RAIMflag, radioStatus);
     }
 
     private MessageAIS encode() {
@@ -131,6 +132,13 @@ class Message {
 
     private String encodeNavigateStatus() {
         return addZeroToReachNbit(decimalToBinary(decode.getNavigationStatus()), 4);
+    }
+
+    private double decodeRateOverTurn(){
+        double res = Integer.parseInt(ais.getRawDataPayloadBin().substring(42, 50), 2);
+        if (res > 127)
+            res = (res % 128) - 128;
+        return res;
     }
 
     private double decodeSpeedOverGround() {
@@ -260,6 +268,10 @@ class Message {
         res.append(ascii);
 
         return res.toString();
+    }
+
+    public void setAis(MessageAIS ais) {
+        this.ais = encode();
     }
 
     private String addZeroToReachNbit(String ascii, int n) {

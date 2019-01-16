@@ -7,6 +7,7 @@ class MessageDecode {
     private String repeatIndicator;
     private String MMSI;
     private String navigationStatus;
+    private double rateOverTurn;
     private double speedOverGround;
     private String positiontionAccuracy;
     private double longitude;
@@ -16,14 +17,76 @@ class MessageDecode {
     private String timeStamp;
     private String maneuverIndicator;
     private String spare;
+
+    public void setMessageType(String messageType) {
+        this.messageType = messageType;
+    }
+
+    public void setRepeatIndicator(String repeatIndicator) {
+        this.repeatIndicator = repeatIndicator;
+    }
+
+    public void setMMSI(String MMSI) {
+        this.MMSI = MMSI;
+    }
+
+    public void setNavigationStatus(String navigationStatus) {
+        this.navigationStatus = navigationStatus;
+    }
+
+    public void setSpeedOverGround(double speedOverGround) {
+        this.speedOverGround = speedOverGround;
+    }
+
+    public void setPositiontionAccuracy(String positiontionAccuracy) {
+        this.positiontionAccuracy = positiontionAccuracy;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setCourseOverGroud(double courseOverGroud) {
+        this.courseOverGroud = courseOverGroud;
+    }
+
+    public void setTrueHeading(String trueHeading) {
+        this.trueHeading = trueHeading;
+    }
+
+    public void setTimeStamp(String timeStamp) {
+        this.timeStamp = timeStamp;
+    }
+
+    public void setManeuverIndicator(String maneuverIndicator) {
+        this.maneuverIndicator = maneuverIndicator;
+    }
+
+    public void setSpare(String spare) {
+        this.spare = spare;
+    }
+
+    public void setRAIMflag(String RAIMflag) {
+        this.RAIMflag = RAIMflag;
+    }
+
+    public void setRadioStatus(String radioStatus) {
+        this.radioStatus = radioStatus;
+    }
+
     private String RAIMflag;
     private String radioStatus;
 
-    MessageDecode(String messageType, String repeatIndicator, String MMSI, String navigationStatus, double speedOverGround, String positiontionAccuracy, double longitude, double latitude, double courseOverGroud, String trueHeading, String timeStamp, String maneuverIndicator, String spare, String RAIMflag, String radioStatus) {
+    MessageDecode(String messageType, String repeatIndicator, String MMSI, String navigationStatus,double rateOverTurn, double speedOverGround, String positiontionAccuracy, double longitude, double latitude, double courseOverGroud, String trueHeading, String timeStamp, String maneuverIndicator, String spare, String RAIMflag, String radioStatus) {
         this.messageType = messageType;
         this.repeatIndicator = repeatIndicator;
         this.MMSI = MMSI;
         this.navigationStatus = navigationStatus;
+        this.rateOverTurn = rateOverTurn;
         this.speedOverGround = speedOverGround;
         this.positiontionAccuracy = positiontionAccuracy;
         this.longitude = longitude;
@@ -56,35 +119,35 @@ class MessageDecode {
     }
 
 
-    public String getMessageType() {
+    String getMessageType() {
         return messageType;
     }
 
-    public String getRepeatIndicator() {
+    String getRepeatIndicator() {
         return repeatIndicator;
     }
 
-    public String getMMSI() {
+    String getMMSI() {
         return MMSI;
     }
 
-    public String getNavigationStatus() {
+    String getNavigationStatus() {
         return navigationStatus;
     }
 
-    public double getSpeedOverGround() {
+    double getSpeedOverGround() {
         return speedOverGround;
     }
 
-    public String getPositiontionAccuracy() {
+    String getPositiontionAccuracy() {
         return positiontionAccuracy;
     }
 
-    public double getLongitude() {
+    double getLongitude() {
         return longitude;
     }
 
-    public double getLatitude() {
+    double getLatitude() {
         return latitude;
     }
 
@@ -92,27 +155,27 @@ class MessageDecode {
         return courseOverGroud;
     }
 
-    public String getTrueHeading() {
+    String getTrueHeading() {
         return trueHeading;
     }
 
-    public String getTimeStamp() {
+    String getTimeStamp() {
         return timeStamp;
     }
 
-    public String getManeuverIndicator() {
+    String getManeuverIndicator() {
         return maneuverIndicator;
     }
 
-    public String getSpare() {
+    String getSpare() {
         return spare;
     }
 
-    public String getRAIMflag() {
+    String getRAIMflag() {
         return RAIMflag;
     }
 
-    public String getRadioStatus() {
+    String getRadioStatus() {
         return radioStatus;
     }
 
@@ -120,9 +183,6 @@ class MessageDecode {
 
         String content = this.messageType +',' + this.repeatIndicator +',' + this.MMSI + ',' + this.navigationStatus +',' + ',' + this.speedOverGround  + ',' + this.positiontionAccuracy +',' + this.longitude +',' + this.latitude +',' + this.courseOverGroud +',' + this.trueHeading +',' + this.timeStamp +',' + this.maneuverIndicator +',' + this.spare +',' + this.RAIMflag +',' + this.radioStatus;
         try {
-
-
-
             File file = new File(fileName);
 
             if (!file.exists()) {
@@ -151,6 +211,7 @@ class MessageDecode {
                 ", \n\trepeatIndicator='" + repeatIndicator + '\'' +
                 ", \n\tMMSI='" + MMSI + '\'' +
                 ", \n\tnavigationStatus='" + navigationStatus + '\'' +
+                ", \n\trateOverTurn='" + rateOverTurn + '\'' +
                 ", \n\tspeedOverGround='" + speedOverGround + '\'' +
                 ", \n\tpositiontionAccuracy='" + positiontionAccuracy + '\'' +
                 ", \n\tlongitude='" + longitude + '\'' +
