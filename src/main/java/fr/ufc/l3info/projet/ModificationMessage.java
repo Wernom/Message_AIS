@@ -11,6 +11,7 @@ class ModificationMessage extends JPanel {
    private JPanel info=new JPanel(new BorderLayout());
    private JButton validate= new JButton("Validate");
    private JButton cancel= new JButton("Cancel");
+   private ArrayList<Message> allSelectedShip=new ArrayList<>();
 
     /**
      * update ship information with selection
@@ -154,14 +155,18 @@ class ModificationMessage extends JPanel {
       * @param allShip ArrayList<Message>
      */
     void affichage(ArrayList<Message> allShip){
-        info.removeAll();
-        JTabbedPane tabbedPane=new JTabbedPane();
-        for(Message vessel:allShip) {
-            tabbedPane.addTab(vessel.getDecode().getMMSI(),affichageOneMessage(vessel));
-        }
+        this.allSelectedShip=allShip;
+        reload();
+   }
 
-        info.add(tabbedPane,BorderLayout.CENTER);
+   void reload(){
+       info.removeAll();
+       JTabbedPane tabbedPane=new JTabbedPane();
+       for(Message vessel:allSelectedShip) {
+           tabbedPane.addTab(vessel.getDecode().getMMSI(),affichageOneMessage(vessel));
+       }
 
+       info.add(tabbedPane,BorderLayout.CENTER);
    }
 
     /**
