@@ -28,6 +28,7 @@ public class Carte extends JPanel implements JMapViewerEventListener{
 
     /**
      * Setups the JFrame layout, sets some default options for the JMapViewerTree and displays a map in the window.
+     * Based on http://svn.openstreetmap.org/applications/viewer/jmapviewer/src/org/openstreetmap/gui/jmapviewer/Demo.java by Jan Peter Stotz
      */
     Carte() {
 
@@ -46,10 +47,11 @@ public class Carte extends JPanel implements JMapViewerEventListener{
 
         // activate map in window
         myMap.setVisible(true);
-        Border test ;
-        test = BorderFactory.createLineBorder(Color.black);
+        Border border ;
+        border = BorderFactory.createLineBorder(Color.black);
+        myMap.setBorder(border);
         panel.add(myMap, BorderLayout.CENTER);
-        panel.setBorder(test);
+        panel.setBorder(border);
     }
 
     //----------------- default source code in Demo of JMapViewer librairy
@@ -160,10 +162,11 @@ public class Carte extends JPanel implements JMapViewerEventListener{
      * @param vessel Ship 
      */
     private void printShip(MessageDecode vessel){
-        myMap.addMapMarker(new MapMarkerDot(vessel.getLatitude(),vessel.getLongitude()));
+        MapMarkerDot ship=new MapMarkerDot(vessel.getLatitude(),vessel.getLongitude());
+        myMap.addMapMarker(ship);
        /*
        for (Coordinate oldCoordinate: vessel.getOldPositionsList()) {
-            MapMarkerCircle oldPosition = new  MapMarkerCircle(oldCoordinate.getLatitude(),oldCoordinate.getLongitude(),0.03);
+            MapMarkerDot oldPosition = new  MapMarkerDot(oldCoordinate.getLatitude(),oldCoordinate.getLongitude());
             oldPosition.setColor(Color.black);
             oldPosition.setBackColor(Color.black);
             map().addMapMarker(oldPosition);
@@ -183,7 +186,7 @@ public class Carte extends JPanel implements JMapViewerEventListener{
     }
 
     /**
-     * Reload the map to display ship
+     * Reload the map to display ship after import
      * @param trafic ArrayList<Message>
      */
     void reloadMap(HashMap<String,Message> trafic){
@@ -191,14 +194,37 @@ public class Carte extends JPanel implements JMapViewerEventListener{
         printTrafic(trafic);
     }
 
+    /**
+     * Reload the map after MMSI select
+     * @param trafic HashMap<String,Message>
+     * @param MMSI String
+     */
     void reloadMap(HashMap<String,Message> trafic,String MMSI){
         this.reloadMap(trafic);
         MapMarkerDot ship=new MapMarkerDot(trafic.get(MMSI).getDecode().getLatitude(),trafic.get(MMSI).getDecode().getLongitude());
+        setSelectedShip(ship);
+    }
+
+    /**
+     * Reload the map after select ship on map
+     * @param trafic ArrayList<Message>
+     */
+    void reloadMap(HashMap<String,Message> trafic,Coordinate coordinate){
+        this.reloadMap(trafic);
+        MapMarkerDot ship=new MapMarkerDot(coordinate);
+        setSelectedShip(ship);
+    }
+
+    /**
+     * set more visible the selected ship
+     * @param ship MapMarkerDot
+     */
+    private void setSelectedShip(MapMarkerDot ship){
         ship.setColor(Color.BLACK);
         ship.setBackColor(Color.RED);
         myMap.addMapMarker(ship);
         myMap.setDisplayPosition(ship.getCoordinate(),3);
-        setupZoomPanel();
+        updateZoomParameters();
     }
 
     /**
@@ -206,5 +232,9 @@ public class Carte extends JPanel implements JMapViewerEventListener{
      */
     JPanel getPanel() {
         return panel;
+    }
+
+    JMapViewer getMyMap() {
+        return myMap;
     }
 }

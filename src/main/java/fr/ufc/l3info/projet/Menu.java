@@ -44,6 +44,10 @@ class Menu extends JMenuBar {
         return messages;
     }
 
+    Message getMessage(String MMSI){
+        return messages.get(MMSI);
+    }
+
     JMenuBar getMenuBar() {
         return menuBar;
     }

@@ -1,26 +1,34 @@
 package fr.ufc.l3info.projet;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 
 class MenuDeroulant extends JPanel {
     /*
-        affichage des bateau et des informations de ceux ci
+        List of ship import from source file
      */
     private JPanel panel;
     private JList listDeroulante;
     private DefaultListModel<String> defaultList;
 
+    /**
+     * constructor
+     */
     MenuDeroulant() {
         panel = new JPanel(new BorderLayout());
-        add(panel,BorderLayout.NORTH);
         add(panel,BorderLayout.CENTER);
-
-        JLabel testList = new JLabel("Ship List :");
-        panel.add(testList,BorderLayout.NORTH);
+        Border border ;
+        border = BorderFactory.createEtchedBorder();
+        border = BorderFactory.createTitledBorder(border,"Ship List");
+        panel.setBorder(border);
+        panel.setPreferredSize(new Dimension(100,0));
         initList();
     }
 
+    /**
+     * initialize lis of ship
+     */
     private void initList() {
         defaultList=new DefaultListModel<>();
         listDeroulante = new JList<>(defaultList);
@@ -29,10 +37,23 @@ class MenuDeroulant extends JPanel {
         panel.add(listDeroulante,BorderLayout.CENTER);
     }
 
+    /**
+     * @return Jpanel
+     */
+    JPanel getPanel() {
+        return panel;
+    }
+
+    /**
+     * @return JList
+     */
     JList getListDeroulante() {
         return listDeroulante;
     }
 
+    /**
+     * @return DefaultListModel
+     */
     DefaultListModel getDefaultList() {
         return defaultList;
     }
