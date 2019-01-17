@@ -98,7 +98,7 @@ class Fenetre {
         fenetre.setLayout(layout);
         fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         fenetre.setSize(1000, 800);
-        fenetre.setMinimumSize(new Dimension(800,800));
+        fenetre.setMinimumSize(new Dimension(700,700));
 
         // creation de la carte
         map = new Carte();

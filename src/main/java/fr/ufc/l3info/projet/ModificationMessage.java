@@ -9,12 +9,13 @@ class ModificationMessage extends JPanel {
 
    private JPanel panel = new JPanel(new BorderLayout());
    private JPanel info=new JPanel(new BorderLayout());
+   private JButton validate= new JButton("Validate");
+   private JButton cancel= new JButton("Cancel");
 
     /**
      * update ship information with selection
      */
    ModificationMessage(){
-        add(panel,BorderLayout.NORTH);
         add(panel,BorderLayout.CENTER);
 
        initPanelInfo();
@@ -38,10 +39,10 @@ class ModificationMessage extends JPanel {
      * @param ais Message AIS data
      */
     private JPanel affichageOneMessage(Message ais){
-       //OneMessage.removeAll();
        JPanel OneMessage=new JPanel(new BorderLayout());
        add(OneMessage,BorderLayout.NORTH);
        add(OneMessage,BorderLayout.CENTER);
+       add(OneMessage,BorderLayout.SOUTH);
 
 
 
@@ -50,7 +51,11 @@ class ModificationMessage extends JPanel {
         JLabel AISraw=new JLabel(" Raw AIS : "+ais.getAis().getRawData());
        OneMessage.add(AISraw,BorderLayout.NORTH);
 
-        JPanel panelValue=new JPanel();
+        JPanel panelValue=new JPanel(new GridLayout(3,5));
+        JScrollPane scrollPane=new JScrollPane(panelValue);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+
 
         // messageType
         JLabel messageTypeLabel = new JLabel("Message Type");
@@ -123,7 +128,10 @@ class ModificationMessage extends JPanel {
         JTextField radioStatusText = new JTextField((vessel==null)?"":vessel.getRadioStatus());
         panelValue.add(initPanelValue(radioStatusLabel,radioStatusText));
 
-       OneMessage.add(panelValue,BorderLayout.CENTER);
+
+
+       OneMessage.add(scrollPane,BorderLayout.CENTER);
+       OneMessage.add(setupButton(),BorderLayout.SOUTH);
        return OneMessage;
    }
 
@@ -136,6 +144,7 @@ class ModificationMessage extends JPanel {
     private JPanel initPanelValue(JLabel label, JTextField textField){
         JPanel returnPanel=new JPanel();
         returnPanel.add(label);
+        textField.setColumns(5);
         returnPanel.add(textField);
         return returnPanel;
    }
@@ -155,7 +164,19 @@ class ModificationMessage extends JPanel {
 
    }
 
+    /**
+     * setup cancel and validate modification button
+     * @return JPanel
+     */
+    private JPanel setupButton(){
+        JPanel panelButton=new JPanel();
+        cancel.setForeground(new Color(139, 0, 0));
+        validate.setForeground(new Color(0, 114, 57));
 
+        panelButton.add(cancel);
+        panelButton.add(validate);
+        return panelButton;
+    }
 
 
     /**
@@ -163,5 +184,19 @@ class ModificationMessage extends JPanel {
      */
     JPanel getPanel() {
         return panel;
+    }
+
+    /**
+     * @return JButton
+     */
+    JButton getCancelButton(){
+        return cancel;
+    }
+
+    /**
+     * @return JButton
+     */
+    JButton getValidateButton(){
+        return cancel;
     }
 }
