@@ -5,18 +5,13 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 class ModificationMessage extends JPanel {
 
     private JPanel panel = new JPanel(new BorderLayout());
     private JPanel info=new JPanel(new BorderLayout());
-   /* private JButton applyAll=new JButton();
-    private JButton cancelAll=new JButton();
-    private JButton applySingle =new JButton();
-    private JButton cancelSingle=new JButton();*/
-    private HashMap<String,Message> allSelectedShip=new HashMap<>();
+    private HashMap<String,Message> allSelectedShip;
 
     private JTextField messageTypeText;
     private JTextField repeatIndicatorText;
@@ -84,7 +79,7 @@ class ModificationMessage extends JPanel {
      * setup cancel and validate modification button
      * @return JPanel
      */
-    private JPanel initButton(String mmsi){
+    private JPanel initButton(HashMap<String ,Message> allShip,String mmsi){
         JPanel panelButton=new JPanel();
 
         // set text
@@ -100,13 +95,13 @@ class ModificationMessage extends JPanel {
         applySingle.setForeground(new Color(0, 114, 57));
 
         //add listener
-        cancelAll.addActionListener(addCancelAllListener());
-        applyAll.addActionListener(addApplyAllListener());
-        applySingle.addActionListener(addApplySingleListener(mmsi));
+        cancelAll.addActionListener(addCancelAllListener(allShip));
+        applyAll.addActionListener(addApplyAllListener(allShip));
+        applySingle.addActionListener(addApplySingleListener(allShip,mmsi));
 
         // add to panel
         panelButton.add(cancelAll);
-        panelButton.add(applyAll);
+        //panelButton.add(applyAll);
         //panelButton.add(cancelSingle);
         panelButton.add(applySingle);
         return panelButton;
@@ -117,7 +112,7 @@ class ModificationMessage extends JPanel {
      * generate display of ship information
      * @param ais Message AIS data
      */
-    private JPanel affichageOneMessage(Message ais){
+    private JPanel affichageOneMessage(HashMap<String ,Message> allShip,Message ais){
        JPanel OneMessage=new JPanel(new BorderLayout());
        add(OneMessage,BorderLayout.NORTH);
        add(OneMessage,BorderLayout.CENTER);
@@ -208,7 +203,7 @@ class ModificationMessage extends JPanel {
 
 
        OneMessage.add(scrollPane,BorderLayout.CENTER);
-       OneMessage.add(initButton((vessel==null)?"GhostShip":vessel.getMMSI()),BorderLayout.SOUTH);
+       OneMessage.add(initButton(allShip,(vessel==null)?"GhostShip":vessel.getMMSI()),BorderLayout.SOUTH);
        return OneMessage;
    }
 
@@ -217,18 +212,17 @@ class ModificationMessage extends JPanel {
       * @param allShip ArrayList<Message>
      */
     void affichage(HashMap<String ,Message> allShip){
-        this.allSelectedShip=allShip;
-        reload();
+        reload(allShip);
    }
 
     /**
      * reload information after validation or cancel
      */
-    private void reload(){
+    private void reload(HashMap<String ,Message> allShip){
        info.removeAll();
        JTabbedPane tabbedPane=new JTabbedPane();
-       for(Message vessel:allSelectedShip.values()) {
-           tabbedPane.addTab(vessel.getDecode().getMMSI(),affichageOneMessage(vessel));
+       for(Message vessel:allShip.values()) {
+           tabbedPane.addTab(vessel.getDecode().getMMSI(),affichageOneMessage(allShip,vessel));
        }
        info.add(tabbedPane,BorderLayout.CENTER);
    }
@@ -238,13 +232,13 @@ class ModificationMessage extends JPanel {
      * create an ActionListener for cancelAll Button
      * @return ActionListener
      */
-    private ActionListener addCancelAllListener(){
+    private ActionListener addCancelAllListener(final HashMap<String ,Message> allShip){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                reload();
-                revalidate();
-                updateUI();
+                reload(allShip);
+                getPanel().revalidate();
+                getPanel().updateUI();
             }
         };
     }
@@ -253,14 +247,14 @@ class ModificationMessage extends JPanel {
      * create an ActionListener for applyAll Button
      * @return ActionListener
      */
-    private ActionListener addApplyAllListener(){
+    private ActionListener addApplyAllListener(final HashMap<String ,Message> allShip){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                saveModificationAll();
-                reload();
-                revalidate();
-                updateUI();
+                saveModificationAll(allShip);
+                reload(allShip);
+                getPanel().revalidate();
+                getPanel().updateUI();
             }
         };
     }
@@ -269,14 +263,15 @@ class ModificationMessage extends JPanel {
      * create an ActionListener for applySingle Button
      * @return ActionListener
      */
-    private ActionListener addApplySingleListener(final String mmsi){
+    private ActionListener addApplySingleListener(final HashMap<String ,Message> allShip, final String mmsi){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                saveModificationOne(mmsi);
-                reload();
-                revalidate();
-                updateUI();
+                saveModificationOne(allShip.get(mmsi).getDecode());
+                reload(allShip);
+                getPanel().revalidate();
+                getPanel().updateUI();
+                System.out.println("Modification done!");
             }
         };
     }
@@ -285,29 +280,29 @@ class ModificationMessage extends JPanel {
     /**
      * Save information modification for one selected vessel
      */
-    private void saveModificationOne(String mmsi) {
-        allSelectedShip.get(mmsi).getDecode().setMessageType(messageTypeText.getText());
-        allSelectedShip.get(mmsi).getDecode().setRepeatIndicator(repeatIndicatorText.getText());
-        allSelectedShip.get(mmsi).getDecode().setMMSI(MMSIText.getText());
-        allSelectedShip.get(mmsi).getDecode().setNavigationStatus(navigationStatusText.getText());
-        allSelectedShip.get(mmsi).getDecode().setSpeedOverGround(Double.parseDouble(speedOverGroundText.getText()));
-        allSelectedShip.get(mmsi).getDecode().setPositiontionAccuracy(positiontionAccuracyText.getText());
-        allSelectedShip.get(mmsi).getDecode().setLongitude(Double.parseDouble(longitudeText.getText()));
-        allSelectedShip.get(mmsi).getDecode().setLatitude(Double.parseDouble(latitudeText.getText()));
-        allSelectedShip.get(mmsi).getDecode().setTrueHeading(trueHeadingText.getText());
-        allSelectedShip.get(mmsi).getDecode().setTimeStamp(timeStampText.getText());
-        allSelectedShip.get(mmsi).getDecode().setManeuverIndicator(maneuverIndicatorText.getText());
-        allSelectedShip.get(mmsi).getDecode().setSpare(spareText.getText());
-        allSelectedShip.get(mmsi).getDecode().setRAIMflag(RAIMflagText.getText());
-        allSelectedShip.get(mmsi).getDecode().setRadioStatus(radioStatusText.getText());
+    private void saveModificationOne(MessageDecode ship) {
+        ship.setMessageType(messageTypeText.getText());
+        ship.setRepeatIndicator(repeatIndicatorText.getText());
+        ship.setMMSI(MMSIText.getText());
+        ship.setNavigationStatus(navigationStatusText.getText());
+        ship.setSpeedOverGround(Double.parseDouble(speedOverGroundText.getText()));
+        ship.setPositiontionAccuracy(positiontionAccuracyText.getText());
+        ship.setLongitude(Double.parseDouble(longitudeText.getText()));
+        ship.setLatitude(Double.parseDouble(latitudeText.getText()));
+        ship.setTrueHeading(trueHeadingText.getText());
+        ship.setTimeStamp(timeStampText.getText());
+        ship.setManeuverIndicator(maneuverIndicatorText.getText());
+        ship.setSpare(spareText.getText());
+        ship.setRAIMflag(RAIMflagText.getText());
+        ship.setRadioStatus(radioStatusText.getText());
     }
 
     /**
      * Save information modification for all selected vessel
      */
-    private void saveModificationAll(){
-        for(String mmsi:allSelectedShip.keySet()) {
-            saveModificationOne(mmsi);
+    private void saveModificationAll(HashMap<String ,Message> allShip){
+        for(Message vessel:allShip.values()) {
+            saveModificationOne(vessel.getDecode());
         }
     }
 }
