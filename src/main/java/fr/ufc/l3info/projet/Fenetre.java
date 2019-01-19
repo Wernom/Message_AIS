@@ -13,7 +13,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.*;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 class Fenetre {
@@ -155,8 +155,6 @@ class Fenetre {
         // creation de la partie modification des message AIS en bas
         modificationMessage = new ModificationMessage();
         modificationMessage.getPanel().setPreferredSize(new Dimension(0,200));
-        modificationMessage.getCancelButton().addActionListener(addCancelListener());
-        modificationMessage.getValidateButton().addActionListener(addValidateListener());
 
         // affichage
         //----------
@@ -189,9 +187,10 @@ class Fenetre {
                 if(!e.getValueIsAdjusting()){
                     Message topListShip= menuBar.getMessages().get((String)menuDeroulant.getListDeroulante().getSelectedValue());
                     List allShip = menuDeroulant.getListDeroulante().getSelectedValuesList();
-                    ArrayList<Message> allSelectedShip=new ArrayList<>();
+                    HashMap<String ,Message> allSelectedShip=new HashMap<>();
                     for(Object vessel:allShip){
-                        allSelectedShip.add(menuBar.getMessage((String)vessel));
+                        Message ship=menuBar.getMessage((String)vessel);
+                        allSelectedShip.put(ship.getDecode().getMMSI(),ship);
                     }
                     modificationMessage.affichage(allSelectedShip);
                     modificationMessage.getPanel().revalidate();
@@ -203,36 +202,4 @@ class Fenetre {
         };
     }
 
-    /**
-     * create an ActionListener for cancel Button
-     * @return ActionListener
-     */
-    private ActionListener addCancelListener(){
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                modificationMessage.reload();
-                modificationMessage.getPanel().revalidate();
-                modificationMessage.getPanel().updateUI();
-            }
-        };
-    }
-
-    /**
-     * create an ActionListener for validate Button
-     * @return ActionListener
-     */
-    private ActionListener addValidateListener(){
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                // save information
-
-                modificationMessage.reload();
-                modificationMessage.getPanel().revalidate();
-                modificationMessage.getPanel().updateUI();
-            }
-        };
-    }
 }
