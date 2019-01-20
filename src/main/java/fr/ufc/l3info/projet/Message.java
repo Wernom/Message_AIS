@@ -12,8 +12,8 @@ class Message {
     }
 
     Message(String[] messageCSV) {
-        decode = new MessageDecode(messageCSV);
-        ais = encode();
+        this.decode = new MessageDecode(messageCSV);
+        encode();
     }
 
     private String binaryToString(String binary) {
@@ -46,14 +46,14 @@ class Message {
         return new MessageDecode(messageType, repeatIndicator, MMSI, navigationStatus, rateOverTurn, speedOverGround, positiontionAccuracy, longitude, latitude, courseOverGroud, trueHeading, timeStamp, maneuverIndicator, spare, RAIMflag, radioStatus);
     }
 
-    MessageAIS encode() {
+    private void encode() {
         String aisRaw = "";
         String aisBin;
         switch (this.decode.getMessageType()) {
             case "1":
             case "2":
             case "3":
-                aisBin = encodeMessageType() + encodeRepeatInicator() + encodeMMSI() + encodeNavigateStatus() + "11111000"
+                aisBin = encodeMessageType() + encodeRepeatInicator() + encodeMMSI() + encodeNavigateStatus() + encodeRateOverTurn()
                         + encodeSpeedOverGround() + encodePositionAccuracy() + encodeLongitude() + encodeLatitude() + encodeCourseOverGround()
                         + encodeTrueHeading() + encodeTimeStamp() + encodeManeuverIndicator() + encodeSpare() + encodeRAIMflag() + encodeRadioStatus();
 
@@ -91,7 +91,7 @@ class Message {
 
                 break;
         }
-        return new MessageAIS(aisRaw);
+        this.ais= new MessageAIS(aisRaw);
     }
 
     MessageAIS getAis() {
@@ -139,6 +139,17 @@ class Message {
         if (res > 127)
             res = (res % 128) - 128;
         return res;
+    }
+
+    private String encodeRateOverTurn(){
+        double rateOverTurnBin = decode.getRateOverTurn();
+        if (rateOverTurnBin < 0){
+            rateOverTurnBin *= -1;
+            rateOverTurnBin += 128;
+        }
+
+        int rot = (int) Math.round(rateOverTurnBin);
+        return addZeroToReachNbit(Integer.toBinaryString(rot), 8);
     }
 
     private double decodeSpeedOverGround() {
@@ -270,8 +281,8 @@ class Message {
         return res.toString();
     }
 
-    public void setAis(MessageAIS ais) {
-        this.ais = encode();
+    void setAis() {
+        encode();
     }
 
     private String addZeroToReachNbit(String ascii, int n) {

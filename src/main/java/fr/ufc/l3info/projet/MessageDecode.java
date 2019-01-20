@@ -54,6 +54,14 @@ class MessageDecode {
         this.courseOverGroud = courseOverGroud;
     }
 
+    public double getRateOverTurn() {
+        return rateOverTurn;
+    }
+
+    public void setRateOverTurn(double rateOverTurn) {
+        this.rateOverTurn = rateOverTurn;
+    }
+
     public void setTrueHeading(String trueHeading) {
         this.trueHeading = trueHeading;
     }
