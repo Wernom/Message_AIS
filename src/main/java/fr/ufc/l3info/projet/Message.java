@@ -12,8 +12,8 @@ class Message {
     }
 
     Message(String[] messageCSV) {
-        decode = new MessageDecode(messageCSV);
-        ais = encode();
+        this.decode = new MessageDecode(messageCSV);
+        encode();
     }
 
     private String binaryToString(String binary) {
@@ -91,7 +91,7 @@ class Message {
 
                 break;
         }
-        return new MessageAIS(aisRaw);
+        this.ais= new MessageAIS(aisRaw);
     }
 
     MessageAIS getAis() {
@@ -281,8 +281,8 @@ class Message {
         return res.toString();
     }
 
-    public void setAis(MessageAIS ais) {
-        this.ais = encode();
+    void setAis() {
+        encode();
     }
 
     private String addZeroToReachNbit(String ascii, int n) {
