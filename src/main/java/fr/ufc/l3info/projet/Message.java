@@ -11,18 +11,9 @@ class Message {
         decode = decode();
     }
 
-    Message(String messageCSV[]) {
+    Message(String[] messageCSV) {
         decode = new MessageDecode(messageCSV);
         ais = encode();
-    }
-
-    private String sixBitOffset(String binary) {
-        int res = Integer.parseInt(binary);
-        System.out.println(res);
-        if (res <= 31)
-            res += 64;
-
-        return Integer.toString(res);
     }
 
     private String binaryToString(String binary) {
@@ -34,7 +25,7 @@ class Message {
         return Integer.toBinaryString(i);
     }
 
-    private MessageDecode decode() {//TODO: si un champ est marqué comme string utiliser sixBitOffset
+    private MessageDecode decode() {
         String messageType = decodeMessageType();
         String repeatIndicator = decodeRepeatIndicator();
         String MMSI = decodeMMSI();
@@ -55,7 +46,7 @@ class Message {
         return new MessageDecode(messageType, repeatIndicator, MMSI, navigationStatus, rateOverTurn, speedOverGround, positiontionAccuracy, longitude, latitude, courseOverGroud, trueHeading, timeStamp, maneuverIndicator, spare, RAIMflag, radioStatus);
     }
 
-    private MessageAIS encode() {
+    MessageAIS encode() {
         String aisRaw = "";
         String aisBin;
         switch (this.decode.getMessageType()) {
@@ -93,7 +84,7 @@ class Message {
                 }
 
                 if (this.ais.getAfterPayload().equals("")){
-                    aisRawBuilderBin.append(",???");//TODO: remplacer ??? par le bon message.
+                    aisRawBuilderBin.append(",???");
                 }else
                     aisRawBuilderBin.append(this.ais.getAfterPayload());
                 aisRaw = aisRawBuilderBin.toString();
