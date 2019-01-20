@@ -66,9 +66,14 @@ class Message {
                         + encodeSpeedOverGround() + encodePositionAccuracy() + encodeLongitude() + encodeLatitude() + encodeCourseOverGround()
                         + encodeTrueHeading() + encodeTimeStamp() + encodeManeuverIndicator() + encodeSpare() + encodeRAIMflag() + encodeRadioStatus();
 
-                aisRaw = "!AIVDM,1,1,,A,";
+                StringBuilder aisRawBuilderBin = new StringBuilder();
+                if (this.ais.getBeforePayload().equals("")){
+                    aisRawBuilderBin.append("!AIVDM,1,1,,A,");
+                }else {
+                    aisRawBuilderBin.append(this.ais.getBeforePayload());
+                }
+
                 String aisChar;
-                StringBuilder aisRawBuilderBin = new StringBuilder(aisRaw);
                 for (int i = 0; i < 28; ++i) {
                     aisChar = String.valueOf(aisBin.charAt(6 * i)) +
                             String.valueOf(aisBin.charAt(6 * i + 1)) +
@@ -86,7 +91,11 @@ class Message {
 
                     aisRawBuilderBin.append((char)Integer.parseInt(addZeroToReachNbit(Integer.toBinaryString(transformToAscii), 7), 2));
                 }
-                aisRawBuilderBin.append(",???");//TODO: remplacer ??? par le bon message.
+
+                if (this.ais.getAfterPayload().equals("")){
+                    aisRawBuilderBin.append(",???");//TODO: remplacer ??? par le bon message.
+                }else
+                    aisRawBuilderBin.append(this.ais.getAfterPayload());
                 aisRaw = aisRawBuilderBin.toString();
 
                 break;

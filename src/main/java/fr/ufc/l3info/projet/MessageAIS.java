@@ -7,12 +7,30 @@ import java.io.IOException;
 
 class MessageAIS {
     private String rawData;
+    private String beforePayload;
+    private String afterPayload;
     private String rawDataPayloadBin;
 
 
     MessageAIS(String rawData) {
         this.rawData = rawData;
-        String payload = rawData.split(",")[5];
+        StringBuilder beforePayload = new StringBuilder();
+        StringBuilder afterPayload = new StringBuilder();
+        String[] arrayRawData = rawData.split(",");
+        String payload = "";
+        for (int i = 0; i < arrayRawData.length; i++){
+            if (i == 5)
+                payload = arrayRawData[i];
+            else if (i < 5){
+                beforePayload.append(arrayRawData[i]).append(',');
+            }else{
+                afterPayload.append(',').append(arrayRawData[i]);
+            }
+
+        }
+        this.beforePayload = beforePayload.toString();
+        this.afterPayload = afterPayload.toString();
+
         rawDataPayloadBin = "";
         StringBuilder payloadBinEcoded = new StringBuilder();
         for (int i = 0; i < payload.length(); ++i) {
@@ -76,5 +94,13 @@ class MessageAIS {
                 "\trawData = '" + rawData + '\'' + ",\n" +
                 "\trawDataPayloadBin = '" + rawDataPayloadBin + "\'\n" +
                 '}';
+    }
+
+    public String getBeforePayload() {
+        return beforePayload;
+    }
+
+    public String getAfterPayload() {
+        return afterPayload;
     }
 }
