@@ -17,6 +17,9 @@ class MessageDecode {
     private String timeStamp;
     private String maneuverIndicator;
     private String spare;
+    private String RAIMflag;
+    private String radioStatus;
+
 
     public void setMessageType(String messageType) {
         this.messageType = messageType;
@@ -54,10 +57,6 @@ class MessageDecode {
         this.courseOverGroud = courseOverGroud;
     }
 
-    public double getRateOverTurn() {
-        return rateOverTurn;
-    }
-
     public void setRateOverTurn(double rateOverTurn) {
         this.rateOverTurn = rateOverTurn;
     }
@@ -86,8 +85,6 @@ class MessageDecode {
         this.radioStatus = radioStatus;
     }
 
-    private String RAIMflag;
-    private String radioStatus;
 
     MessageDecode(String messageType, String repeatIndicator, String MMSI, String navigationStatus,double rateOverTurn, double speedOverGround, String positiontionAccuracy, double longitude, double latitude, double courseOverGroud, String trueHeading, String timeStamp, String maneuverIndicator, String spare, String RAIMflag, String radioStatus) {
         this.messageType = messageType;
@@ -143,6 +140,10 @@ class MessageDecode {
         return navigationStatus;
     }
 
+    double getRateOverTurn() {
+        return rateOverTurn;
+    }
+
     double getSpeedOverGround() {
         return speedOverGround;
     }
@@ -159,7 +160,7 @@ class MessageDecode {
         return latitude;
     }
 
-    public double getCourseOverGroud() {
+    double getCourseOverGroud() {
         return courseOverGroud;
     }
 
