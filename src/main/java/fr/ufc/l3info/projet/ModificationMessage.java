@@ -115,7 +115,7 @@ class ModificationMessage extends JPanel {
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                tabMap.get(mmsi).saveModificationOne(allShip.get(mmsi).getDecode());
+                tabMap.get(mmsi).saveModificationOne(allShip.get(mmsi));
                 reload(allShip);
                 getPanel().revalidate();
                 getPanel().updateUI();
@@ -131,7 +131,7 @@ class ModificationMessage extends JPanel {
      */
     private void saveModificationAll(HashMap<String ,Message> allShip){
         for(Message vessel:allShip.values()) {
-            tabMap.get(vessel.getDecode().getMMSI()).saveModificationOne(vessel.getDecode());
+            tabMap.get(vessel.getDecode().getMMSI()).saveModificationOne(vessel);
         }
     }
 
@@ -148,6 +148,7 @@ class DisplayOneShip extends JPanel{
     private JTextField positiontionAccuracyText;
     private JTextField longitudeText;
     private JTextField latitudeText;
+    private JTextField courseOverGroudText;
     private JTextField trueHeadingText;
     private JTextField timeStampText;
     private JTextField maneuverIndicatorText;
@@ -172,6 +173,7 @@ class DisplayOneShip extends JPanel{
      * @param ship Message AIS data
      */
     private void setDisplay(Message ship){
+        display.removeAll();
         add(display,BorderLayout.NORTH);
         add(display,BorderLayout.CENTER);
         add(display,BorderLayout.SOUTH);
@@ -227,6 +229,11 @@ class DisplayOneShip extends JPanel{
         JLabel latitudeLabel = new JLabel("Latitude");
         latitudeText = new JTextField((vessel==null)?"":String.valueOf(vessel.getLatitude()));
         panelValue.add(initPanelValue(latitudeLabel,latitudeText));
+
+        //courseOverGround
+        JLabel courseOverGroudLabel = new JLabel("Course Over Ground");
+        courseOverGroudText= new JTextField((vessel==null)?"":String.valueOf(vessel.getCourseOverGroud()));
+        panelValue.add(initPanelValue(courseOverGroudLabel,courseOverGroudText));
 
         // trueHeading
         JLabel trueHeadingLabel = new JLabel("True Heading");
@@ -307,21 +314,25 @@ class DisplayOneShip extends JPanel{
     /**
      * Save information modification for one selected vessel
      */
-    void saveModificationOne(MessageDecode ship) {
-        ship.setMessageType(messageTypeText.getText());
-        ship.setRepeatIndicator(repeatIndicatorText.getText());
-        ship.setMMSI(MMSIText.getText());
-        ship.setNavigationStatus(navigationStatusText.getText());
-        ship.setSpeedOverGround(Double.parseDouble(speedOverGroundText.getText()));
-        ship.setPositiontionAccuracy(positiontionAccuracyText.getText());
-        ship.setLongitude(Double.parseDouble(longitudeText.getText()));
-        ship.setLatitude(Double.parseDouble(latitudeText.getText()));
-        ship.setTrueHeading(trueHeadingText.getText());
-        ship.setTimeStamp(timeStampText.getText());
-        ship.setManeuverIndicator(maneuverIndicatorText.getText());
-        ship.setSpare(spareText.getText());
-        ship.setRAIMflag(RAIMflagText.getText());
-        ship.setRadioStatus(radioStatusText.getText());
+    void saveModificationOne(Message ship) {
+
+        ship.getDecode().setMessageType((messageTypeText.getText()==null)?"0": messageTypeText.getText());
+        ship.getDecode().setRepeatIndicator(repeatIndicatorText.getText()==null?"0":repeatIndicatorText.getText());
+        ship.getDecode().setMMSI(MMSIText.getText()==null?"0":MMSIText.getText());
+        ship.getDecode().setNavigationStatus(navigationStatusText.getText()==null?"0":navigationStatusText.getText());
+        ship.getDecode().setSpeedOverGround(Double.parseDouble(speedOverGroundText.getText()==null?"0":speedOverGroundText.getText()));
+        ship.getDecode().setPositiontionAccuracy(positiontionAccuracyText.getText()==null?"0":positiontionAccuracyText.getText());
+        ship.getDecode().setLongitude(Double.parseDouble(longitudeText.getText()==null?"0":longitudeText.getText()));
+        ship.getDecode().setLatitude(Double.parseDouble(latitudeText.getText()==null?"0":latitudeText.getText()));
+        ship.getDecode().setCourseOverGroud(Double.parseDouble(courseOverGroudText.getText()==null?"0":courseOverGroudText.getText()));
+        ship.getDecode().setTrueHeading(trueHeadingText.getText()==null?"0":trueHeadingText.getText());
+        ship.getDecode().setTimeStamp(timeStampText.getText()==null?"0":timeStampText.getText());
+        ship.getDecode().setManeuverIndicator(maneuverIndicatorText.getText()==null?"0":maneuverIndicatorText.getText());
+        ship.getDecode().setSpare(spareText.getText()==null?"0":spareText.getText());
+        ship.getDecode().setRAIMflag(RAIMflagText.getText()==null?"0":RAIMflagText.getText());
+        ship.getDecode().setRadioStatus(radioStatusText.getText()==null?"0":radioStatusText.getText());
+        ship.setAis(ship.getAis());
+
     }
 
     /**
