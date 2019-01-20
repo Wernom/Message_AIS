@@ -331,8 +331,7 @@ class DisplayOneShip extends JPanel{
         ship.getDecode().setSpare(spareText.getText()==null?"0":spareText.getText());
         ship.getDecode().setRAIMflag(RAIMflagText.getText()==null?"0":RAIMflagText.getText());
         ship.getDecode().setRadioStatus(radioStatusText.getText()==null?"0":radioStatusText.getText());
-        ship.setAis(ship.getAis());
-
+        ship.setAis();
     }
 
     /**
