@@ -1,0 +1,8 @@
+
+target/
+
+\.idea/
+
+src/main/java/fr/ufc/l3info/projet/Main\.java
+
+test\.csv
