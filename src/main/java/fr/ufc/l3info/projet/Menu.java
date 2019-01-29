@@ -40,11 +40,11 @@ class Menu extends JMenuBar {
 
 
     //--------------
-    HashMap<String,Ship> getShipsMessages() {
+    HashMap<String,Ship> getShips() {
         return shipsMessages;
     }
 
-    Ship getShipMessages(String MMSI){
+    Ship getShip(String MMSI){
         return shipsMessages.get(MMSI);
     }
 

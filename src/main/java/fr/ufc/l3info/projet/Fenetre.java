@@ -49,7 +49,9 @@ class Fenetre {
                             ++ENLEVEMOI;
                             //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                             Message msg=new Message(ligne);
-                            menuBar.getMessages().put(msg.getDecode().getMMSI(),msg);
+                            Ship vessel = new Ship();
+                            vessel.addMessage(msg);
+                            menuBar.getShips().put(msg.getDecode().getMMSI(),vessel);
                             menuDeroulant.getDefaultList().addElement(msg.getDecode().getMMSI());
                             //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                             if(ENLEVEMOI==3)
@@ -118,7 +120,7 @@ class Fenetre {
 
                             System.out.println("souris "+point+"\nship :"+point1);
                             if ((point.x-(int)coordinate.getLon()<=20)&&(point.y-(int)coordinate.getLat()<=20)) {
-                                map.reloadMap(menuBar.getMessages(), coordinate);
+                                map.reloadMap(menuBar.getShips(), coordinate);
                                 return;
                             }
                         }
@@ -173,7 +175,7 @@ class Fenetre {
      * reload the map after import raw AIS
      */
     private void reloadMap(){
-        map.reloadMap(menuBar.getMessages());
+        map.reloadMap(menuBar.getShips());
     }
 
     /**
@@ -184,18 +186,17 @@ class Fenetre {
         return new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                if(!e.getValueIsAdjusting()){
-                    Message topListShip= menuBar.getMessages().get((String)menuDeroulant.getListDeroulante().getSelectedValue());
+                if(!e.getValueIsAdjusting()){ // lors de la section d'un ou plusieur item de la liste deroulante
+                    String mmsi=(String)menuDeroulant.getListDeroulante().getSelectedValue();
                     List allShip = menuDeroulant.getListDeroulante().getSelectedValuesList();
-                    HashMap<String ,Message> allSelectedShip=new HashMap<>();
+                    HashMap<String ,Ship> allSelectedShip=new HashMap<>();
                     for(Object vessel:allShip){
-                        Message ship=menuBar.getMessage((String)vessel);
-                        allSelectedShip.put(ship.getDecode().getMMSI(),ship);
+                        allSelectedShip.put(menuBar.getShip((String)vessel).getLastKnownMessage().getDecode().getMMSI(),menuBar.getShip((String)vessel));
                     }
                     modificationMessage.affichage(allSelectedShip);
                     modificationMessage.getPanel().revalidate();
                     modificationMessage.getPanel().updateUI();
-                    map.reloadMap(menuBar.getMessages(),topListShip.getDecode().getMMSI()); // centre la map sur le navire selectionné
+                    map.reloadMap(menuBar.getShips(),mmsi); // centre la map sur le navire selectionné
                 }
 
             }

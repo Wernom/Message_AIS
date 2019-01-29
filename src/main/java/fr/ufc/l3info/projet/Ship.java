@@ -2,7 +2,7 @@ package fr.ufc.l3info.projet;
 
 import java.util.HashMap;
 
-public class Ship {
+class Ship {
     private HashMap<String, Message> messages;
 
     Ship(HashMap<String, Message> messages) {
@@ -14,10 +14,24 @@ public class Ship {
     }
 
     void addMessage(Message message) {
-        this.messages.put(message.getDecode().getMMSI(), message);
+        this.messages.put(message.getDecode().getTimeStamp(), message);
     }
 
-    public HashMap<String, Message> getMessages() {
+    HashMap<String, Message> getMessages() {
         return messages;
+    }
+
+    Message getLastKnownMessage() {
+        long last=-1;
+        long notLast=0;
+        for (Message msg: messages.values()) {
+            last=Long.decode(msg.getDecode().getTimeStamp());
+            if (last<notLast){
+                last=notLast;
+            }else {
+                notLast=last;
+            }
+        }
+        return messages.get(Long.toString(last));
     }
 }

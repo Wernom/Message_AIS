@@ -53,24 +53,26 @@ class ModificationMessage extends JPanel {
      * display all tabs of selected ship
       * @param allShip ArrayList<Message>
      */
-    void affichage(HashMap<String ,Message> allShip){
+    void affichage(HashMap<String ,Ship> allShip){
         reload(allShip);
    }
 
     /**
      * reload information after validation or cancel
      */
-    private void reload(HashMap<String ,Message> allShip){
+    private void reload(HashMap<String ,Ship> allShip){
        info.removeAll();
        JTabbedPane tabbedPane=new JTabbedPane();
-       for(Message vessel:allShip.values()) {
-           String mmsi= vessel.getDecode().getMMSI();
-           DisplayOneShip displayOneShip=new DisplayOneShip(vessel);
+       for(Ship vessel:allShip.values()) {
+
+           String mmsi= vessel.getLastKnownMessage().getDecode().getMMSI();
+           DisplayOneShip displayOneShip=new DisplayOneShip(vessel.getLastKnownMessage());
            tabMap.put(mmsi,displayOneShip);
            tabbedPane.addTab(mmsi,displayOneShip.getDisplay());
            displayOneShip.getApplySingle().addActionListener(addApplySingleListener(allShip,mmsi));
            displayOneShip.getCancelAll().addActionListener(addCancelAllListener(allShip));
            displayOneShip.getApplyAll().addActionListener(addApplyAllListener(allShip));
+
        }
        info.add(tabbedPane,BorderLayout.CENTER);
    }
@@ -80,7 +82,7 @@ class ModificationMessage extends JPanel {
      * create an ActionListener for cancelAll Button
      * @return ActionListener
      */
-    private ActionListener addCancelAllListener(final HashMap<String ,Message> allShip){
+    private ActionListener addCancelAllListener(final HashMap<String ,Ship> allShip){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -95,7 +97,7 @@ class ModificationMessage extends JPanel {
      * create an ActionListener for applyAll Button
      * @return ActionListener
      */
-    private ActionListener addApplyAllListener(final HashMap<String ,Message> allShip){
+    private ActionListener addApplyAllListener(final HashMap<String ,Ship> allShip){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -111,11 +113,11 @@ class ModificationMessage extends JPanel {
      * create an ActionListener for applySingle Button
      * @return ActionListener
      */
-    private ActionListener addApplySingleListener(final HashMap<String ,Message> allShip, final String mmsi){
+    private ActionListener addApplySingleListener(final HashMap<String ,Ship> allShip, final String mmsi){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                tabMap.get(mmsi).saveModificationOne(allShip.get(mmsi));
+                tabMap.get(mmsi).saveModificationOne(allShip.get(mmsi).getLastKnownMessage());
                 reload(allShip);
                 getPanel().revalidate();
                 getPanel().updateUI();
@@ -129,9 +131,9 @@ class ModificationMessage extends JPanel {
     /**
      * Save information modification for all selected vessel
      */
-    private void saveModificationAll(HashMap<String ,Message> allShip){
-        for(Message vessel:allShip.values()) {
-            tabMap.get(vessel.getDecode().getMMSI()).saveModificationOne(vessel);
+    private void saveModificationAll(HashMap<String ,Ship> allShip){
+        for(Ship vessel:allShip.values()) {
+            tabMap.get(vessel.getLastKnownMessage().getDecode().getMMSI()).saveModificationOne(vessel.getLastKnownMessage());
         }
     }
 
@@ -324,7 +326,7 @@ class DisplayOneShip extends JPanel{
 
         ship.getDecode().setMessageType((messageTypeText.getText()==null)?"0": messageTypeText.getText());
         ship.getDecode().setRepeatIndicator(repeatIndicatorText.getText()==null?"0":repeatIndicatorText.getText());
-        ship.getDecode().setMMSI(MMSIText.getText()==null?"0":MMSIText.getText());
+       // ship.getDecode().setMMSI(MMSIText.getText()==null?"0":MMSIText.getText());
         ship.getDecode().setNavigationStatus(navigationStatusText.getText()==null?"0":navigationStatusText.getText());
         ship.getDecode().setRateOverTurn(Double.parseDouble(rateOverTurnText.getText()==null?"0":rateOverTurnText.getText()));
         ship.getDecode().setSpeedOverGround(Double.parseDouble(speedOverGroundText.getText()==null?"0":speedOverGroundText.getText()));
