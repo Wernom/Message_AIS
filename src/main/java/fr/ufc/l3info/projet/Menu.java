@@ -15,14 +15,14 @@ class Menu extends JMenuBar {
     private JMenu menu = new JMenu("Fichier");
     private JMenuItem menuItem = new JMenuItem("Importer");
     private JMenuItem menuItem2 = new JMenuItem("Exporter");
-    private HashMap<String,Message> messages;
+    private HashMap<String,Ship> shipsMessages;
 
     public static final String FRAME_BOUNDS = "frameBounds";
     public static final String FIELD_TEXT = "fieldText";
 
     Menu(/*Fenetre fenetre*/) {
         //---------
-        messages = new HashMap<>();
+        shipsMessages = new HashMap<>();
         menuBar.add(menu);
         menu.add(menuItem);
         menu.add(menuItem2);
@@ -40,12 +40,12 @@ class Menu extends JMenuBar {
 
 
     //--------------
-    HashMap<String,Message> getMessages() {
-        return messages;
+    HashMap<String,Ship> getShipsMessages() {
+        return shipsMessages;
     }
 
-    Message getMessage(String MMSI){
-        return messages.get(MMSI);
+    Ship getShipMessages(String MMSI){
+        return shipsMessages.get(MMSI);
     }
 
     JMenuBar getMenuBar() {

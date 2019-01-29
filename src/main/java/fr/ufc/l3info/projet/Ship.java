@@ -13,9 +13,11 @@ public class Ship {
         this.messages = new HashMap<>();
     }
 
-    public void addMessage(Message message) {
+    void addMessage(Message message) {
         this.messages.put(message.getDecode().getMMSI(), message);
     }
 
-
+    public HashMap<String, Message> getMessages() {
+        return messages;
+    }
 }
