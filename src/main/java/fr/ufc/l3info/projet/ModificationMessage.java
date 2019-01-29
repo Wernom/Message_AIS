@@ -14,7 +14,7 @@ class ModificationMessage extends JPanel {
     private HashMap<String,DisplayOneShip> tabMap=new HashMap<>();
 
 
-// construcor
+// constructor
     /**
      * update ship information with selection
      */
@@ -144,6 +144,7 @@ class DisplayOneShip extends JPanel{
     private JTextField repeatIndicatorText;
     private JTextField MMSIText;
     private JTextField navigationStatusText;
+    private JTextField rateOverTurnText;
     private JTextField speedOverGroundText;
     private JTextField positiontionAccuracyText;
     private JTextField longitudeText;
@@ -183,7 +184,7 @@ class DisplayOneShip extends JPanel{
         JLabel AISraw=new JLabel(" Raw AIS : "+ship.getAis().getRawData()); // display raw data
         display.add(AISraw,BorderLayout.NORTH);
 
-        JPanel panelValue=new JPanel(new GridLayout(3,5));
+        JPanel panelValue=new JPanel(new GridLayout(4,5));
         JScrollPane scrollPane=new JScrollPane(panelValue); // for reponsive design
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -209,6 +210,11 @@ class DisplayOneShip extends JPanel{
         JLabel navigationStatusLabel = new JLabel("Navigation Status");
         navigationStatusText = new JTextField((vessel==null)?"":vessel.getNavigationStatus());
         panelValue.add(initPanelValue(navigationStatusLabel,navigationStatusText));
+
+        //rateOverTurn
+        JLabel rateOverTurnLabel = new JLabel("Rate Over Turn");
+        rateOverTurnText = new JTextField(vessel==null?"":String.valueOf(vessel.getRateOverTurn()));
+        panelValue.add(initPanelValue(rateOverTurnLabel,rateOverTurnText));
 
         // speedOverGround
         JLabel speedOverGroundLabel = new JLabel("Speed Over Ground");
@@ -278,7 +284,7 @@ class DisplayOneShip extends JPanel{
     private JPanel initPanelValue(JLabel label, JTextField textField){
         JPanel returnPanel=new JPanel();
         returnPanel.add(label);
-        textField.setColumns(5);
+        textField.setColumns(6);
         returnPanel.add(textField);
         return returnPanel;
     }
@@ -320,6 +326,7 @@ class DisplayOneShip extends JPanel{
         ship.getDecode().setRepeatIndicator(repeatIndicatorText.getText()==null?"0":repeatIndicatorText.getText());
         ship.getDecode().setMMSI(MMSIText.getText()==null?"0":MMSIText.getText());
         ship.getDecode().setNavigationStatus(navigationStatusText.getText()==null?"0":navigationStatusText.getText());
+        ship.getDecode().setRateOverTurn(Double.parseDouble(rateOverTurnText.getText()==null?"0":rateOverTurnText.getText()));
         ship.getDecode().setSpeedOverGround(Double.parseDouble(speedOverGroundText.getText()==null?"0":speedOverGroundText.getText()));
         ship.getDecode().setPositiontionAccuracy(positiontionAccuracyText.getText()==null?"0":positiontionAccuracyText.getText());
         ship.getDecode().setLongitude(Double.parseDouble(longitudeText.getText()==null?"0":longitudeText.getText()));
