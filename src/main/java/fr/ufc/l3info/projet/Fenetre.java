@@ -8,10 +8,7 @@ import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.io.*;
 import java.util.HashMap;
 import java.util.List;
@@ -49,7 +46,7 @@ class Fenetre {
                             ++ENLEVEMOI;
                             //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
                             Message msg=new Message(ligne);
-                            Ship vessel = new Ship();
+                            Ship vessel = new Ship(msg.getDecode().getMMSI());
                             vessel.addMessage(msg);
                             menuBar.getShips().put(msg.getDecode().getMMSI(),vessel);
                             menuDeroulant.getDefaultList().addElement(msg.getDecode().getMMSI());
@@ -96,58 +93,20 @@ class Fenetre {
 
         });
 
+        // set JFrame
         BorderLayout layout= new BorderLayout(4,4);
         fenetre.setLayout(layout);
-        fenetre.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        fenetre.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        fenetre.addWindowListener(addWindowEvent());
         fenetre.setSize(1000, 800);
         fenetre.setMinimumSize(new Dimension(700,700));
 
         // creation de la carte
         map = new Carte();
 
-        //!\\ TRAVAUX EN COURS //!\\
+        //!\\ TRAVAUX EN COURS //!\\ cf fonction selectShipOnMap()
         //listener pour la selection des navire via la map
-        map.getMyMap().addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if(e.getButton()==MouseEvent.BUTTON1){
-                    System.out.println("mouseClicked");
-                    Point point=map.getMyMap().getMapPosition(e.getX(),e.getY());
-                    if(point!=null) {
-                        for (MapMarker mark : map.getMyMap().getMapMarkerList()) {
-                            Coordinate coordinate=mark.getCoordinate();
-                            Point point1=map.getMyMap().getTileController().getTileSource().latLonToXY(coordinate,map.getMyMap().getZoom());
-
-                            System.out.println("souris "+point+"\nship :"+point1);
-                            if ((point.x-(int)coordinate.getLon()<=20)&&(point.y-(int)coordinate.getLat()<=20)) {
-                                map.reloadMap(menuBar.getShips(), coordinate);
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-
-            }
-        });
+        map.getMyMap().addMouseListener(selectShipOnMap());
 
 
         // creation du menu deroulant (liste bateau) a gauche
@@ -198,6 +157,109 @@ class Fenetre {
                     modificationMessage.getPanel().updateUI();
                     map.reloadMap(menuBar.getShips(),mmsi); // centre la map sur le navire selectionné
                 }
+
+            }
+        };
+    }
+
+    /**
+     * Check if the user want to close the application
+     */
+    private void validateOnClose(){
+        Object[] options = {"yes, please",
+                "no, thanks"};
+        JOptionPane onQuit=new JOptionPane("Do you want to close the application ?",JOptionPane.WARNING_MESSAGE,JOptionPane.YES_NO_OPTION,null,options);
+        onQuit.createDialog(fenetre,"Warning").setVisible(true);
+        Object res=onQuit.getValue();
+        if(res==options[0]){
+            // do something before close app
+            System.exit(0);
+        }
+    }
+
+    /**
+     * add some event to window
+     * @return WindowListener
+     */
+    private WindowListener addWindowEvent(){
+        return new WindowListener() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowClosing(WindowEvent e) {
+                validateOnClose();
+            }
+
+            @Override
+            public void windowClosed(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowIconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeiconified(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowActivated(WindowEvent e) {
+
+            }
+
+            @Override
+            public void windowDeactivated(WindowEvent e) {
+
+            }
+        };
+    }
+
+    //*\\ Traveaux en cours //!\\
+    private MouseListener selectShipOnMap(){
+        return new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if(e.getButton()==MouseEvent.BUTTON1){
+                    System.out.println("mouseClicked");
+                    Point point=map.getMyMap().getMapPosition(e.getX(),e.getY());
+                    if(point!=null) {
+                        for (MapMarker mark : map.getMyMap().getMapMarkerList()) {
+                            Coordinate coordinate=mark.getCoordinate();
+                            Point point1=map.getMyMap().getTileController().getTileSource().latLonToXY(coordinate,map.getMyMap().getZoom());
+
+                            System.out.println("souris "+point+"\nship :"+point1);
+                            if ((point.x-(int)coordinate.getLon()<=20)&&(point.y-(int)coordinate.getLat()<=20)) {
+                                map.reloadMap(menuBar.getShips(), coordinate);
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
 
             }
         };

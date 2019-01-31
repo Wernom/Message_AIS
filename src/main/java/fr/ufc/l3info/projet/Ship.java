@@ -1,37 +1,35 @@
 package fr.ufc.l3info.projet;
 
-import java.util.HashMap;
+
+import java.util.TreeMap;
 
 class Ship {
-    private HashMap<String, Message> messages;
+    private TreeMap<String, Message> messages;
+    private String MMSI;
 
-    Ship(HashMap<String, Message> messages) {
+    Ship(String mmsi,TreeMap<String, Message> messages) {
+        this.MMSI=mmsi;
         this.messages = messages;
     }
 
-    Ship() {
-        this.messages = new HashMap<>();
+    Ship(String mmsi) {
+        this.MMSI=mmsi;
+        this.messages = new TreeMap<>();
     }
 
     void addMessage(Message message) {
         this.messages.put(message.getDecode().getTimeStamp(), message);
     }
 
-    HashMap<String, Message> getMessages() {
+    TreeMap<String, Message> getMessages() {
         return messages;
     }
 
+    public String getMMSI() {
+        return MMSI;
+    }
+
     Message getLastKnownMessage() {
-        long last=-1;
-        long notLast=0;
-        for (Message msg: messages.values()) {
-            last=Long.decode(msg.getDecode().getTimeStamp());
-            if (last<notLast){
-                last=notLast;
-            }else {
-                notLast=last;
-            }
-        }
-        return messages.get(Long.toString(last));
+        return messages.get(messages.lastKey());
     }
 }
