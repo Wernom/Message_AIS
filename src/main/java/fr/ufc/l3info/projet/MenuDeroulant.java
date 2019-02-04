@@ -34,6 +34,7 @@ class MenuDeroulant extends JPanel {
         listDeroulante = new JList<>(defaultList);
         listDeroulante.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         listDeroulante.setLayoutOrientation(JList.VERTICAL);
+        defaultList.addElement("<none>");
         panel.add(listDeroulante,BorderLayout.CENTER);
     }
 

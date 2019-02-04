@@ -40,20 +40,29 @@ class Fenetre {
                         InputStreamReader lecture = new InputStreamReader(flux);
                         BufferedReader buff = new BufferedReader(lecture);
                         String ligne;
-                        int ENLEVEMOI=0;
+                        Ship vessel = null;
                         while ((ligne = buff.readLine()) != null) {
-                            //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                            ++ENLEVEMOI;
-                            //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                            Message msg=new Message(ligne);
-                            Ship vessel = new Ship(msg.getDecode().getMMSI());
-                            vessel.addMessage(msg);
-                            menuBar.getShips().put(msg.getDecode().getMMSI(),vessel);
-                            menuDeroulant.getDefaultList().addElement(msg.getDecode().getMMSI());
-                            //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-                            if(ENLEVEMOI==3)
-                                break; // les autres lignes du fichier ne sont peut etre pas encore traité
-                            //XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+                            try {
+                                Message msg = new Message(ligne);
+                                if(vessel==null){
+                                    vessel = new Ship(msg.getDecode().getMMSI());
+                                    vessel.addMessage(msg);
+                                    menuBar.getShips().put(msg.getDecode().getMMSI(), vessel);
+                                    menuDeroulant.getDefaultList().addElement(msg.getDecode().getMMSI());
+                                }else{
+                                    if(vessel.getMMSI().equals(msg.getDecode().getMMSI())){
+                                        vessel.addMessage(msg);
+                                    }else{
+                                        vessel=new Ship(msg.getDecode().getMMSI());
+                                        vessel.addMessage(msg);
+                                        menuBar.getShips().put(msg.getDecode().getMMSI(), vessel);
+                                        menuDeroulant.getDefaultList().addElement(msg.getDecode().getMMSI());
+                                    }
+                                }
+
+                            }catch (Exception excepction){
+
+                            }
                         }
                         buff.close();
                     } catch (Exception ex) {
@@ -147,12 +156,21 @@ class Fenetre {
             public void valueChanged(ListSelectionEvent e) {
                 if(!e.getValueIsAdjusting()){ // lors de la section d'un ou plusieur item de la liste deroulante
                     String mmsi=(String)menuDeroulant.getListDeroulante().getSelectedValue();
+                    if(mmsi.equals("<none>")){
+                        fenetre.remove(modificationMessage);
+                        modificationMessage=new ModificationMessage();
+                        modificationMessage.getPanel().setPreferredSize(new Dimension(0,200));
+                        fenetre.add(modificationMessage.getPanel(),BorderLayout.SOUTH);
+                        fenetre.revalidate();
+                        reloadMap();
+                        return;
+                    }
                     List allShip = menuDeroulant.getListDeroulante().getSelectedValuesList();
                     HashMap<String ,Ship> allSelectedShip=new HashMap<>();
                     for(Object vessel:allShip){
                         allSelectedShip.put(menuBar.getShip((String)vessel).getLastKnownMessage().getDecode().getMMSI(),menuBar.getShip((String)vessel));
                     }
-                    modificationMessage.affichage(allSelectedShip);
+                    modificationMessage.affichage(menuBar.getShips(),allSelectedShip,map);
                     modificationMessage.getPanel().revalidate();
                     modificationMessage.getPanel().updateUI();
                     map.reloadMap(menuBar.getShips(),mmsi); // centre la map sur le navire selectionné
@@ -226,14 +244,14 @@ class Fenetre {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if(e.getButton()==MouseEvent.BUTTON1){
-                    System.out.println("mouseClicked");
+                    //System.out.println("mouseClicked");
                     Point point=map.getMyMap().getMapPosition(e.getX(),e.getY());
                     if(point!=null) {
                         for (MapMarker mark : map.getMyMap().getMapMarkerList()) {
                             Coordinate coordinate=mark.getCoordinate();
                             Point point1=map.getMyMap().getTileController().getTileSource().latLonToXY(coordinate,map.getMyMap().getZoom());
 
-                            System.out.println("souris "+point+"\nship :"+point1);
+                            //System.out.println("souris "+point+"\nship :"+point1);
                             if ((point.x-(int)coordinate.getLon()<=20)&&(point.y-(int)coordinate.getLat()<=20)) {
                                 map.reloadMap(menuBar.getShips(), coordinate);
                                 return;

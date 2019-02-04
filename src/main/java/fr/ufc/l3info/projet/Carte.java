@@ -10,7 +10,8 @@ import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
+import java.util.*;
+
 
 
 public class Carte extends JPanel implements JMapViewerEventListener{
@@ -20,7 +21,6 @@ public class Carte extends JPanel implements JMapViewerEventListener{
     private JMapViewer myMap;
     private JPanel panel = new JPanel(new BorderLayout());
     private JPanel panelZoom;
-    private JLabel zoomLabel;
     private JLabel zoomValue;
     private JLabel mperpLabelName;
     private JLabel mperpLabelValue;
@@ -113,7 +113,7 @@ public class Carte extends JPanel implements JMapViewerEventListener{
 
     private void setupZoomPanel(){
         panelZoom.removeAll();
-        zoomLabel = new JLabel("Zoom: ");
+        JLabel zoomLabel = new JLabel("Zoom: ");
         zoomValue = new JLabel(String.format("%s", myMap.getZoom()));
 
         panelZoom.add(zoomLabel,BorderLayout.SOUTH);
@@ -162,15 +162,18 @@ public class Carte extends JPanel implements JMapViewerEventListener{
      * @param vessel Ship 
      */
     private void printShip(Ship vessel){
+        Coordinate lastKnownCoordinate=new Coordinate(vessel.getLastKnownMessage().getDecode().getLatitude(),vessel.getLastKnownMessage().getDecode().getLongitude());
        for (Message message : vessel.getMessages().values()) {
-            Coordinate coordinate = new Coordinate( message.getDecode().getLatitude(),message.getDecode().getLongitude() );
-            MapMarkerDot position = new  MapMarkerDot(coordinate.getLat(),coordinate.getLon());
-            position.setColor(Color.black);
-            position.setBackColor(Color.black);
+           Coordinate coordinate = new Coordinate(message.getDecode().getLatitude(), message.getDecode().getLongitude());
+           MapMarkerDot position = new MapMarkerDot(coordinate.getLat(), coordinate.getLon());
+           if(!lastKnownCoordinate.equals(coordinate)) {
+               position.setColor(Color.green);
+               position.setBackColor(Color.green);
+           }
+
             myMap.addMapMarker(position);
-        }
-       MapMarkerDot ship=new MapMarkerDot(vessel.getLastKnownMessage().getDecode().getLatitude(),vessel.getLastKnownMessage().getDecode().getLongitude());
-        myMap.addMapMarker(ship);
+
+       }
     }
 
     /**
@@ -207,6 +210,7 @@ public class Carte extends JPanel implements JMapViewerEventListener{
     /**
      * Reload the map after select ship on map
      * @param trafic ArrayList<Message>
+     * @param coordinate Coordinate
      */
     void reloadMap(HashMap<String,Ship> trafic,Coordinate coordinate){
         this.reloadMap(trafic);

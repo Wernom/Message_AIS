@@ -1,5 +1,7 @@
 package fr.ufc.l3info.projet;
 
+import org.openstreetmap.gui.jmapviewer.Coordinate;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
@@ -48,31 +50,29 @@ class ModificationMessage extends JPanel {
 
 //displayer
 
-
     /**
      * display all tabs of selected ship
-      * @param allShip ArrayList<Message>
+      * @param selectedShip ArrayList<Message>
      */
-    void affichage(HashMap<String ,Ship> allShip){
-        reload(allShip);
+    void affichage(HashMap<String ,Ship> trafic, HashMap<String ,Ship> selectedShip, Carte map){
+        reload(trafic,selectedShip,map);
    }
 
     /**
      * reload information after validation or cancel
      */
-    private void reload(HashMap<String ,Ship> allShip){
+    private void reload(HashMap<String ,Ship> trafic,HashMap<String ,Ship> selectedShip,Carte map){
        info.removeAll();
        JTabbedPane tabbedPane=new JTabbedPane();
-       for(Ship vessel:allShip.values()) {
-
+       for(Ship vessel:selectedShip.values()) {
            String mmsi= vessel.getLastKnownMessage().getDecode().getMMSI();
            DisplayOneShip displayOneShip=new DisplayOneShip(vessel.getLastKnownMessage());
            tabMap.put(mmsi,displayOneShip);
            tabbedPane.addTab(mmsi,displayOneShip.getDisplay());
-           displayOneShip.getApplySingle().addActionListener(addApplySingleListener(allShip,mmsi));
-           displayOneShip.getCancelAll().addActionListener(addCancelAllListener(allShip));
-           displayOneShip.getApplyAll().addActionListener(addApplyAllListener(allShip));
-
+           displayOneShip.getApplySingle().addActionListener(addApplySingleListener(trafic,selectedShip,mmsi,map));
+           displayOneShip.getCancelAll().addActionListener(addCancelAllListener(trafic,selectedShip,map));
+           displayOneShip.getApplyAll().addActionListener(addApplyAllListener(trafic,selectedShip,map));
+            map.reloadMap(trafic,mmsi);
        }
        info.add(tabbedPane,BorderLayout.CENTER);
    }
@@ -82,11 +82,11 @@ class ModificationMessage extends JPanel {
      * create an ActionListener for cancelAll Button
      * @return ActionListener
      */
-    private ActionListener addCancelAllListener(final HashMap<String ,Ship> allShip){
+    private ActionListener addCancelAllListener(final HashMap<String ,Ship> trafic,final HashMap<String ,Ship> selectedShip,final Carte map){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                reload(allShip);
+                reload(trafic,selectedShip,map);
                 getPanel().revalidate();
                 getPanel().updateUI();
             }
@@ -97,12 +97,12 @@ class ModificationMessage extends JPanel {
      * create an ActionListener for applyAll Button
      * @return ActionListener
      */
-    private ActionListener addApplyAllListener(final HashMap<String ,Ship> allShip){
+    private ActionListener addApplyAllListener(final HashMap<String ,Ship> trafic,final HashMap<String ,Ship> selectedShip,final Carte map){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                saveModificationAll(allShip);
-                reload(allShip);
+                saveModificationAll(selectedShip);
+                reload(trafic,selectedShip,map);
                 getPanel().revalidate();
                 getPanel().updateUI();
             }
@@ -113,15 +113,15 @@ class ModificationMessage extends JPanel {
      * create an ActionListener for applySingle Button
      * @return ActionListener
      */
-    private ActionListener addApplySingleListener(final HashMap<String ,Ship> allShip, final String mmsi){
+    private ActionListener addApplySingleListener(final HashMap<String ,Ship> trafic,final HashMap<String ,Ship> selectedShip, final String mmsi,final Carte map){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                tabMap.get(mmsi).saveModificationOne(allShip.get(mmsi).getLastKnownMessage());
-                reload(allShip);
+                tabMap.get(mmsi).saveModificationOne(selectedShip.get(mmsi).getLastKnownMessage());
+                reload(trafic,selectedShip,map);
                 getPanel().revalidate();
                 getPanel().updateUI();
-                System.out.println("Modification done!");
+
             }
         };
     }
@@ -131,8 +131,8 @@ class ModificationMessage extends JPanel {
     /**
      * Save information modification for all selected vessel
      */
-    private void saveModificationAll(HashMap<String ,Ship> allShip){
-        for(Ship vessel:allShip.values()) {
+    private void saveModificationAll(HashMap<String ,Ship> selectedShip){
+        for(Ship vessel:selectedShip.values()) {
             tabMap.get(vessel.getLastKnownMessage().getDecode().getMMSI()).saveModificationOne(vessel.getLastKnownMessage());
         }
     }
@@ -158,6 +158,8 @@ class DisplayOneShip extends JPanel{
     private JTextField spareText;
     private JTextField RAIMflagText;
     private JTextField radioStatusText;
+    private JTextField hoursText;
+    private JTextField minutesText;
 
     private JButton applyAll=new JButton();
     private JButton cancelAll=new JButton();
@@ -182,11 +184,11 @@ class DisplayOneShip extends JPanel{
         add(display,BorderLayout.SOUTH);
 
         MessageDecode vessel = ship.getDecode();
-
         JLabel AISraw=new JLabel(" Raw AIS : "+ship.getAis().getRawData()); // display raw data
+        System.out.println(ship.getAis().getRawData());
         display.add(AISraw,BorderLayout.NORTH);
 
-        JPanel panelValue=new JPanel(new GridLayout(4,5));
+        JPanel panelValue=new JPanel(new GridLayout(0,4));
         JScrollPane scrollPane=new JScrollPane(panelValue); // for reponsive design
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -273,6 +275,16 @@ class DisplayOneShip extends JPanel{
         radioStatusText = new JTextField((vessel==null)?"":vessel.getRadioStatus());
         panelValue.add(initPanelValue(radioStatusLabel,radioStatusText));
 
+        // hour
+        JLabel hourLabel = new JLabel("Hour");
+        hoursText = new JTextField((vessel==null)?"":String.valueOf(vessel.getHour()));
+        panelValue.add(initPanelValue(hourLabel,hoursText));
+
+        // minutes
+        JLabel minuteLabel = new JLabel("Hour");
+        minutesText = new JTextField((vessel==null)?"":String.valueOf(vessel.getMinute()));
+        panelValue.add(initPanelValue(minuteLabel,minutesText));
+
         display.add(scrollPane,BorderLayout.CENTER);
         display.add(initButton((vessel==null)?"GhostShip":vessel.getMMSI()),BorderLayout.SOUTH);
     }
@@ -323,24 +335,27 @@ class DisplayOneShip extends JPanel{
      * Save information modification for one selected vessel
      */
     void saveModificationOne(Message ship) {
-
-        ship.getDecode().setMessageType((messageTypeText.getText()==null)?"0": messageTypeText.getText());
-        ship.getDecode().setRepeatIndicator(repeatIndicatorText.getText()==null?"0":repeatIndicatorText.getText());
-       // ship.getDecode().setMMSI(MMSIText.getText()==null?"0":MMSIText.getText());
-        ship.getDecode().setNavigationStatus(navigationStatusText.getText()==null?"0":navigationStatusText.getText());
-        ship.getDecode().setRateOverTurn(Double.parseDouble(rateOverTurnText.getText()==null?"0":rateOverTurnText.getText()));
-        ship.getDecode().setSpeedOverGround(Double.parseDouble(speedOverGroundText.getText()==null?"0":speedOverGroundText.getText()));
-        ship.getDecode().setPositiontionAccuracy(positiontionAccuracyText.getText()==null?"0":positiontionAccuracyText.getText());
-        ship.getDecode().setLongitude(Double.parseDouble(longitudeText.getText()==null?"0":longitudeText.getText()));
-        ship.getDecode().setLatitude(Double.parseDouble(latitudeText.getText()==null?"0":latitudeText.getText()));
-        ship.getDecode().setCourseOverGroud(Double.parseDouble(courseOverGroudText.getText()==null?"0":courseOverGroudText.getText()));
-        ship.getDecode().setTrueHeading(trueHeadingText.getText()==null?"0":trueHeadingText.getText());
-        ship.getDecode().setTimeStamp(timeStampText.getText()==null?"0":timeStampText.getText());
-        ship.getDecode().setManeuverIndicator(maneuverIndicatorText.getText()==null?"0":maneuverIndicatorText.getText());
-        ship.getDecode().setSpare(spareText.getText()==null?"0":spareText.getText());
-        ship.getDecode().setRAIMflag(RAIMflagText.getText()==null?"0":RAIMflagText.getText());
-        ship.getDecode().setRadioStatus(radioStatusText.getText()==null?"0":radioStatusText.getText());
+        String defaultValue="0";
+        ship.getDecode().setMessageType((messageTypeText.getText()==null)?defaultValue: messageTypeText.getText());
+        ship.getDecode().setRepeatIndicator(repeatIndicatorText.getText()==null?defaultValue:repeatIndicatorText.getText());
+       // ship.getDecode().setMMSI(MMSIText.getText()==null?defaultValue:MMSIText.getText());
+        ship.getDecode().setNavigationStatus(navigationStatusText.getText()==null?defaultValue:navigationStatusText.getText());
+        ship.getDecode().setRateOverTurn(Double.parseDouble(rateOverTurnText.getText()==null?defaultValue:rateOverTurnText.getText()));
+        ship.getDecode().setSpeedOverGround(Double.parseDouble(speedOverGroundText.getText()==null?defaultValue:speedOverGroundText.getText()));
+        ship.getDecode().setPositiontionAccuracy(positiontionAccuracyText.getText()==null?defaultValue:positiontionAccuracyText.getText());
+        ship.getDecode().setLongitude(Double.parseDouble(longitudeText.getText()==null?defaultValue:longitudeText.getText()));
+        ship.getDecode().setLatitude(Double.parseDouble(latitudeText.getText()==null?defaultValue:latitudeText.getText()));
+        ship.getDecode().setCourseOverGroud(Double.parseDouble(courseOverGroudText.getText()==null?defaultValue:courseOverGroudText.getText()));
+        ship.getDecode().setTrueHeading(trueHeadingText.getText()==null?defaultValue:trueHeadingText.getText());
+        ship.getDecode().setTimeStamp(timeStampText.getText()==null?defaultValue:timeStampText.getText());
+        ship.getDecode().setManeuverIndicator(maneuverIndicatorText.getText()==null?defaultValue:maneuverIndicatorText.getText());
+        ship.getDecode().setSpare(spareText.getText()==null?defaultValue:spareText.getText());
+        ship.getDecode().setRAIMflag(RAIMflagText.getText()==null?defaultValue:RAIMflagText.getText());
+        ship.getDecode().setRadioStatus(radioStatusText.getText()==null?defaultValue:radioStatusText.getText());
+        ship.getDecode().setHour(Integer.parseInt(hoursText.getText()==null?defaultValue:hoursText.getText()));
+        ship.getDecode().setMinute(Integer.parseInt(minutesText.getText()==null?defaultValue:minutesText.getText()));
         ship.setAis();
+        System.out.println("Modification done");
     }
 
     /**
