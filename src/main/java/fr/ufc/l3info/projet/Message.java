@@ -60,9 +60,9 @@ class Message {
                         + encodeTrueHeading() + encodeTimeStamp() + encodeManeuverIndicator() + encodeSpare() + encodeRAIMflag() + encodeRadioStatus();
 
                 StringBuilder aisRawBuilderBin = new StringBuilder();
-                if (this.ais.getBeforePayload().equals("")){
+                if (this.ais.getBeforePayload().equals("")) {
                     aisRawBuilderBin.append("!AIVDM,1,1,,A,");
-                }else {
+                } else {
                     aisRawBuilderBin.append(this.ais.getBeforePayload());
                 }
 
@@ -82,18 +82,18 @@ class Message {
 
                     transformToAscii += 48;
 
-                    aisRawBuilderBin.append((char)Integer.parseInt(addZeroToReachNbit(Integer.toBinaryString(transformToAscii), 7), 2));
+                    aisRawBuilderBin.append((char) Integer.parseInt(addZeroToReachNbit(Integer.toBinaryString(transformToAscii), 7), 2));
                 }
 
-                if (this.ais.getAfterPayload().equals("")){
+                if (this.ais.getAfterPayload().equals("")) {
                     aisRawBuilderBin.append(",???");
-                }else
+                } else
                     aisRawBuilderBin.append(this.ais.getAfterPayload());
                 aisRaw = aisRawBuilderBin.toString();
 
                 break;
         }
-        this.ais= new MessageAIS(aisRaw);
+        this.ais = new MessageAIS(aisRaw);
     }
 
     MessageAIS getAis() {
@@ -136,16 +136,16 @@ class Message {
         return addZeroToReachNbit(decimalToBinary(decode.getNavigationStatus()), 4);
     }
 
-    private double decodeRateOverTurn(){
+    private double decodeRateOverTurn() {
         double res = Integer.parseInt(ais.getRawDataPayloadBin().substring(42, 50), 2);
         if (res > 127)
             res = (res % 128) - 128;
         return res;
     }
 
-    private String encodeRateOverTurn(){
+    private String encodeRateOverTurn() {
         double rateOverTurnBin = decode.getRateOverTurn();
-        if (rateOverTurnBin < 0){
+        if (rateOverTurnBin < 0) {
             rateOverTurnBin *= -1;
             rateOverTurnBin += 128;
         }
