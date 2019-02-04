@@ -1,6 +1,9 @@
 package fr.ufc.l3info.projet;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 class MessageDecode {
     private String messageType;
@@ -19,6 +22,8 @@ class MessageDecode {
     private String spare;
     private String RAIMflag;
     private String radioStatus;
+    private String hour;
+    private String minute;
 
 
     public void setMessageType(String messageType) {
@@ -85,8 +90,16 @@ class MessageDecode {
         this.radioStatus = radioStatus;
     }
 
+    public void setMinute(String minute) {
+        this.minute = minute;
+    }
 
-    MessageDecode(String messageType, String repeatIndicator, String MMSI, String navigationStatus,double rateOverTurn, double speedOverGround, String positiontionAccuracy, double longitude, double latitude, double courseOverGroud, String trueHeading, String timeStamp, String maneuverIndicator, String spare, String RAIMflag, String radioStatus) {
+    public void setHour(String hour) {
+        this.hour = hour;
+    }
+
+
+    MessageDecode(String messageType, String repeatIndicator, String MMSI, String navigationStatus, double rateOverTurn, double speedOverGround, String positiontionAccuracy, double longitude, double latitude, double courseOverGroud, String trueHeading, String timeStamp, String maneuverIndicator, String spare, String RAIMflag, String radioStatus, String hour, String minute) {
         this.messageType = messageType;
         this.repeatIndicator = repeatIndicator;
         this.MMSI = MMSI;
@@ -103,9 +116,11 @@ class MessageDecode {
         this.spare = spare;
         this.RAIMflag = RAIMflag;
         this.radioStatus = radioStatus;
+        this.hour = hour;
+        this.minute = minute;
     }
 
-    MessageDecode(String message[]){
+    MessageDecode(String message[]) {
         this.messageType = message[0];
         this.repeatIndicator = message[1];
         this.MMSI = message[2];
@@ -188,16 +203,24 @@ class MessageDecode {
         return radioStatus;
     }
 
+    public String getHour() {
+        return hour;
+    }
+
+    public String getMinute() {
+        return minute;
+    }
+
     void printMessage(String fileName) {
 
-        String content = this.messageType +',' + this.repeatIndicator +',' + this.MMSI + ',' + this.navigationStatus +',' + ',' + this.speedOverGround  + ',' + this.positiontionAccuracy +',' + this.longitude +',' + this.latitude +',' + this.courseOverGroud +',' + this.trueHeading +',' + this.timeStamp +',' + this.maneuverIndicator +',' + this.spare +',' + this.RAIMflag +',' + this.radioStatus;
+        String content = this.messageType + ',' + this.repeatIndicator + ',' + this.MMSI + ',' + this.navigationStatus + ',' + ',' + this.speedOverGround + ',' + this.positiontionAccuracy + ',' + this.longitude + ',' + this.latitude + ',' + this.courseOverGroud + ',' + this.trueHeading + ',' + this.timeStamp + ',' + this.maneuverIndicator + ',' + this.spare + ',' + this.RAIMflag + ',' + this.radioStatus;
         try {
             File file = new File(fileName);
 
             if (!file.exists()) {
                 try {
                     file.createNewFile();
-                }catch (IOException e){
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -212,6 +235,7 @@ class MessageDecode {
             e.printStackTrace();
         }
     }
+
 
     @Override
     public String toString() {
