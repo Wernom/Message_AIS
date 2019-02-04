@@ -236,7 +236,7 @@ class Message {
     }
 
     private String encodeTimeStamp() {
-        return addZeroToReachNbit(decimalToBinary(decode.getTimeStamp()), 2);
+        return addZeroToReachNbit(decimalToBinary(decode.getTimeStamp()), 6);
     }
 
     private String decodeManeuverIndicator() {
