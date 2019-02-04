@@ -91,11 +91,29 @@ class MessageDecode {
     }
 
     public void setMinute(int minute) {
-        this.minute = minute;
+        String binRadioStatus = Integer.toBinaryString(Integer.parseInt(this.radioStatus));
+        int offcet = 10 - (19 - binRadioStatus.length());
+        System.out.println(addZeroToReachNbit(Integer.toBinaryString(minute), 7));
+        String before = binRadioStatus.substring(0, offcet);
+        String after = binRadioStatus.substring(offcet + 7);
+        this.minute = Integer.parseInt(addZeroToReachNbit(Integer.toBinaryString(minute), 7), 2);
+        this.radioStatus = String.valueOf(Integer.parseInt(before + addZeroToReachNbit(Integer.toBinaryString(minute), 7) + after, 2));
+        System.out.println(this.minute + "\t" + this.radioStatus);
+
     }
 
     public void setHour(int hour) {
-        this.hour = hour;
+        String binRadioStatus = Integer.toBinaryString(Integer.parseInt(this.radioStatus));
+        int offcet = 5 - (19 - binRadioStatus.length());
+        System.out.println(addZeroToReachNbit(Integer.toBinaryString(hour), 5));
+        String before = binRadioStatus.substring(0, offcet);
+        String after = binRadioStatus.substring(offcet + 5);
+        String binHour = addZeroToReachNbit(Integer.toBinaryString(hour), 5);
+        System.out.println(before+'\t' +after);
+        this.hour = Integer.parseInt(binHour, 2);
+        this.radioStatus = String.valueOf(Integer.parseInt(before + binHour + after, 2));
+        System.out.println(this.hour + "\t" + this.radioStatus);
+
     }
 
 
@@ -120,7 +138,7 @@ class MessageDecode {
         this.minute = minute;
     }
 
-    MessageDecode(String message[]) {
+    MessageDecode(String[] message) {
         this.messageType = message[0];
         this.repeatIndicator = message[1];
         this.MMSI = message[2];
@@ -211,8 +229,8 @@ class MessageDecode {
         return minute;
     }
 
-    public int getUTCHourMinute(){
-        return this.hour*100+this.minute;
+    public int getUTCHourMinute() {
+        return this.hour * 100 + this.minute;
     }
 
     void printMessage(String fileName) {
@@ -238,6 +256,16 @@ class MessageDecode {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private String addZeroToReachNbit(String ascii, int n) {
+        int offcet = n - ascii.length();
+        StringBuilder res = new StringBuilder();
+        for (int i = 0; i < offcet; ++i) {
+            res.append("0");
+        }
+        res.append(ascii);
+        return res.toString();
     }
 
 

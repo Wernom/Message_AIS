@@ -295,7 +295,7 @@ class Message {
         encode();
     }
 
-    private String addZeroToReachNbit(String ascii, int n) {
+    private String addZeroToReachNbit(String ascii, int n) { //TODO: passe en static
         int offcet = n - ascii.length();
         StringBuilder res = new StringBuilder();
         for (int i = 0; i < offcet; ++i) {
