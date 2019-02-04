@@ -22,8 +22,8 @@ class MessageDecode {
     private String spare;
     private String RAIMflag;
     private String radioStatus;
-    private String hour;
-    private String minute;
+    private int hour;
+    private int minute;
 
 
     public void setMessageType(String messageType) {
@@ -90,16 +90,16 @@ class MessageDecode {
         this.radioStatus = radioStatus;
     }
 
-    public void setMinute(String minute) {
+    public void setMinute(int minute) {
         this.minute = minute;
     }
 
-    public void setHour(String hour) {
+    public void setHour(int hour) {
         this.hour = hour;
     }
 
 
-    MessageDecode(String messageType, String repeatIndicator, String MMSI, String navigationStatus, double rateOverTurn, double speedOverGround, String positiontionAccuracy, double longitude, double latitude, double courseOverGroud, String trueHeading, String timeStamp, String maneuverIndicator, String spare, String RAIMflag, String radioStatus, String hour, String minute) {
+    MessageDecode(String messageType, String repeatIndicator, String MMSI, String navigationStatus, double rateOverTurn, double speedOverGround, String positiontionAccuracy, double longitude, double latitude, double courseOverGroud, String trueHeading, String timeStamp, String maneuverIndicator, String spare, String RAIMflag, String radioStatus, int hour, int minute) {
         this.messageType = messageType;
         this.repeatIndicator = repeatIndicator;
         this.MMSI = MMSI;
@@ -203,12 +203,16 @@ class MessageDecode {
         return radioStatus;
     }
 
-    public String getHour() {
+    public int getHour() {
         return hour;
     }
 
-    public String getMinute() {
+    public int getMinute() {
         return minute;
+    }
+
+    public int getUTCHourMinute(){
+        return this.hour*100+this.minute;
     }
 
     void printMessage(String fileName) {

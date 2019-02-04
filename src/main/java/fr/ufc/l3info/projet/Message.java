@@ -42,8 +42,8 @@ class Message {
         String spare = decodeSpare();
         String RAIMflag = decodeRAIMflag();
         String radioStatus = decodeRadioStatus();
-        String hour = decodeHour();
-        String minute = decodeMinute();
+        int hour = decodeHour();
+        int minute = decodeMinute();
 
         return new MessageDecode(messageType, repeatIndicator, MMSI, navigationStatus, rateOverTurn, speedOverGround, positiontionAccuracy, longitude, latitude, courseOverGroud, trueHeading, timeStamp, maneuverIndicator, spare, RAIMflag, radioStatus, hour, minute);
     }
@@ -267,12 +267,12 @@ class Message {
         return binaryToString(ais.getRawDataPayloadBin().substring(149, 168));
     }
 
-    private String decodeHour(){
-        return binaryToString(ais.getRawDataPayloadBin().substring(154, 159));
+    private int decodeHour(){
+        return Integer.parseInt(ais.getRawDataPayloadBin().substring(154, 159));
     }
 
-    private String decodeMinute(){
-        return binaryToString(ais.getRawDataPayloadBin().substring(159, 166));
+    private int decodeMinute(){
+        return Integer.parseInt(ais.getRawDataPayloadBin().substring(159, 166));
     }
 
     private String encodeRadioStatus() {
