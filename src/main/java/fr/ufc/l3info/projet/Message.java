@@ -268,11 +268,11 @@ class Message {
     }
 
     private int decodeHour(){
-        return Integer.parseInt(ais.getRawDataPayloadBin().substring(154, 159));
+        return Integer.parseInt(ais.getRawDataPayloadBin().substring(154, 159), 2);
     }
 
     private int decodeMinute(){
-        return Integer.parseInt(ais.getRawDataPayloadBin().substring(159, 166));
+        return Integer.parseInt(ais.getRawDataPayloadBin().substring(159, 166), 2);
     }
 
     private String encodeRadioStatus() {
