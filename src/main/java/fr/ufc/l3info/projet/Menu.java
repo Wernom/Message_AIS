@@ -13,8 +13,10 @@ import java.util.*;
 class Menu extends JMenuBar {
     private JMenuBar menuBar = new JMenuBar();
     private JMenu menu = new JMenu("Fichier");
+    private JMenu menu2 = new JMenu("Exporter");
     private JMenuItem menuItem = new JMenuItem("Importer");
-    private JMenuItem menuItem2 = new JMenuItem("Exporter");
+    private JMenuItem menuItem2 = new JMenuItem("ExporterCsv");
+    private JMenuItem menuItem3 = new JMenuItem("ExporterAis");
     private HashMap<String,Ship> shipsMessages;
 
     public static final String FRAME_BOUNDS = "frameBounds";
@@ -24,8 +26,10 @@ class Menu extends JMenuBar {
         //---------
         shipsMessages = new HashMap<>();
         menuBar.add(menu);
+        menu.add(menu2);
         menu.add(menuItem);
-        menu.add(menuItem2);
+        menu2.add(menuItem2);
+        menu2.add(menuItem3);
     }
 
     private Path getApplicationDataFile(boolean create) throws IOException {
@@ -58,8 +62,11 @@ class Menu extends JMenuBar {
     JMenuItem getMenuItem() {
         return menuItem;
     }
-    JMenuItem getMenuItemExporter() {
+    JMenuItem getMenuItemExporterCsv() {
         return menuItem2;
+    }
+    JMenuItem getMenuItemExporterAis() {
+        return menuItem3;
     }
     JMenu getMenu() {
         return menu;

@@ -74,7 +74,7 @@ class Fenetre {
         });
 
         // faire une fonction pour la lisibilité
-        menuBar.getMenuItemExporter().addActionListener(new ActionListener() {
+        menuBar.getMenuItemExporterCsv().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fc = new JFileChooser();
@@ -92,11 +92,42 @@ class Fenetre {
                                 String content = menuBar.getShip((String) item).getLastKnownMessage().getDecode().printMessage();
                                 bw.write(content);
                                 bw.newLine();
-                                System.out.println(content);
                             }
                             bw.close();
                             writer.close();
                             } finally {
+                            writer.close();
+                        }
+                    } catch (Exception ex) {
+                        System.out.println("Impossible de creer le fichier");
+                    }
+                }
+            }
+
+        });
+
+        menuBar.getMenuItemExporterAis().addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fc = new JFileChooser();
+                if (fc.showOpenDialog(menuBar.getMenu()) == JFileChooser.APPROVE_OPTION) {
+                    final String chemin = fc.getSelectedFile().getAbsolutePath();
+                    final File fichier = new File(chemin);
+                    System.out.println(chemin);
+                    try {
+                        fichier.createNewFile();
+                        final FileWriter writer = new FileWriter(fichier);
+                        try {
+                            List selectedShip = menuDeroulant.getListDeroulante().getSelectedValuesList();
+                            BufferedWriter bw = new BufferedWriter(writer);
+                            for (Object item : selectedShip) {
+                                String content = menuBar.getShip((String) item).getLastKnownMessage().getDecode().printMessage();
+                                bw.write(menuBar.getShip((String) item).getLastKnownMessage().getAis().getRawData());
+                                bw.newLine();
+                            }
+                            bw.close();
+                            writer.close();
+                        } finally {
                             writer.close();
                         }
                     } catch (Exception ex) {
