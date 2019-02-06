@@ -19,7 +19,7 @@ class Fenetre {
     private Carte map;
     private Menu menuBar;
     private MenuDeroulant menuDeroulant;
-    private ModificationMessage modificationMessage;
+    private DisplaySelectedShip displaySelectedShip;
 
     /**
      * constructor of display
@@ -28,50 +28,7 @@ class Fenetre {
         menuBar = new Menu();
 
         // faire une fonction pour la lisibilité
-        menuBar.getMenuItem().addActionListener(new ActionListener(){
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                JFileChooser fc = new JFileChooser();
-                if (fc.showOpenDialog(menuBar.getMenu()) == JFileChooser.APPROVE_OPTION) {
-                    try {
-                        InputStream flux = new FileInputStream(fc.getSelectedFile());
-                        InputStreamReader lecture = new InputStreamReader(flux);
-                        BufferedReader buff = new BufferedReader(lecture);
-                        String ligne;
-                        Ship vessel = null;
-                        while ((ligne = buff.readLine()) != null) {
-                            try {
-                                Message msg = new Message(ligne);
-                                if(vessel==null){
-                                    vessel = new Ship(msg.getDecode().getMMSI());
-                                    vessel.addMessage(msg);
-                                    menuBar.getShips().put(msg.getDecode().getMMSI(), vessel);
-                                    menuDeroulant.getDefaultList().addElement(msg.getDecode().getMMSI());
-                                }else{
-                                    if(vessel.getMMSI().equals(msg.getDecode().getMMSI())){
-                                        vessel.addMessage(msg);
-                                    }else{
-                                        vessel=new Ship(msg.getDecode().getMMSI());
-                                        vessel.addMessage(msg);
-                                        menuBar.getShips().put(msg.getDecode().getMMSI(), vessel);
-                                        menuDeroulant.getDefaultList().addElement(msg.getDecode().getMMSI());
-                                    }
-                                }
-
-                            }catch (Exception excepction){
-
-                            }
-                        }
-                        buff.close();
-                    } catch (Exception ex) {
-                        System.out.println(e.toString());
-                    }
-                    reloadMap();
-                }
-            }
-        });
+        menuBar.getMenuItem().addActionListener(importListener());
 
         // faire une fonction pour la lisibilité
         menuBar.getMenuItemExporterCsv().addActionListener(new ActionListener() {
@@ -144,7 +101,7 @@ class Fenetre {
         fenetre.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         fenetre.addWindowListener(addWindowEvent());
         fenetre.setSize(1000, 800);
-        fenetre.setMinimumSize(new Dimension(700,700));
+        fenetre.setMinimumSize(new Dimension(800,800));
 
         // creation de la carte
         map = new Carte();
@@ -159,8 +116,8 @@ class Fenetre {
         menuDeroulant.getListDeroulante().addListSelectionListener(addSelectListener());
 
         // creation de la partie modification des message AIS en bas
-        modificationMessage = new ModificationMessage();
-        modificationMessage.getPanel().setPreferredSize(new Dimension(0,200));
+        displaySelectedShip = new DisplaySelectedShip();
+        displaySelectedShip.getPanel().setPreferredSize(new Dimension(0,300));
 
         // affichage
         //----------
@@ -168,7 +125,7 @@ class Fenetre {
         //----------
         fenetre.add(menuDeroulant.getPanel(),BorderLayout.WEST);
         fenetre.add(map.getPanel(), BorderLayout.CENTER);
-        fenetre.add(modificationMessage.getPanel(),BorderLayout.SOUTH);
+        fenetre.add(displaySelectedShip.getPanel(),BorderLayout.SOUTH);
         fenetre.setVisible(true);
     }
 
@@ -193,10 +150,10 @@ class Fenetre {
                 if(!e.getValueIsAdjusting()){ // lors de la section d'un ou plusieur item de la liste deroulante
                     String mmsi=(String)menuDeroulant.getListDeroulante().getSelectedValue();
                     if(mmsi.equals("<none>")){
-                        fenetre.remove(modificationMessage);
-                        modificationMessage=new ModificationMessage();
-                        modificationMessage.getPanel().setPreferredSize(new Dimension(0,200));
-                        fenetre.add(modificationMessage.getPanel(),BorderLayout.SOUTH);
+                        fenetre.remove(displaySelectedShip);
+                        displaySelectedShip =new DisplaySelectedShip();
+                        displaySelectedShip.getPanel().setPreferredSize(new Dimension(0,200));
+                        fenetre.add(displaySelectedShip.getPanel(),BorderLayout.SOUTH);
                         fenetre.revalidate();
                         reloadMap();
                         return;
@@ -206,12 +163,63 @@ class Fenetre {
                     for(Object vessel:allShip){
                         allSelectedShip.put(menuBar.getShip((String)vessel).getLastKnownMessage().getDecode().getMMSI(),menuBar.getShip((String)vessel));
                     }
-                    modificationMessage.affichage(menuBar.getShips(),allSelectedShip,map);
-                    modificationMessage.getPanel().revalidate();
-                    modificationMessage.getPanel().updateUI();
+                    displaySelectedShip.affichage(allSelectedShip);
+                    displaySelectedShip.getPanel().revalidate();
+                    displaySelectedShip.getPanel().updateUI();
                     map.reloadMap(menuBar.getShips(),mmsi); // centre la map sur le navire selectionné
                 }
 
+            }
+        };
+    }
+
+    /**
+     *  Menu listener import AIS data from file
+     * @return ActionListener
+     */
+    private ActionListener importListener(){
+        return new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                JFileChooser fc = new JFileChooser();
+                if (fc.showOpenDialog(menuBar.getMenu()) == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        InputStream flux = new FileInputStream(fc.getSelectedFile());
+                        InputStreamReader lecture = new InputStreamReader(flux);
+                        BufferedReader buff = new BufferedReader(lecture);
+                        String ligne;
+                        Ship vessel = null;
+                        while ((ligne = buff.readLine()) != null) {
+                            try {
+                                Message msg = new Message(ligne);
+                                if(vessel==null){
+                                    vessel = new Ship(msg.getDecode().getMMSI());
+                                    vessel.addMessage(msg);
+                                    menuBar.getShips().put(msg.getDecode().getMMSI(), vessel);
+                                    menuDeroulant.getDefaultList().addElement(msg.getDecode().getMMSI());
+                                }else{
+                                    if(vessel.getMMSI().equals(msg.getDecode().getMMSI())){
+                                        vessel.addMessage(msg);
+                                    }else{
+                                        vessel=new Ship(msg.getDecode().getMMSI());
+                                        vessel.addMessage(msg);
+                                        menuBar.getShips().put(msg.getDecode().getMMSI(), vessel);
+                                        menuDeroulant.getDefaultList().addElement(msg.getDecode().getMMSI());
+                                    }
+                                }
+
+                            }catch (Exception exception){
+                                System.out.println("error when AIS import");
+                            }
+                        }
+                        buff.close();
+                    } catch (Exception ex) {
+                        System.out.println(e.toString());
+                    }
+                    reloadMap();
+                }
             }
         };
     }

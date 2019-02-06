@@ -4,11 +4,11 @@ package fr.ufc.l3info.projet;
 import java.util.TreeMap;
 
 class Ship {
-    private TreeMap<Integer, Message> messages;
-    private TreeMap<Integer, Message> modifiedMessage;
+    private TreeMap<String, Message> messages;
+    private TreeMap<String, Message> modifiedMessage;
     private String MMSI;
 
-    Ship(String mmsi,TreeMap<Integer, Message> messages) {
+    Ship(String mmsi,TreeMap<String, Message> messages) {
         this.MMSI=mmsi;
         this.messages = messages;
         this.modifiedMessage = new TreeMap<>();
@@ -21,10 +21,10 @@ class Ship {
     }
 
     void addMessage(Message message) {
-        this.messages.put(message.getDecode().getUTCHourMinute(), message);
+        this.messages.put(message.getDecode().getUTCString(), message);
     }
 
-    TreeMap<Integer, Message> getMessages() {
+    TreeMap<String, Message> getMessages() {
         return messages;
     }
 

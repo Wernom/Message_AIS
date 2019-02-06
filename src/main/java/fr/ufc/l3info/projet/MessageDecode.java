@@ -102,7 +102,7 @@ class MessageDecode {
 
     }
 
-    public void setHour(int hour) {
+    void setHour(int hour) {
         String binRadioStatus = Integer.toBinaryString(Integer.parseInt(this.radioStatus));
         int offcet = 5 - (19 - binRadioStatus.length());
         System.out.println(addZeroToReachNbit(Integer.toBinaryString(hour), 5));
@@ -221,17 +221,19 @@ class MessageDecode {
         return radioStatus;
     }
 
-    public int getHour() {
+    int getHour() {
         return hour;
     }
 
-    public int getMinute() {
+    int getMinute() {
         return minute;
     }
 
     public int getUTCHourMinute() {
         return this.hour * 100 + this.minute;
     }
+
+    String getUTCString(){return this.hour +"h"+ this.minute;}
 
     String printMessage() {
 

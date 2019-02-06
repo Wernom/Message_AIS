@@ -1,146 +1,11 @@
 package fr.ufc.l3info.projet;
 
-import org.openstreetmap.gui.jmapviewer.Coordinate;
-
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashMap;
 
-class ModificationMessage extends JPanel {
-
-    private JPanel panel = new JPanel(new BorderLayout());
-    private JPanel info=new JPanel(new BorderLayout());
-    private HashMap<String,DisplayOneShip> tabMap=new HashMap<>();
-
-
-// constructor
-    /**
-     * update ship information with selection
-     */
-   ModificationMessage(){
-        add(panel,BorderLayout.CENTER);
-
-       initPanelInfo();
-        panel.add(info,BorderLayout.CENTER);
-   }
-
-// getters
-    /**
-     * @return JPanel
-     */
-    JPanel getPanel() {
-        return panel;
-    }
-
-// initializer
-    /**
-     * initialize panel for display of all selected ship
-     */
-    private void initPanelInfo(){
-       add(info,BorderLayout.CENTER);
-       add(info,BorderLayout.SOUTH);
-       Border border ;
-       border = BorderFactory.createEtchedBorder();
-       border = BorderFactory.createTitledBorder(border,"Ship Selection");
-       info.setBorder(border);
-   }
-
-//displayer
-
-    /**
-     * display all tabs of selected ship
-      * @param selectedShip ArrayList<Message>
-     */
-    void affichage(HashMap<String ,Ship> trafic, HashMap<String ,Ship> selectedShip, Carte map){
-        reload(trafic,selectedShip,map);
-   }
-
-    /**
-     * reload information after validation or cancel
-     */
-    private void reload(HashMap<String ,Ship> trafic,HashMap<String ,Ship> selectedShip,Carte map){
-       info.removeAll();
-       JTabbedPane tabbedPane=new JTabbedPane();
-       for(Ship vessel:selectedShip.values()) {
-           String mmsi= vessel.getLastKnownMessage().getDecode().getMMSI();
-           DisplayOneShip displayOneShip=new DisplayOneShip(vessel.getLastKnownMessage());
-           tabMap.put(mmsi,displayOneShip);
-           tabbedPane.addTab(mmsi,displayOneShip.getDisplay());
-           displayOneShip.getApplySingle().addActionListener(addApplySingleListener(trafic,selectedShip,mmsi,map));
-           displayOneShip.getCancelAll().addActionListener(addCancelAllListener(trafic,selectedShip,map));
-           displayOneShip.getApplyAll().addActionListener(addApplyAllListener(trafic,selectedShip,map));
-            map.reloadMap(trafic,mmsi);
-       }
-       info.add(tabbedPane,BorderLayout.CENTER);
-   }
-
-//listener
-    /**
-     * create an ActionListener for cancelAll Button
-     * @return ActionListener
-     */
-    private ActionListener addCancelAllListener(final HashMap<String ,Ship> trafic,final HashMap<String ,Ship> selectedShip,final Carte map){
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                reload(trafic,selectedShip,map);
-                getPanel().revalidate();
-                getPanel().updateUI();
-            }
-        };
-    }
-
-    /**
-     * create an ActionListener for applyAll Button
-     * @return ActionListener
-     */
-    private ActionListener addApplyAllListener(final HashMap<String ,Ship> trafic,final HashMap<String ,Ship> selectedShip,final Carte map){
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                saveModificationAll(selectedShip);
-                reload(trafic,selectedShip,map);
-                getPanel().revalidate();
-                getPanel().updateUI();
-            }
-        };
-    }
-
-    /**
-     * create an ActionListener for applySingle Button
-     * @return ActionListener
-     */
-    private ActionListener addApplySingleListener(final HashMap<String ,Ship> trafic,final HashMap<String ,Ship> selectedShip, final String mmsi,final Carte map){
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                tabMap.get(mmsi).saveModificationOne(selectedShip.get(mmsi).getLastKnownMessage());
-                reload(trafic,selectedShip,map);
-                getPanel().revalidate();
-                getPanel().updateUI();
-
-            }
-        };
-    }
-
-//modification save
-
-    /**
-     * Save information modification for all selected vessel
-     */
-    private void saveModificationAll(HashMap<String ,Ship> selectedShip){
-        for(Ship vessel:selectedShip.values()) {
-            tabMap.get(vessel.getLastKnownMessage().getDecode().getMMSI()).saveModificationOne(vessel.getLastKnownMessage());
-        }
-    }
-
-}
-
-
-class DisplayOneShip extends JPanel{
+class DisplayOneMessage extends JPanel {
 
     private JTextField messageTypeText;
     private JTextField repeatIndicatorText;
@@ -165,13 +30,13 @@ class DisplayOneShip extends JPanel{
     private JButton cancelAll=new JButton();
     private JButton applySingle =new JButton();
     private JButton cancelSingle=new JButton();
-     private JPanel display=new JPanel(new BorderLayout());
+    private JPanel display=new JPanel(new BorderLayout());
 
 
-     DisplayOneShip(Message ship){
-         setDisplay(ship);
-         getCancelSingle().addActionListener(addCancelSingleListener(ship));
-     }
+    DisplayOneMessage(Message ship){
+        setDisplay(ship);
+        getCancelSingle().addActionListener(addCancelSingleListener(ship));
+    }
 
     /**
      * generate display of ship information
@@ -185,14 +50,12 @@ class DisplayOneShip extends JPanel{
 
         MessageDecode vessel = ship.getDecode();
         JLabel AISraw=new JLabel(" Raw AIS : "+ship.getAis().getRawData()); // display raw data
-        System.out.println(ship.getAis().getRawData());
         display.add(AISraw,BorderLayout.NORTH);
 
         JPanel panelValue=new JPanel(new GridLayout(0,4));
         JScrollPane scrollPane=new JScrollPane(panelValue); // for reponsive design
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-
 
         // messageType
         JLabel messageTypeLabel = new JLabel("Message Type");
@@ -286,7 +149,7 @@ class DisplayOneShip extends JPanel{
         panelValue.add(initPanelValue(minuteLabel,minutesText));
 
         display.add(scrollPane,BorderLayout.CENTER);
-        display.add(initButton((vessel==null)?"GhostShip":vessel.getMMSI()),BorderLayout.SOUTH);
+        display.add(initButton((vessel==null)?"GhostShip":vessel.getUTCString()),BorderLayout.SOUTH);
     }
 
     /**
@@ -311,10 +174,10 @@ class DisplayOneShip extends JPanel{
         JPanel panelButton=new JPanel();
 
         // set text
-         applyAll.setText("Apply (all)");
-         cancelAll.setText("Cancel (all)");
-         applySingle.setText("Apply ("+mmsi+")");
-         cancelSingle.setText("Cancel ("+mmsi+")");
+       // applyAll.setText("Apply (all)");
+        //cancelAll.setText("Cancel (all)");
+        applySingle.setText("Apply ("+mmsi+")");
+        cancelSingle.setText("Cancel ("+mmsi+")");
 
         // color font
         cancelAll.setForeground(new Color(139, 0, 0));
@@ -324,8 +187,8 @@ class DisplayOneShip extends JPanel{
 
 
         // add to panel
-        panelButton.add(cancelAll);
-        panelButton.add(applyAll);
+        //panelButton.add(cancelAll);
+        //panelButton.add(applyAll);
         panelButton.add(cancelSingle);
         panelButton.add(applySingle);
         return panelButton;
@@ -338,7 +201,7 @@ class DisplayOneShip extends JPanel{
         String defaultValue="0";
         ship.getDecode().setMessageType((messageTypeText.getText()==null)?defaultValue: messageTypeText.getText());
         ship.getDecode().setRepeatIndicator(repeatIndicatorText.getText()==null?defaultValue:repeatIndicatorText.getText());
-       // ship.getDecode().setMMSI(MMSIText.getText()==null?defaultValue:MMSIText.getText());
+        // ship.getDecode().setMMSI(MMSIText.getText()==null?defaultValue:MMSIText.getText());
         ship.getDecode().setNavigationStatus(navigationStatusText.getText()==null?defaultValue:navigationStatusText.getText());
         ship.getDecode().setRateOverTurn(Double.parseDouble(rateOverTurnText.getText()==null?defaultValue:rateOverTurnText.getText()));
         ship.getDecode().setSpeedOverGround(Double.parseDouble(speedOverGroundText.getText()==null?defaultValue:speedOverGroundText.getText()));
@@ -355,7 +218,6 @@ class DisplayOneShip extends JPanel{
         ship.getDecode().setHour(Integer.parseInt(hoursText.getText()==null?defaultValue:hoursText.getText()));
         ship.getDecode().setMinute(Integer.parseInt(minutesText.getText()==null?defaultValue:minutesText.getText()));
         ship.setAis();
-        System.out.println("Modification done");
     }
 
     /**
