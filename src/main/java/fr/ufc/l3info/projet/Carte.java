@@ -161,14 +161,18 @@ public class Carte extends JPanel implements JMapViewerEventListener{
      * print a ship with his old position
      * @param vessel Ship 
      */
-    private void printShip(Ship vessel){
+    private void printShip(Ship vessel,Color color){
         Coordinate lastKnownCoordinate=new Coordinate(vessel.getLastKnownMessage().getDecode().getLatitude(),vessel.getLastKnownMessage().getDecode().getLongitude());
        for (Message message : vessel.getMessages().values()) {
            Coordinate coordinate = new Coordinate(message.getDecode().getLatitude(), message.getDecode().getLongitude());
            MapMarkerDot position = new MapMarkerDot(coordinate.getLat(), coordinate.getLon());
-           if(!lastKnownCoordinate.equals(coordinate)) {
-               position.setColor(Color.green);
-               position.setBackColor(Color.green);
+           if(lastKnownCoordinate.equals(coordinate)) {
+               position.setColor(color);
+               position.setBackColor(color);
+           }else{
+               Color oldPosition=new Color(0,color.getGreen(),color.getBlue());
+               position.setColor(oldPosition);
+               position.setBackColor(oldPosition);
            }
 
             myMap.addMapMarker(position);
@@ -179,11 +183,15 @@ public class Carte extends JPanel implements JMapViewerEventListener{
     /**
      * print all ships
      */
-    private void printTrafic(HashMap<String,Ship> trafic){
+    private void printTrafic(HashMap<String,Ship> trafic,Ship ship){
         if (trafic==null)
             return;
         for (Ship vessel:trafic.values()) {
-            printShip(vessel);
+            if(vessel.equals(ship)){
+                printShip(vessel,new Color(200,100,0));
+            }else{
+                printShip(vessel,new Color(200,0,250));
+            }
         }
     }
 
@@ -191,9 +199,9 @@ public class Carte extends JPanel implements JMapViewerEventListener{
      * Reload the map to display ship after import
      * @param trafic ArrayList<Message>
      */
-    void reloadMap(HashMap<String,Ship> trafic){
+    void reloadMap(HashMap<String,Ship> trafic,Ship ship){
         myMap.removeAllMapMarkers();
-        printTrafic(trafic);
+        printTrafic(trafic,ship);
     }
 
     /**
@@ -201,9 +209,14 @@ public class Carte extends JPanel implements JMapViewerEventListener{
      * @param trafic HashMap<String,Message>
      * @param MMSI String
      */
-    void reloadMap(HashMap<String,Ship> trafic,String MMSI){
-        this.reloadMap(trafic);
-        MapMarkerDot ship=new MapMarkerDot(trafic.get(MMSI).getLastKnownMessage().getDecode().getLatitude(),trafic.get(MMSI).getLastKnownMessage().getDecode().getLongitude());
+    void reloadMap(HashMap<String,Ship> trafic,String MMSI,Message msg){
+        this.reloadMap(trafic,trafic.get(MMSI));
+        MapMarkerDot ship;
+        if (msg==null){
+            ship=new MapMarkerDot(trafic.get(MMSI).getLastKnownMessage().getDecode().getLatitude(),trafic.get(MMSI).getLastKnownMessage().getDecode().getLongitude());
+        }else{
+            ship=new MapMarkerDot(msg.getDecode().getLatitude(),msg.getDecode().getLongitude());
+        }
         setSelectedShip(ship);
     }
 
@@ -213,7 +226,7 @@ public class Carte extends JPanel implements JMapViewerEventListener{
      * @param coordinate Coordinate
      */
     void reloadMap(HashMap<String,Ship> trafic,Coordinate coordinate){
-        this.reloadMap(trafic);
+        this.reloadMap(trafic, (Ship) null);
         MapMarkerDot ship=new MapMarkerDot(coordinate);
         setSelectedShip(ship);
     }

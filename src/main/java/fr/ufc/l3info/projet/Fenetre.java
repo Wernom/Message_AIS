@@ -5,6 +5,7 @@ import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
@@ -125,6 +126,7 @@ class Fenetre {
         //----------
         fenetre.add(menuDeroulant.getPanel(),BorderLayout.WEST);
         fenetre.add(map.getPanel(), BorderLayout.CENTER);
+        fenetre.add(createLegend(),BorderLayout.EAST);
         fenetre.add(displaySelectedShip.getPanel(),BorderLayout.SOUTH);
         fenetre.setVisible(true);
     }
@@ -132,13 +134,54 @@ class Fenetre {
 
     //----------------
 
+    private JPanel createLegend(){
+        JPanel pan=new JPanel(new GridLayout(5,1));
+        JLabel currShip=new JLabel("Selected Ship");
+        currShip.setForeground(new Color(200,100,0));
+        JLabel currMsg=new JLabel("Selected Message");
+        currMsg.setForeground(Color.red);
+        JLabel currLastMsg=new JLabel("Selected Last Message");
+        currLastMsg.setForeground(new Color(0,100,0));
+
+        JLabel otherMsg=new JLabel("Other Message");
+        otherMsg.setForeground(new Color(200,0,250));
+        JLabel otherLastMsg=new JLabel("Other Last Message");
+        otherLastMsg.setForeground(new Color(0,0,250));
+        pan.add(currShip);
+        pan.add(currMsg);
+        pan.add(currLastMsg);
+        pan.add(otherMsg);
+        pan.add(otherLastMsg);
+        Border border;
+        border = BorderFactory.createEtchedBorder();
+        border=BorderFactory.createTitledBorder(border,"Legend :");
+        pan.setBorder(border);
+        return pan;
+    }
+
     /**
      * reload the map after import raw AIS
      */
     private void reloadMap(){
-        map.reloadMap(menuBar.getShips());
+        map.reloadMap(menuBar.getShips(),(Ship)null);
     }
 
+    /**
+     * Check if the user want to close the application
+     */
+    private void validateOnClose(){
+        Object[] options = {"yes, please",
+                "no, thanks"};
+        JOptionPane onQuit=new JOptionPane("Do you want to close the application ?",JOptionPane.WARNING_MESSAGE,JOptionPane.YES_NO_OPTION,null,options);
+        onQuit.createDialog(fenetre,"Warning").setVisible(true);
+        Object res=onQuit.getValue();
+        if(res==options[0]){
+            // do something before close app
+            System.exit(0);
+        }
+    }
+
+    // listener
     /**
      * setup a listener for display the selection of the list of ship
      * @return ListSelectionListener
@@ -161,12 +204,12 @@ class Fenetre {
                     List allShip = menuDeroulant.getListDeroulante().getSelectedValuesList();
                     HashMap<String ,Ship> allSelectedShip=new HashMap<>();
                     for(Object vessel:allShip){
-                        allSelectedShip.put(menuBar.getShip((String)vessel).getLastKnownMessage().getDecode().getMMSI(),menuBar.getShip((String)vessel));
+                        allSelectedShip.put(menuBar.getShip((String)vessel).getMMSI(),menuBar.getShip((String)vessel));
                     }
-                    displaySelectedShip.affichage(allSelectedShip);
+                    displaySelectedShip.affichage(map,menuBar.getShips(),allSelectedShip);
                     displaySelectedShip.getPanel().revalidate();
                     displaySelectedShip.getPanel().updateUI();
-                    map.reloadMap(menuBar.getShips(),mmsi); // centre la map sur le navire selectionné
+                    map.reloadMap(menuBar.getShips(),mmsi,(Message) null); // centre la map sur le navire selectionné
                 }
 
             }
@@ -196,17 +239,13 @@ class Fenetre {
                                 Message msg = new Message(ligne);
                                 if(vessel==null){
                                     vessel = new Ship(msg.getDecode().getMMSI());
-                                    vessel.addMessage(msg);
-                                    menuBar.getShips().put(msg.getDecode().getMMSI(), vessel);
-                                    menuDeroulant.getDefaultList().addElement(msg.getDecode().getMMSI());
+                                    createNewShip(vessel,msg);
                                 }else{
                                     if(vessel.getMMSI().equals(msg.getDecode().getMMSI())){
                                         vessel.addMessage(msg);
                                     }else{
                                         vessel=new Ship(msg.getDecode().getMMSI());
-                                        vessel.addMessage(msg);
-                                        menuBar.getShips().put(msg.getDecode().getMMSI(), vessel);
-                                        menuDeroulant.getDefaultList().addElement(msg.getDecode().getMMSI());
+                                        createNewShip(vessel,msg);
                                     }
                                 }
 
@@ -224,19 +263,10 @@ class Fenetre {
         };
     }
 
-    /**
-     * Check if the user want to close the application
-     */
-    private void validateOnClose(){
-        Object[] options = {"yes, please",
-                "no, thanks"};
-        JOptionPane onQuit=new JOptionPane("Do you want to close the application ?",JOptionPane.WARNING_MESSAGE,JOptionPane.YES_NO_OPTION,null,options);
-        onQuit.createDialog(fenetre,"Warning").setVisible(true);
-        Object res=onQuit.getValue();
-        if(res==options[0]){
-            // do something before close app
-            System.exit(0);
-        }
+    private void createNewShip(Ship vessel,Message msg){
+        vessel.addMessage(msg);
+        menuBar.getShips().put(msg.getDecode().getMMSI(), vessel);
+        menuDeroulant.getDefaultList().addElement(msg.getDecode().getMMSI());
     }
 
     /**
