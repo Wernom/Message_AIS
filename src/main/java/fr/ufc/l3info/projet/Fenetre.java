@@ -86,12 +86,17 @@ class Fenetre {
                         fichier.createNewFile();
                         final FileWriter writer = new FileWriter(fichier);
                         try {
-                            /*for (menuBar.getMessages() :
-                                 ) {
-                                
-                            }*/
-                            writer.write("Test\n");
-                        } finally {
+                            List selectedShip = menuDeroulant.getListDeroulante().getSelectedValuesList();
+                            BufferedWriter bw = new BufferedWriter(writer);
+                            for (Object item : selectedShip) {
+                                String content = menuBar.getShip((String) item).getLastKnownMessage().getDecode().printMessage();
+                                bw.write(content);
+                                bw.newLine();
+                                System.out.println(content);
+                            }
+                            bw.close();
+                            writer.close();
+                            } finally {
                             writer.close();
                         }
                     } catch (Exception ex) {

@@ -26,11 +26,11 @@ class MessageDecode {
     private int minute;
 
 
-    public void setMessageType(String messageType) {
+    void setMessageType(String messageType) {
         this.messageType = messageType;
     }
 
-    public void setRepeatIndicator(String repeatIndicator) {
+     void setRepeatIndicator(String repeatIndicator) {
         this.repeatIndicator = repeatIndicator;
     }
 
@@ -38,59 +38,59 @@ class MessageDecode {
         this.MMSI = MMSI;
     }
 
-    public void setNavigationStatus(String navigationStatus) {
+     void setNavigationStatus(String navigationStatus) {
         this.navigationStatus = navigationStatus;
     }
 
-    public void setSpeedOverGround(double speedOverGround) {
+     void setSpeedOverGround(double speedOverGround) {
         this.speedOverGround = speedOverGround;
     }
 
-    public void setPositiontionAccuracy(String positiontionAccuracy) {
+     void setPositiontionAccuracy(String positiontionAccuracy) {
         this.positiontionAccuracy = positiontionAccuracy;
     }
 
-    public void setLongitude(double longitude) {
+    void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 
-    public void setLatitude(double latitude) {
+     void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
-    public void setCourseOverGroud(double courseOverGroud) {
+     void setCourseOverGroud(double courseOverGroud) {
         this.courseOverGroud = courseOverGroud;
     }
 
-    public void setRateOverTurn(double rateOverTurn) {
+     void setRateOverTurn(double rateOverTurn) {
         this.rateOverTurn = rateOverTurn;
     }
 
-    public void setTrueHeading(String trueHeading) {
+     void setTrueHeading(String trueHeading) {
         this.trueHeading = trueHeading;
     }
 
-    public void setTimeStamp(String timeStamp) {
+     void setTimeStamp(String timeStamp) {
         this.timeStamp = timeStamp;
     }
 
-    public void setManeuverIndicator(String maneuverIndicator) {
+     void setManeuverIndicator(String maneuverIndicator) {
         this.maneuverIndicator = maneuverIndicator;
     }
 
-    public void setSpare(String spare) {
+     void setSpare(String spare) {
         this.spare = spare;
     }
 
-    public void setRAIMflag(String RAIMflag) {
+     void setRAIMflag(String RAIMflag) {
         this.RAIMflag = RAIMflag;
     }
 
-    public void setRadioStatus(String radioStatus) {
+     void setRadioStatus(String radioStatus) {
         this.radioStatus = radioStatus;
     }
 
-    public void setMinute(int minute) {
+     void setMinute(int minute) {
         String binRadioStatus = Integer.toBinaryString(Integer.parseInt(this.radioStatus));
         int offcet = 10 - (19 - binRadioStatus.length());
         System.out.println(addZeroToReachNbit(Integer.toBinaryString(minute), 7));
@@ -233,10 +233,11 @@ class MessageDecode {
         return this.hour * 100 + this.minute;
     }
 
-    void printMessage(String fileName) {
+    String printMessage() {
 
         String content = this.messageType + ',' + this.repeatIndicator + ',' + this.MMSI + ',' + this.navigationStatus + ',' + ',' + this.speedOverGround + ',' + this.positiontionAccuracy + ',' + this.longitude + ',' + this.latitude + ',' + this.courseOverGroud + ',' + this.trueHeading + ',' + this.timeStamp + ',' + this.maneuverIndicator + ',' + this.spare + ',' + this.RAIMflag + ',' + this.radioStatus;
-        try {
+        return content;
+        /*try {
             File file = new File(fileName);
 
             if (!file.exists()) {
@@ -255,7 +256,7 @@ class MessageDecode {
 
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     private String addZeroToReachNbit(String ascii, int n) {
