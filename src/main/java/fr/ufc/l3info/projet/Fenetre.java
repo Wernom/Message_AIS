@@ -126,7 +126,6 @@ class Fenetre {
         //----------
         fenetre.add(menuDeroulant.getPanel(),BorderLayout.WEST);
         fenetre.add(map.getPanel(), BorderLayout.CENTER);
-        fenetre.add(createLegend(),BorderLayout.EAST);
         fenetre.add(displaySelectedShip.getPanel(),BorderLayout.SOUTH);
         fenetre.setVisible(true);
     }
@@ -134,30 +133,7 @@ class Fenetre {
 
     //----------------
 
-    private JPanel createLegend(){
-        JPanel pan=new JPanel(new GridLayout(5,1));
-        JLabel currShip=new JLabel("Selected Ship");
-        currShip.setForeground(new Color(200,100,0));
-        JLabel currMsg=new JLabel("Selected Message");
-        currMsg.setForeground(Color.red);
-        JLabel currLastMsg=new JLabel("Selected Last Message");
-        currLastMsg.setForeground(new Color(0,100,0));
 
-        JLabel otherMsg=new JLabel("Other Message");
-        otherMsg.setForeground(new Color(200,0,250));
-        JLabel otherLastMsg=new JLabel("Other Last Message");
-        otherLastMsg.setForeground(new Color(0,0,250));
-        pan.add(currShip);
-        pan.add(currMsg);
-        pan.add(currLastMsg);
-        pan.add(otherMsg);
-        pan.add(otherLastMsg);
-        Border border;
-        border = BorderFactory.createEtchedBorder();
-        border=BorderFactory.createTitledBorder(border,"Legend :");
-        pan.setBorder(border);
-        return pan;
-    }
 
     /**
      * reload the map after import raw AIS

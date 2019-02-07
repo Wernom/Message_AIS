@@ -12,7 +12,6 @@ class DisplayOneShip extends JPanel{
     private JPanel info=new JPanel(new BorderLayout());
     private JList listDeroulante;
     private DefaultListModel<String> defaultList;
-    //private HashMap<String,DisplayOneMessage> tabMap=new HashMap<>();
 
     /**
      * constructor

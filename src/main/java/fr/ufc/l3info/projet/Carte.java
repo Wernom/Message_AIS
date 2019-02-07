@@ -51,6 +51,7 @@ public class Carte extends JPanel implements JMapViewerEventListener{
         border = BorderFactory.createLineBorder(Color.black);
         myMap.setBorder(border);
         panel.add(myMap, BorderLayout.CENTER);
+        panel.add(createLegend(),BorderLayout.SOUTH);
         panel.setBorder(border);
     }
 
@@ -156,6 +157,43 @@ public class Carte extends JPanel implements JMapViewerEventListener{
         return checkBoxPanel;
     }
     //---------------------
+
+    private JPanel createLegend(){
+        JPanel pan=new JPanel(new GridLayout(1,5));
+
+        Border border;
+        border = BorderFactory.createEtchedBorder();
+        border=BorderFactory.createTitledBorder(border,"Legend :");
+        pan.setBorder(border);
+
+        JLabel currShip=new JLabel("Selected Ship");
+        currShip.setHorizontalTextPosition(JLabel.LEFT);
+        currShip.setForeground(new Color(200,100,0));
+
+        JLabel currMsg=new JLabel("Selected Message");
+        currMsg.setHorizontalTextPosition(JLabel.LEFT);
+        currMsg.setForeground(Color.red);
+
+        JLabel currLastMsg=new JLabel("Selected Last Message ");
+        currLastMsg.setHorizontalTextPosition(JLabel.LEFT);
+        currLastMsg.setForeground(new Color(0,100,0));
+
+        JLabel otherMsg=new JLabel("Other Message");
+        otherMsg.setHorizontalTextPosition(JLabel.LEFT);
+        otherMsg.setForeground(new Color(200,0,250));
+
+        JLabel otherLastMsg=new JLabel("Other Last Message");
+        otherLastMsg.setHorizontalTextPosition(JLabel.LEFT);
+        otherLastMsg.setForeground(new Color(0,0,250));
+
+        pan.add(currShip);
+        pan.add(currMsg);
+        pan.add(currLastMsg);
+        pan.add(otherMsg);
+        pan.add(otherLastMsg);
+
+        return pan;
+    }
 
     /**
      * print a ship with his old position
