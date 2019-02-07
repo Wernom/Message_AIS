@@ -41,7 +41,10 @@ class DisplayOneShip extends JPanel{
         for (Message msg:ship.getMessages().values()) {
             defaultList.addElement(msg.getDecode().getUTCString());
         }
-        listPan.add(listDeroulante);
+        JScrollPane scrollPane=new JScrollPane(listDeroulante);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        listPan.add(scrollPane);
     }
 
     void reload( HashMap<String ,Message> selectedMessage){

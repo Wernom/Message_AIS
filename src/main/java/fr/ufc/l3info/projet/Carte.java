@@ -180,11 +180,11 @@ public class Carte extends JPanel implements JMapViewerEventListener{
 
         JLabel otherMsg=new JLabel("Other Message");
         otherMsg.setHorizontalTextPosition(JLabel.LEFT);
-        otherMsg.setForeground(new Color(200,0,250));
+        otherMsg.setForeground(new Color(0,0,250));
 
         JLabel otherLastMsg=new JLabel("Other Last Message");
         otherLastMsg.setHorizontalTextPosition(JLabel.LEFT);
-        otherLastMsg.setForeground(new Color(0,0,250));
+        otherLastMsg.setForeground(new Color(200,0,250));
 
         pan.add(currShip);
         pan.add(currMsg);

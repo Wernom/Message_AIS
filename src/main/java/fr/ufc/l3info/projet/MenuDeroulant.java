@@ -33,9 +33,13 @@ class MenuDeroulant extends JPanel {
         defaultList=new DefaultListModel<>();
         listDeroulante = new JList<>(defaultList);
         listDeroulante.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        listDeroulante.setVisibleRowCount(-1);
         listDeroulante.setLayoutOrientation(JList.VERTICAL);
         defaultList.addElement("<none>");
-        panel.add(listDeroulante,BorderLayout.CENTER);
+        JScrollPane scrollPane=new JScrollPane(listDeroulante);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        panel.add(scrollPane,BorderLayout.CENTER);
     }
 
     /**
