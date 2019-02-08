@@ -28,7 +28,6 @@ class Fenetre {
     Fenetre(){
         menuBar = new Menu();
 
-        // faire une fonction pour la lisibilité
         menuBar.getMenuItem().addActionListener(importListener());
 
         // faire une fonction pour la lisibilité
@@ -201,18 +200,41 @@ class Fenetre {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 JFileChooser fc = new JFileChooser();
                 if (fc.showOpenDialog(menuBar.getMenu()) == JFileChooser.APPROVE_OPTION) {
+                    boolean rawData;
                     try {
-                        InputStream flux = new FileInputStream(fc.getSelectedFile());
+                        //verification
+                        File fic=fc.getSelectedFile();
+                        if(fic.getName().matches(".*(.raw)$")){
+                            rawData=true;
+                        }else if(fic.getName().matches(".*(.csv)$")){
+                            rawData=false;
+                            JOptionPane onImport=new JOptionPane("This feature must be added soon.\nSorry for the incovenience",JOptionPane.WARNING_MESSAGE);
+                            onImport.createDialog(fenetre,"Warning").setVisible(true);
+                            return;
+
+                        }else {
+                            // popup the File Extension must be "File.raw" or "File.csv"
+                            JOptionPane onImport=new JOptionPane("File Extension must be \"File.raw\" or \"File.csv\"",JOptionPane.ERROR_MESSAGE);
+                            onImport.createDialog(fenetre,"Error").setVisible(true);
+                            return;
+                        }
+                        //import
+                        InputStream flux = new FileInputStream(fic);
                         InputStreamReader lecture = new InputStreamReader(flux);
                         BufferedReader buff = new BufferedReader(lecture);
+
                         String ligne;
                         Ship vessel = null;
                         while ((ligne = buff.readLine()) != null) {
                             try {
-                                Message msg = new Message(ligne);
+                                Message msg;
+                                if(rawData) {
+                                     msg = new Message(ligne);
+                                }else {
+                                    msg=createMessageFromCsv(ligne);
+                                }
                                 if(vessel==null){
                                     vessel = new Ship(msg.getDecode().getMMSI());
                                     createNewShip(vessel,msg);
@@ -239,6 +261,22 @@ class Fenetre {
         };
     }
 
+    /**
+     * Create Message on CSV import
+     * @param ligne String
+     * @return Message
+     */
+    private Message createMessageFromCsv(String ligne){
+        String []strTab=ligne.split(",");
+        // TODO
+        return new Message(strTab);
+    }
+
+    /**
+     * Create new ship on import
+     * @param vessel Ship
+     * @param msg Message
+     */
     private void createNewShip(Ship vessel,Message msg){
         vessel.addMessage(msg);
         menuBar.getShips().put(msg.getDecode().getMMSI(), vessel);
