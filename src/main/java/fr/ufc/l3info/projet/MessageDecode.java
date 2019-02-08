@@ -1,10 +1,5 @@
 package fr.ufc.l3info.projet;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
 class MessageDecode {
     private String messageType;
     private String repeatIndicator;
@@ -30,7 +25,7 @@ class MessageDecode {
         this.messageType = messageType;
     }
 
-     void setRepeatIndicator(String repeatIndicator) {
+    void setRepeatIndicator(String repeatIndicator) {
         this.repeatIndicator = repeatIndicator;
     }
 
@@ -38,15 +33,15 @@ class MessageDecode {
         this.MMSI = MMSI;
     }
 
-     void setNavigationStatus(String navigationStatus) {
+    void setNavigationStatus(String navigationStatus) {
         this.navigationStatus = navigationStatus;
     }
 
-     void setSpeedOverGround(double speedOverGround) {
+    void setSpeedOverGround(double speedOverGround) {
         this.speedOverGround = speedOverGround;
     }
 
-     void setPositiontionAccuracy(String positiontionAccuracy) {
+    void setPositiontionAccuracy(String positiontionAccuracy) {
         this.positiontionAccuracy = positiontionAccuracy;
     }
 
@@ -54,66 +49,59 @@ class MessageDecode {
         this.longitude = longitude;
     }
 
-     void setLatitude(double latitude) {
+    void setLatitude(double latitude) {
         this.latitude = latitude;
     }
 
-     void setCourseOverGroud(double courseOverGroud) {
+    void setCourseOverGroud(double courseOverGroud) {
         this.courseOverGroud = courseOverGroud;
     }
 
-     void setRateOverTurn(double rateOverTurn) {
+    void setRateOverTurn(double rateOverTurn) {
         this.rateOverTurn = rateOverTurn;
     }
 
-     void setTrueHeading(String trueHeading) {
+    void setTrueHeading(String trueHeading) {
         this.trueHeading = trueHeading;
     }
 
-     void setTimeStamp(String timeStamp) {
+    void setTimeStamp(String timeStamp) {
         this.timeStamp = timeStamp;
     }
 
-     void setManeuverIndicator(String maneuverIndicator) {
+    void setManeuverIndicator(String maneuverIndicator) {
         this.maneuverIndicator = maneuverIndicator;
     }
 
-     void setSpare(String spare) {
+    void setSpare(String spare) {
         this.spare = spare;
     }
 
-     void setRAIMflag(String RAIMflag) {
+    void setRAIMflag(String RAIMflag) {
         this.RAIMflag = RAIMflag;
     }
 
-     void setRadioStatus(String radioStatus) {
+    void setRadioStatus(String radioStatus) {
         this.radioStatus = radioStatus;
     }
 
-     void setMinute(int minute) {
+    void setMinute(int minute) {
         String binRadioStatus = Integer.toBinaryString(Integer.parseInt(this.radioStatus));
         int offcet = 10 - (19 - binRadioStatus.length());
-        System.out.println(addZeroToReachNbit(Integer.toBinaryString(minute), 7));
         String before = binRadioStatus.substring(0, offcet);
         String after = binRadioStatus.substring(offcet + 7);
         this.minute = Integer.parseInt(addZeroToReachNbit(Integer.toBinaryString(minute), 7), 2);
         this.radioStatus = String.valueOf(Integer.parseInt(before + addZeroToReachNbit(Integer.toBinaryString(minute), 7) + after, 2));
-        System.out.println(this.minute + "\t" + this.radioStatus);
-
     }
 
     void setHour(int hour) {
         String binRadioStatus = Integer.toBinaryString(Integer.parseInt(this.radioStatus));
         int offcet = 5 - (19 - binRadioStatus.length());
-        System.out.println(addZeroToReachNbit(Integer.toBinaryString(hour), 5));
         String before = binRadioStatus.substring(0, offcet);
         String after = binRadioStatus.substring(offcet + 5);
         String binHour = addZeroToReachNbit(Integer.toBinaryString(hour), 5);
-        System.out.println(before+'\t' +after);
         this.hour = Integer.parseInt(binHour, 2);
         this.radioStatus = String.valueOf(Integer.parseInt(before + binHour + after, 2));
-        System.out.println(this.hour + "\t" + this.radioStatus);
-
     }
 
 
