@@ -9,6 +9,7 @@ class MenuDeroulant extends JPanel {
         List of ship import from source file
      */
     private JPanel panel;
+    private JComboBox<String> possibilitiesModifications;
     private JList listDeroulante;
     private DefaultListModel<String> defaultList;
 
@@ -18,12 +19,10 @@ class MenuDeroulant extends JPanel {
     MenuDeroulant() {
         panel = new JPanel(new BorderLayout());
         add(panel,BorderLayout.CENTER);
-        Border border ;
-        border = BorderFactory.createEtchedBorder();
-        border = BorderFactory.createTitledBorder(border,"Ship List");
-        panel.setBorder(border);
-        panel.setPreferredSize(new Dimension(100,0));
+        add(panel,BorderLayout.SOUTH);
+        panel.setPreferredSize(new Dimension(125,0));
         initList();
+        initPossibilities();
     }
 
     /**
@@ -39,7 +38,25 @@ class MenuDeroulant extends JPanel {
         JScrollPane scrollPane=new JScrollPane(listDeroulante);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        Border border ;
+        border = BorderFactory.createEtchedBorder();
+        border = BorderFactory.createTitledBorder(border,"Ship List");
+        scrollPane.setBorder(border);
         panel.add(scrollPane,BorderLayout.CENTER);
+    }
+
+    /**
+     * initialize list of possibilities
+     */
+    private void initPossibilities(){
+        String[] possibilities={"Hard","Propagation"};
+        possibilitiesModifications=new JComboBox<>(possibilities);
+        Border border ;
+        border = BorderFactory.createEmptyBorder();
+        border = BorderFactory.createTitledBorder(border,"Modification type :");
+        possibilitiesModifications.setBorder(border);
+        possibilitiesModifications.setSelectedIndex(0);
+        panel.add(possibilitiesModifications,BorderLayout.SOUTH);
     }
 
     /**
@@ -63,5 +80,11 @@ class MenuDeroulant extends JPanel {
         return defaultList;
     }
 
+    /**
+     * @return JComboBox
+     */
+    public JComboBox getPossibilitiesModifications() {
+        return possibilitiesModifications;
+    }
 }
 

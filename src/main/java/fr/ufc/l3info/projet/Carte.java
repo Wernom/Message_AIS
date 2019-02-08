@@ -25,6 +25,12 @@ public class Carte extends JPanel implements JMapViewerEventListener{
     private JLabel mperpLabelName;
     private JLabel mperpLabelValue;
 
+    private Color currentSelectedMessageColor=new Color(179,0, 9);
+    private Color currentLastMessageRecieveColor=new Color(234, 179,0);
+    private Color currentSelectedShipColor=new Color(184, 75, 0, 193);
+    private Color otherMessageColor=new Color(0, 4, 176, 255);
+    private Color otherLastMessageReceiveColor=new Color(0, 117, 168);
+
 
     /**
      * Setups the JFrame layout, sets some default options for the JMapViewerTree and displays a map in the window.
@@ -168,29 +174,29 @@ public class Carte extends JPanel implements JMapViewerEventListener{
 
         JLabel currShip=new JLabel("Selected Ship");
         currShip.setHorizontalTextPosition(JLabel.LEFT);
-        currShip.setForeground(new Color(200,100,0));
+        currShip.setForeground(currentSelectedShipColor);
 
         JLabel currMsg=new JLabel("Selected Message");
         currMsg.setHorizontalTextPosition(JLabel.LEFT);
-        currMsg.setForeground(Color.red);
+        currMsg.setForeground(currentSelectedMessageColor);
 
         JLabel currLastMsg=new JLabel("Selected Last Message ");
         currLastMsg.setHorizontalTextPosition(JLabel.LEFT);
-        currLastMsg.setForeground(new Color(0,100,0));
+        currLastMsg.setForeground(currentLastMessageRecieveColor);
 
         JLabel otherMsg=new JLabel("Other Message");
         otherMsg.setHorizontalTextPosition(JLabel.LEFT);
-        otherMsg.setForeground(new Color(0,0,250));
+        otherMsg.setForeground(otherMessageColor);
 
         JLabel otherLastMsg=new JLabel("Other Last Message");
         otherLastMsg.setHorizontalTextPosition(JLabel.LEFT);
-        otherLastMsg.setForeground(new Color(200,0,250));
+        otherLastMsg.setForeground(otherLastMessageReceiveColor);
 
-        pan.add(currShip);
         pan.add(currMsg);
         pan.add(currLastMsg);
-        pan.add(otherMsg);
+        pan.add(currShip);
         pan.add(otherLastMsg);
+        pan.add(otherMsg);
 
         return pan;
     }
@@ -199,20 +205,28 @@ public class Carte extends JPanel implements JMapViewerEventListener{
      * print a ship with his old position
      * @param vessel Ship 
      */
-    private void printShip(Ship vessel,Color color){
+    private void printShip(Ship vessel,boolean isSelected){
         Coordinate lastKnownCoordinate=new Coordinate(vessel.getLastKnownMessage().getDecode().getLatitude(),vessel.getLastKnownMessage().getDecode().getLongitude());
        for (Message message : vessel.getMessages().values()) {
            Coordinate coordinate = new Coordinate(message.getDecode().getLatitude(), message.getDecode().getLongitude());
            MapMarkerDot position = new MapMarkerDot(coordinate.getLat(), coordinate.getLon());
-           if(lastKnownCoordinate.equals(coordinate)) {
-               position.setColor(color);
-               position.setBackColor(color);
+           if(isSelected) {
+               if (lastKnownCoordinate.equals(coordinate)) {
+                   //position.setColor(currentLastMessageRecieveColor);
+                   position.setBackColor(currentLastMessageRecieveColor);
+               } else {
+                   //position.setColor(currentSelectedShipColor);
+                   position.setBackColor(currentSelectedShipColor);
+               }
            }else{
-               Color oldPosition=new Color(0,color.getGreen(),color.getBlue());
-               position.setColor(oldPosition);
-               position.setBackColor(oldPosition);
+               if (lastKnownCoordinate.equals(coordinate)) {
+                   //position.setColor(otherLastMessageReceiveColor);
+                   position.setBackColor(otherLastMessageReceiveColor);
+               } else {
+                   //position.setColor(otherMessageColor);
+                   position.setBackColor(otherMessageColor);
+               }
            }
-
             myMap.addMapMarker(position);
 
        }
@@ -226,9 +240,9 @@ public class Carte extends JPanel implements JMapViewerEventListener{
             return;
         for (Ship vessel:trafic.values()) {
             if(vessel.equals(ship)){
-                printShip(vessel,new Color(200,100,0));
+                printShip(vessel,true);
             }else{
-                printShip(vessel,new Color(200,0,250));
+                printShip(vessel,false);
             }
         }
     }
