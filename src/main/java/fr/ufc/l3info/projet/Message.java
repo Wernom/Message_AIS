@@ -306,4 +306,8 @@ class Message {
 
         return res.toString();
     }
+
+    public String toString(){
+        return this.ais.toString() + this.decode.toString();
+    }
 }
