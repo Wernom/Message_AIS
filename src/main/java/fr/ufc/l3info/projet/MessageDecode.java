@@ -291,6 +291,7 @@ class MessageDecode {
                 ", \n\tspare='" + spare + '\'' +
                 ", \n\tRAIMflag='" + RAIMflag + '\'' +
                 ", \n\tradioStatus='" + radioStatus + '\'' +
-                "\n\t}";
+                ", \n\ttime='" + this.getUTCString() + '\'' +
+                "\n\t}\n";
     }
 }
