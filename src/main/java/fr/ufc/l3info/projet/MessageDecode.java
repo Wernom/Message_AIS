@@ -233,7 +233,9 @@ class MessageDecode {
         return this.hour * 100 + this.minute;
     }
 
-    String getUTCString(){return this.hour +"h"+ this.minute;}
+    String getUTCString() {
+        return (this.hour < 10 ? "0" + this.hour : this.hour) + "h" + (this.minute < 10 ? "0" + this.minute : this.minute);
+    }
 
     String printMessage() {
 
