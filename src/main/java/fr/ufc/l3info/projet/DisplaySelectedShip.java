@@ -21,8 +21,8 @@ class DisplaySelectedShip extends JPanel {
      * update ship information with selection
      */
    DisplaySelectedShip(){
-        add(panel,BorderLayout.CENTER);
-        panel.setPreferredSize(new Dimension(0,300));
+        add(panel);
+        info.setPreferredSize(new Dimension(0,300));
         initPanelInfo();
         panel.add(info,BorderLayout.CENTER);
    }
@@ -32,7 +32,7 @@ class DisplaySelectedShip extends JPanel {
      * @return JPanel
      */
     JPanel getPanel() {
-        return panel;
+        return info;
     }
 
 // initializer

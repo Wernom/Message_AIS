@@ -117,7 +117,6 @@ class Fenetre {
 
         // creation de la partie modification des message AIS en bas
         displaySelectedShip = new DisplaySelectedShip();
-        //displaySelectedShip.getPanel().setPreferredSize(new Dimension(0,300));
 
         // affichage
         //----------
@@ -168,11 +167,9 @@ class Fenetre {
                 if(!e.getValueIsAdjusting()){ // lors de la section d'un ou plusieur item de la liste deroulante
                     String mmsi=(String)menuDeroulant.getListDeroulante().getSelectedValue();
                     if(mmsi.equals("<none>")){
-                        fenetre.remove(displaySelectedShip);
-                        displaySelectedShip =new DisplaySelectedShip();
-                        //displaySelectedShip.getPanel().setPreferredSize(new Dimension(0,200));
-                        fenetre.add(displaySelectedShip.getPanel(),BorderLayout.SOUTH);
-                        fenetre.revalidate();
+                        displaySelectedShip.getPanel().removeAll();
+                        displaySelectedShip.getPanel().revalidate();
+                        displaySelectedShip.getPanel().updateUI();
                         reloadMap();
                         return;
                     }
