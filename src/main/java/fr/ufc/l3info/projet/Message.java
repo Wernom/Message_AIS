@@ -48,7 +48,7 @@ class Message {
         return new MessageDecode(messageType, repeatIndicator, MMSI, navigationStatus, rateOverTurn, speedOverGround, positiontionAccuracy, longitude, latitude, courseOverGroud, trueHeading, timeStamp, maneuverIndicator, spare, RAIMflag, radioStatus, hour, minute);
     }
 
-    private void encode() {
+    void encode() {
         String aisRaw = "";
         String aisBin;
         switch (this.decode.getMessageType()) {
