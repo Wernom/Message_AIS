@@ -93,7 +93,7 @@ class MessageAIS {
         return "MessageAIS{" + "\n" +
                 "\trawData = '" + rawData + '\'' + ",\n" +
                 "\trawDataPayloadBin = '" + rawDataPayloadBin + "\'\n" +
-                '}';
+                "}\n";
     }
 
     public String getBeforePayload() {
