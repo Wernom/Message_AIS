@@ -1,12 +1,12 @@
 package fr.ufc.l3info.projet;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 class DisplayOneMessage extends JPanel {
 
+    // ais info
     private JTextField messageTypeText;
     private JTextField repeatIndicatorText;
     private JTextField MMSIText;
@@ -26,30 +26,84 @@ class DisplayOneMessage extends JPanel {
     private JTextField hoursText;
     private JTextField minutesText;
 
+    //time interval JTextField
+    private JTextField hourFrom=new JTextField();
+    private JTextField minuteFrom=new JTextField();
+    private JTextField hourTo=new JTextField();
+    private JTextField minuteTo=new JTextField();
+
+    // button
     private JButton applyAll=new JButton();
     private JButton cancelAll=new JButton();
     private JButton applySingle =new JButton();
     private JButton cancelSingle=new JButton();
+
+    // panel
+    private JPanel timeIntervalPanel=new JPanel();
     private JPanel display=new JPanel(new BorderLayout());
+    private JPanel info=new JPanel(new BorderLayout());
 
+    /**
+     * Constructor
+     * @param message Message
+     */
+    DisplayOneMessage(Message message){
+        setTimeIntervalPanel(message);
+        setDisplay(message);
+        info.add(timeIntervalPanel,BorderLayout.NORTH);
+        info.add(display,BorderLayout.CENTER);
+    }
 
-    DisplayOneMessage(Message ship){
-        setDisplay(ship);
-        getCancelSingle().addActionListener(addCancelSingleListener(ship));
+    /**
+     * Create panel for periode modification
+     * @param msg Message
+     */
+    private void setTimeIntervalPanel(Message msg){
+        int nbColumns=4;
+        hourFrom.setColumns(nbColumns);
+        minuteFrom.setColumns(nbColumns);
+        hourTo.setColumns(nbColumns);
+        minuteTo.setColumns(nbColumns);
+
+        hourFrom.setText(Integer.toString(msg.getDecode().getHour()));
+        minuteFrom.setText(Integer.toString(msg.getDecode().getMinute()));
+        hourTo.setText(Integer.toString(msg.getDecode().getHour()));
+        minuteTo.setText(Integer.toString(msg.getDecode().getMinute()));
+
+        createTimeDisplay("From :",hourFrom,minuteFrom);
+        createTimeDisplay("To :",hourTo,minuteTo);
+    }
+
+    /**
+     * create Jpanel to display hour and minute
+     * @param label String
+     * @param hour JTextField
+     * @param minute JTextField
+     */
+    private void createTimeDisplay(String label,JTextField hour,JTextField minute){
+        JPanel jPanel=new JPanel();
+        Border border ;
+        border = BorderFactory.createEtchedBorder();
+        border = BorderFactory.createTitledBorder(border,label);
+        jPanel.add(hour);
+        jPanel.add(new JLabel("h"));
+        jPanel.add(minute);
+        jPanel.setBorder(border);
+        timeIntervalPanel.add(jPanel);
     }
 
     /**
      * generate display of ship information
-     * @param ship Message AIS data
+     * @param message Message AIS data
      */
-    private void setDisplay(Message ship){
+    private void setDisplay(Message message){
         display.removeAll();
         add(display,BorderLayout.NORTH);
         add(display,BorderLayout.CENTER);
         add(display,BorderLayout.SOUTH);
 
-        MessageDecode vessel = ship.getDecode();
-        JLabel AISraw=new JLabel(" Raw AIS : "+ship.getAis().getRawData()); // display raw data
+        MessageDecode vessel = message.getDecode();
+        JLabel AISraw=new JLabel(" Raw AIS : "+message.getAis().getRawData()); // display raw data
         display.add(AISraw,BorderLayout.NORTH);
 
         JPanel panelValue=new JPanel(new GridLayout(0,4));
@@ -144,7 +198,7 @@ class DisplayOneMessage extends JPanel {
         panelValue.add(initPanelValue(hourLabel,hoursText));
 
         // minutes
-        JLabel minuteLabel = new JLabel("Hour");
+        JLabel minuteLabel = new JLabel("Minute");
         minutesText = new JTextField((vessel==null)?"":String.valueOf(vessel.getMinute()));
         panelValue.add(initPanelValue(minuteLabel,minutesText));
 
@@ -197,42 +251,49 @@ class DisplayOneMessage extends JPanel {
     /**
      * Save information modification for one selected vessel
      */
-    void saveModificationOne(Message ship) {
-        String defaultValue="0";
-        ship.getDecode().setMessageType((messageTypeText.getText()==null)?defaultValue: messageTypeText.getText());
-        ship.getDecode().setRepeatIndicator(repeatIndicatorText.getText()==null?defaultValue:repeatIndicatorText.getText());
-        // ship.getDecode().setMMSI(MMSIText.getText()==null?defaultValue:MMSIText.getText());
-        ship.getDecode().setNavigationStatus(navigationStatusText.getText()==null?defaultValue:navigationStatusText.getText());
-        ship.getDecode().setRateOverTurn(Double.parseDouble(rateOverTurnText.getText()==null?defaultValue:rateOverTurnText.getText()));
-        ship.getDecode().setSpeedOverGround(Double.parseDouble(speedOverGroundText.getText()==null?defaultValue:speedOverGroundText.getText()));
-        ship.getDecode().setPositiontionAccuracy(positiontionAccuracyText.getText()==null?defaultValue:positiontionAccuracyText.getText());
-        ship.getDecode().setLongitude(Double.parseDouble(longitudeText.getText()==null?defaultValue:longitudeText.getText()));
-        ship.getDecode().setLatitude(Double.parseDouble(latitudeText.getText()==null?defaultValue:latitudeText.getText()));
-        ship.getDecode().setCourseOverGroud(Double.parseDouble(courseOverGroudText.getText()==null?defaultValue:courseOverGroudText.getText()));
-        ship.getDecode().setTrueHeading(trueHeadingText.getText()==null?defaultValue:trueHeadingText.getText());
-        ship.getDecode().setTimeStamp(timeStampText.getText()==null?defaultValue:timeStampText.getText());
-        ship.getDecode().setManeuverIndicator(maneuverIndicatorText.getText()==null?defaultValue:maneuverIndicatorText.getText());
-        ship.getDecode().setSpare(spareText.getText()==null?defaultValue:spareText.getText());
-        ship.getDecode().setRAIMflag(RAIMflagText.getText()==null?defaultValue:RAIMflagText.getText());
-        ship.getDecode().setRadioStatus(radioStatusText.getText()==null?defaultValue:radioStatusText.getText());
-        ship.getDecode().setHour(Integer.parseInt(hoursText.getText()==null?defaultValue:hoursText.getText()));
-        ship.getDecode().setMinute(Integer.parseInt(minutesText.getText()==null?defaultValue:minutesText.getText()));
-        ship.setAis();
+    void saveModificationOne(Ship ship) {
+        ship.staticRangeModification(repeatIndicatorText.getText(),
+                navigationStatusText.getText(),
+                getDoubleToAppliedModification(rateOverTurnText.getText()),
+                getDoubleToAppliedModification(speedOverGroundText.getText()),
+                positiontionAccuracyText.getText(),
+                getDoubleToAppliedModification(longitudeText.getText()),
+                getDoubleToAppliedModification(latitudeText.getText()),
+                getDoubleToAppliedModification(courseOverGroudText.getText()),
+                trueHeadingText.getText(),
+                timeStampText.getText(),
+                maneuverIndicatorText.getText(),
+                spareText.getText(),
+                RAIMflagText.getText(),
+                radioStatusText.getText(),
+                getIntToAppliedModification(hoursText.getText()),
+                getIntToAppliedModification(minutesText.getText()),
+                getIntToAppliedModification(hourFrom.getText()),
+                getIntToAppliedModification(minuteFrom.getText()),
+                getIntToAppliedModification(hourTo.getText()),
+                getIntToAppliedModification(minuteTo.getText())
+        );
+        PopUp.information(info.getParent().getParent(),"Modification done !");
     }
 
     /**
-     * create an ActionListener for cancelSingle Button
-     * @return ActionListener
+     * get Integer value from String
+     * @param text String
+     * @return int
      */
-    private ActionListener addCancelSingleListener(final Message ship){
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setDisplay(ship);
-                getDisplay().revalidate();
-                getDisplay().updateUI();
-            }
-        };
+    private int getIntToAppliedModification(String text){
+        int defaultValue=1000000;
+        return (text==null)?defaultValue:Integer.parseInt(text);
+    }
+
+    /**
+     * get Double value from String
+     * @param text String
+     * @return double
+     */
+    private double getDoubleToAppliedModification(String text){
+        double defaultValue=1000000;
+        return (text==null)?defaultValue:Double.parseDouble(text);
     }
 
     /**
@@ -245,7 +306,7 @@ class DisplayOneMessage extends JPanel {
     /**
      * @return JButton
      */
-    private JButton getCancelSingle() {
+    JButton getCancelSingle() {
         return cancelSingle;
     }
 
@@ -267,6 +328,6 @@ class DisplayOneMessage extends JPanel {
      * @return JPanel
      */
     JPanel getDisplay() {
-        return display;
+        return info;
     }
 }

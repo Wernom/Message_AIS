@@ -29,6 +29,10 @@ class Ship {
         return messages;
     }
 
+    TreeMap<String, Message> getModifiedMessage() {
+        return modifiedMessage;
+    }
+
     String getMMSI() {
         return MMSI;
     }
@@ -50,7 +54,7 @@ class Ship {
         int timeTo = hourTo * 100 + minuteTo;
 
         for (Map.Entry<String, Message> data : this.messages.entrySet()) {
-            int timeMessage = data.getValue().getDecode().getHour() * 100 + data.getValue().getDecode().getHour();
+            int timeMessage = data.getValue().getDecode().getHour() * 100 + data.getValue().getDecode().getMinute();
 
             if (timeMessage >= timeFrom && timeMessage <= timeTo) {
                 if (repeatIndicator != null)

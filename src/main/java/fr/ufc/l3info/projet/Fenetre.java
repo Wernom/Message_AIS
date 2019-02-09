@@ -5,7 +5,6 @@ import org.openstreetmap.gui.jmapviewer.Coordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
@@ -21,6 +20,9 @@ class Fenetre {
     private Menu menuBar;
     private MenuDeroulant menuDeroulant;
     private DisplaySelectedShip displaySelectedShip;
+
+    private int defaultsizeW=1000;
+    private int defaultsizeH=1000;
 
     /**
      * constructor of display
@@ -100,8 +102,8 @@ class Fenetre {
         fenetre.setLayout(layout);
         fenetre.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         fenetre.addWindowListener(addWindowEvent());
-        fenetre.setSize(1000, 800);
-        fenetre.setMinimumSize(new Dimension(800,800));
+        fenetre.setSize(defaultsizeW, defaultsizeH);
+        fenetre.setMinimumSize(new Dimension(defaultsizeW,defaultsizeH));
 
         // creation de la carte
         map = new Carte();
@@ -207,14 +209,12 @@ class Fenetre {
                             rawData=true;
                         }else if(fic.getName().matches(".*(.csv)$")){
                             rawData=false;
-                            JOptionPane onImport=new JOptionPane("This feature must be added soon.\nSorry for the incovenience",JOptionPane.WARNING_MESSAGE);
-                            onImport.createDialog(fenetre,"Warning").setVisible(true);
+                            PopUp.warning(fenetre,"This feature must be added soon.\nSorry for the incovenience");
                             return;
 
                         }else {
                             // popup the File Extension must be "File.raw" or "File.csv"
-                            JOptionPane onImport=new JOptionPane("File Extension must be \"File.raw\" or \"File.csv\"",JOptionPane.ERROR_MESSAGE);
-                            onImport.createDialog(fenetre,"Error").setVisible(true);
+                            PopUp.error(fenetre,"File Extension must be \"File.raw\" or \"File.csv\"");
                             return;
                         }
                         //import
@@ -368,4 +368,20 @@ class Fenetre {
         };
     }
 
+}
+class PopUp{
+    static void warning(Component component,String label){
+        JOptionPane onImport=new JOptionPane(label,JOptionPane.WARNING_MESSAGE);
+        onImport.createDialog(component,"Warning").setVisible(true);
+    }
+
+    static void error(Component component,String label){
+        JOptionPane onImport=new JOptionPane(label,JOptionPane.ERROR_MESSAGE);
+        onImport.createDialog(component,"Error").setVisible(true);
+    }
+
+    static void information(Component component,String label){
+        JOptionPane onImport=new JOptionPane(label,JOptionPane.INFORMATION_MESSAGE);
+        onImport.createDialog(component,"Information").setVisible(true);
+    }
 }
