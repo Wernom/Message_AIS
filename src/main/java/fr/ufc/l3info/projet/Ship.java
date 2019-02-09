@@ -76,7 +76,7 @@ class Ship {
                 if (trueHeading != null)
                     modifiedMessage.getDecode().setTrueHeading(trueHeading);
                 if (timeStamp != null)
-                    data.getValue().getDecode().setTimeStamp(timeStamp);
+                    modifiedMessage.getDecode().setTimeStamp(timeStamp);
                 if (maneuverIndicator != null)
                     modifiedMessage.getDecode().setManeuverIndicator(maneuverIndicator);
                 if (spare != null)
