@@ -51,44 +51,44 @@ class Ship {
 
         for (Map.Entry<String, Message> data : this.messages.entrySet()) {
             int timeMessage = data.getValue().getDecode().getHour() * 100 + data.getValue().getDecode().getHour();
-
+            Message modifiedMessage = new Message(data.getValue().getAis().getRawData());
             if (timeMessage >= timeFrom && timeMessage <= timeTo) {
                 if (repeatIndicator != null)
-                    data.getValue().getDecode().setRepeatIndicator(repeatIndicator);
+                    modifiedMessage.getDecode().setRepeatIndicator(repeatIndicator);
                 if (navigationStatus != null)
-                    data.getValue().getDecode().setNavigationStatus(navigationStatus);
+                    modifiedMessage.getDecode().setNavigationStatus(navigationStatus);
                 if (rateOverTurn != 1000000)
-                    data.getValue().getDecode().setRateOverTurn(rateOverTurn);
+                    modifiedMessage.getDecode().setRateOverTurn(rateOverTurn);
                 if (speedOverGround != 1000000)
-                    data.getValue().getDecode().setSpeedOverGround(speedOverGround);
+                    modifiedMessage.getDecode().setSpeedOverGround(speedOverGround);
                 if (positiontionAccuracy != null)
-                    data.getValue().getDecode().setPositiontionAccuracy(positiontionAccuracy);
+                    modifiedMessage.getDecode().setPositiontionAccuracy(positiontionAccuracy);
                 if (longitude != 1000000)
-                    data.getValue().getDecode().setLongitude(longitude);
+                    modifiedMessage.getDecode().setLongitude(longitude);
                 if (latitude != 1000000)
-                    data.getValue().getDecode().setLatitude(latitude);
+                    modifiedMessage.getDecode().setLatitude(latitude);
                 if (courseOverGroud != 1000000)
-                    data.getValue().getDecode().setCourseOverGroud(courseOverGroud);
+                    modifiedMessage.getDecode().setCourseOverGroud(courseOverGroud);
                 if (trueHeading != null)
-                    data.getValue().getDecode().setTrueHeading(trueHeading);
+                    modifiedMessage.getDecode().setTrueHeading(trueHeading);
                 if (timeStamp != null)
                     data.getValue().getDecode().setTimeStamp(timeStamp);
                 if (maneuverIndicator != null)
-                    data.getValue().getDecode().setManeuverIndicator(maneuverIndicator);
+                    modifiedMessage.getDecode().setManeuverIndicator(maneuverIndicator);
                 if (spare != null)
-                    data.getValue().getDecode().setSpare(spare);
+                    modifiedMessage.getDecode().setSpare(spare);
                 if (RAIMflag != null)
-                    data.getValue().getDecode().setRAIMflag(RAIMflag);
+                    modifiedMessage.getDecode().setRAIMflag(RAIMflag);
                 if (radioStatus != null)
-                    data.getValue().getDecode().setRadioStatus(radioStatus);
+                    modifiedMessage.getDecode().setRadioStatus(radioStatus);
 
                 if (hour != 1000000)
-                    data.getValue().getDecode().setHour(hour);
+                    modifiedMessage.getDecode().setHour(hour);
                 if (minute != 1000000)
-                    data.getValue().getDecode().setMinute(minute);
+                    modifiedMessage.getDecode().setMinute(minute);
 
-                data.getValue().encode();
-                this.modifiedMessage.put(data.getValue().getDecode().getUTCString(), data.getValue());
+                modifiedMessage.encode();
+                this.modifiedMessage.put(data.getValue().getDecode().getUTCString(), modifiedMessage);
             }
         }
     }
