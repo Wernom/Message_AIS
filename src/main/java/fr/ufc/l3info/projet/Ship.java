@@ -54,7 +54,7 @@ class Ship {
         int timeTo = hourTo * 100 + minuteTo;
 
         for (Map.Entry<String, Message> data : this.messages.entrySet()) {
-            int timeMessage = data.getValue().getDecode().getHour() * 100 + data.getValue().getDecode().getHour();
+            int timeMessage = data.getValue().getDecode().getHour() * 100 + data.getValue().getDecode().getMinute();
             Message modifiedMessage = new Message(data.getValue().getAis().getRawData());
             if (timeMessage >= timeFrom && timeMessage <= timeTo) {
                 if (repeatIndicator != null)
