@@ -29,6 +29,10 @@ class Ship {
         return messages;
     }
 
+    TreeMap<String, Message> getModifiedMessage() {
+        return modifiedMessage;
+    }
+
     String getMMSI() {
         return MMSI;
     }
@@ -87,8 +91,8 @@ class Ship {
                 if (minute != 1000000)
                     modifiedMessage.getDecode().setMinute(minute);
 
-                modifiedMessage.encode();
-                this.modifiedMessage.put(data.getValue().getDecode().getUTCString(), modifiedMessage);
+                data.getValue().encode();
+                this.modifiedMessage.put(data.getValue().getDecode().getUTCString(), data.getValue());
             }
         }
     }

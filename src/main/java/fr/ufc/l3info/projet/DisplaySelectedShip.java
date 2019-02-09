@@ -3,6 +3,8 @@ package fr.ufc.l3info.projet;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
@@ -21,8 +23,8 @@ class DisplaySelectedShip extends JPanel {
      * update ship information with selection
      */
    DisplaySelectedShip(){
-        add(panel,BorderLayout.CENTER);
-        panel.setPreferredSize(new Dimension(0,300));
+        add(panel);
+        info.setPreferredSize(new Dimension(0,400));
         initPanelInfo();
         panel.add(info,BorderLayout.CENTER);
    }
@@ -32,7 +34,7 @@ class DisplaySelectedShip extends JPanel {
      * @return JPanel
      */
     JPanel getPanel() {
-        return panel;
+        return info;
     }
 
 // initializer
@@ -68,7 +70,7 @@ class DisplaySelectedShip extends JPanel {
      */
     private void reload(final Carte map, final HashMap<String ,Ship> trafic, HashMap<String ,Ship> selectedShip){
        info.removeAll();
-       JTabbedPane tabbedPane=new JTabbedPane();
+       final JTabbedPane tabbedPane=new JTabbedPane();
        for(final Ship vessel:selectedShip.values()) {
            final String mmsi= vessel.getLastKnownMessage().getDecode().getMMSI();
 
@@ -81,11 +83,10 @@ class DisplaySelectedShip extends JPanel {
                        List allMessage = displayOneShip.getListDeroulante().getSelectedValuesList();
                        HashMap<String ,Message> allSelectedMessage=new HashMap<>();
                        for(Object msgTime:allMessage){
-                           allSelectedMessage.put(vessel.getMessages().get((String) msgTime).getDecode().getMMSI(),vessel.getMessages().get((String)msgTime));
+                           String time=msgTime.toString();
+                           allSelectedMessage.put(vessel.getMessages().get(time).getDecode().getMMSI(),vessel.getMessages().get(time));
                        }
-                       String time= (String)displayOneShip.getListDeroulante().getSelectedValue();
-                       map.reloadMap(trafic,mmsi,vessel.getMessages().get( time));
-                       displayOneShip.reload(allSelectedMessage);
+                       displayOneShip.reload(map,trafic,allSelectedMessage,vessel);
                        displayOneShip.getInfo().updateUI();
                        displayOneShip.getInfo().revalidate();
                    }
@@ -93,6 +94,15 @@ class DisplaySelectedShip extends JPanel {
            });
        }
        info.add(tabbedPane,BorderLayout.CENTER);
+        tabbedPane.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                String mmsi=tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
+                Ship ship=trafic.get(mmsi);
+                map.reloadMap(trafic,ship.getMMSI(),ship.getMessages().get( mmsi));
+
+            }
+        });
    }
 
 

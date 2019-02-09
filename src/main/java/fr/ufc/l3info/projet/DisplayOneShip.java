@@ -1,6 +1,9 @@
 package fr.ufc.l3info.projet;
 
+
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -47,23 +50,35 @@ class DisplayOneShip extends JPanel{
         listPan.add(scrollPane);
     }
 
-    void reload( HashMap<String ,Message> selectedMessage){
+    void reload(Carte map,HashMap<String,Ship> trafic, HashMap<String ,Message> selectedMessage,Ship ship){
         tabPan.removeAll();
-        affichage(selectedMessage);
+        affichage(map,trafic,selectedMessage,ship);
+
     }
 
-    private void affichage(HashMap<String, Message> selectedMessage){
+    private void affichage(final Carte map, final HashMap<String,Ship> trafic, HashMap<String, Message> selectedMessage, final Ship ship){
 
-        JTabbedPane tabbedPane=new JTabbedPane();
+        final JTabbedPane tabbedPane=new JTabbedPane();
 
         for(final Message vessel:selectedMessage.values()) {
             DisplayOneMessage displayOneMessage = new DisplayOneMessage(vessel);
-            displayOneMessage.getApplySingle().addActionListener(addApplySingleListener(selectedMessage,displayOneMessage,vessel.getDecode().getMMSI()));
-            displayOneMessage.getCancelAll().addActionListener(addCancelAllListener(selectedMessage));
-            displayOneMessage.getApplyAll().addActionListener(addApplyAllListener(selectedMessage,displayOneMessage));
+            displayOneMessage.getApplySingle().addActionListener(addApplySingleListener(map,trafic,selectedMessage,ship,displayOneMessage));
+            displayOneMessage.getCancelSingle().addActionListener(addCancelAllListener(map,trafic,selectedMessage,ship));
+            //displayOneMessage.getCancelAll().addActionListener(addCancelAllListener(map,trafic,selectedMessage,ship));
+            //displayOneMessage.getApplyAll().addActionListener(addApplyAllListener(map,trafic,selectedMessage,ship,displayOneMessage));
             tabbedPane.addTab(vessel.getDecode().getUTCString(),displayOneMessage.getDisplay());
         }
         tabPan.add(tabbedPane);
+        tabbedPane.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                String time=tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
+                map.reloadMap(trafic,ship.getMMSI(),ship.getMessages().get( time));
+            }
+        });
+        tabbedPane.setSelectedIndex(0);
+        String time=tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
+        map.reloadMap(trafic,ship.getMMSI(),ship.getMessages().get( time));
 
     }
 
@@ -72,11 +87,11 @@ class DisplayOneShip extends JPanel{
      * create an ActionListener for cancelAll Button
      * @return ActionListener
      */
-    private ActionListener addCancelAllListener(final HashMap<String ,Message> selectedMessage){
+    private ActionListener addCancelAllListener(final Carte map,final HashMap<String,Ship> trafic,final HashMap<String ,Message> selectedMessage,final Ship ship){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                affichage(selectedMessage);
+                reload(map,trafic,selectedMessage,ship);
                 info.revalidate();
                 info.updateUI();
             }
@@ -87,44 +102,43 @@ class DisplayOneShip extends JPanel{
      * create an ActionListener for applyAll Button
      * @return ActionListener
      */
-    private ActionListener addApplyAllListener(final HashMap<String ,Message> selectedMessage, final DisplayOneMessage displayOneMessage){
+   /* private ActionListener addApplyAllListener(final Carte map,final HashMap<String,Ship> trafic,final HashMap<String ,Message> selectedMessage,final Ship ship, final DisplayOneMessage displayOneMessage){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                saveModificationAll(selectedMessage,displayOneMessage);
-                affichage(selectedMessage);
+                saveModificationAll(selectedMessage,ship,displayOneMessage);
+                reload(map,trafic,selectedMessage,ship);
                 info.revalidate();
                 info.updateUI();
             }
         };
-    }
+    }/
 
     /**
      * create an ActionListener for applySingle Button
      * @return ActionListener
      */
-    private ActionListener addApplySingleListener(final HashMap<String ,Message> selectedMessage,final DisplayOneMessage displayOneMessage,final String mmsi){
+    private ActionListener addApplySingleListener(final Carte map,final HashMap<String,Ship> trafic,final HashMap<String ,Message> selectedMessage,final Ship ship,final DisplayOneMessage displayOneMessage){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                displayOneMessage.saveModificationOne(selectedMessage.get(mmsi));
-                affichage(selectedMessage);
+                displayOneMessage.saveModificationOne(ship);
+                affichage(map,trafic,selectedMessage,ship);
                 info.revalidate();
                 info.updateUI();
-
             }
         };
     }
 
 //modification save
-    /**
-     * Save information modification for all selected vessel
-     */
-    private void saveModificationAll(HashMap<String ,Message> selectedMessage,final DisplayOneMessage displayOneMessage){
+    ///**
+    // * Save information modification for all selected vessel
+    // */
+   /* private void saveModificationAll(HashMap<String ,Message> selectedMessage,final Ship ship,final DisplayOneMessage displayOneMessage){
         for(Message vessel:selectedMessage.values()) {
-            displayOneMessage.saveModificationOne(vessel);
+            displayOneMessage.saveModificationOne(ship);
         }
-    }
+    }*/
 
     /**
      * @return JList
@@ -139,4 +153,5 @@ class DisplayOneShip extends JPanel{
     JPanel getInfo() {
         return info;
     }
+
 }

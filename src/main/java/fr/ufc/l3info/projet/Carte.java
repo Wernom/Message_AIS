@@ -26,10 +26,11 @@ public class Carte extends JPanel implements JMapViewerEventListener{
     private JLabel mperpLabelValue;
 
     private Color currentSelectedMessageColor=new Color(179,0, 9);
-    private Color currentLastMessageRecieveColor=new Color(234, 179,0);
-    private Color currentSelectedShipColor=new Color(184, 75, 0, 193);
+    private Color currentLastMessageRecieveColor=new Color(203, 166, 0);
+    private Color currentSelectedShipColor=new Color(184, 75, 0, 255);
     private Color otherMessageColor=new Color(0, 4, 176, 255);
     private Color otherLastMessageReceiveColor=new Color(0, 117, 168);
+    private Color modifiedMessageColor=new Color(140, 0, 213, 255);
 
 
     /**
@@ -173,30 +174,35 @@ public class Carte extends JPanel implements JMapViewerEventListener{
         pan.setBorder(border);
 
         JLabel currShip=new JLabel("Selected Ship");
-        currShip.setHorizontalTextPosition(JLabel.LEFT);
+        currShip.setHorizontalTextPosition(JLabel.CENTER);
         currShip.setForeground(currentSelectedShipColor);
 
         JLabel currMsg=new JLabel("Selected Message");
-        currMsg.setHorizontalTextPosition(JLabel.LEFT);
+        currMsg.setHorizontalTextPosition(JLabel.CENTER);
         currMsg.setForeground(currentSelectedMessageColor);
 
         JLabel currLastMsg=new JLabel("Selected Last Message ");
-        currLastMsg.setHorizontalTextPosition(JLabel.LEFT);
+        currLastMsg.setHorizontalTextPosition(JLabel.CENTER);
         currLastMsg.setForeground(currentLastMessageRecieveColor);
 
         JLabel otherMsg=new JLabel("Other Message");
-        otherMsg.setHorizontalTextPosition(JLabel.LEFT);
+        otherMsg.setHorizontalTextPosition(JLabel.CENTER);
         otherMsg.setForeground(otherMessageColor);
 
         JLabel otherLastMsg=new JLabel("Other Last Message");
-        otherLastMsg.setHorizontalTextPosition(JLabel.LEFT);
+        otherLastMsg.setHorizontalTextPosition(JLabel.CENTER);
         otherLastMsg.setForeground(otherLastMessageReceiveColor);
 
+        JLabel modifiedMsg=new JLabel("Modified Message");
+        modifiedMsg.setHorizontalTextPosition(JLabel.CENTER);
+        modifiedMsg.setForeground(modifiedMessageColor);
+
         pan.add(currMsg);
-        pan.add(currLastMsg);
         pan.add(currShip);
+        pan.add(currLastMsg);
         pan.add(otherLastMsg);
         pan.add(otherMsg);
+        pan.add(modifiedMsg);
 
         return pan;
     }
@@ -212,24 +218,28 @@ public class Carte extends JPanel implements JMapViewerEventListener{
            MapMarkerDot position = new MapMarkerDot(coordinate.getLat(), coordinate.getLon());
            if(isSelected) {
                if (lastKnownCoordinate.equals(coordinate)) {
-                   //position.setColor(currentLastMessageRecieveColor);
                    position.setBackColor(currentLastMessageRecieveColor);
                } else {
-                   //position.setColor(currentSelectedShipColor);
                    position.setBackColor(currentSelectedShipColor);
                }
+               System.out.println("select : lat: "+coordinate.getLat()+" lon: "+ coordinate.getLon());
            }else{
                if (lastKnownCoordinate.equals(coordinate)) {
-                   //position.setColor(otherLastMessageReceiveColor);
                    position.setBackColor(otherLastMessageReceiveColor);
                } else {
-                   //position.setColor(otherMessageColor);
                    position.setBackColor(otherMessageColor);
                }
            }
             myMap.addMapMarker(position);
-
        }
+        if(isSelected) {
+            for (Message message : vessel.getModifiedMessage().values()) {
+                MapMarkerDot modifiedPosition = new MapMarkerDot(message.getDecode().getLatitude(), message.getDecode().getLongitude());
+                modifiedPosition.setBackColor(modifiedMessageColor);
+                myMap.addMapMarker(modifiedPosition);
+                System.out.println("modif : lat: "+message.getDecode().getLatitude()+" lon: "+ message.getDecode().getLongitude());
+            }
+        }
     }
 
     /**
@@ -293,6 +303,11 @@ public class Carte extends JPanel implements JMapViewerEventListener{
         myMap.addMapMarker(ship);
         myMap.setDisplayPosition(ship.getCoordinate(),3);
         updateZoomParameters();
+    }
+
+    void centerOnSelectedmessage(Coordinate coordinate){
+        MapMarkerDot ship=new MapMarkerDot(coordinate);
+        setSelectedShip(ship);
     }
 
     /**
