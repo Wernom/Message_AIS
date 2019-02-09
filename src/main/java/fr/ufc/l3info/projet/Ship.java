@@ -91,8 +91,8 @@ class Ship {
                 if (minute != 1000000)
                     modifiedMessage.getDecode().setMinute(minute);
 
-                data.getValue().encode();
-                this.modifiedMessage.put(data.getValue().getDecode().getUTCString(), data.getValue());
+                modifiedMessage.encode();
+                this.modifiedMessage.put(modifiedMessage.getDecode().getUTCString(), modifiedMessage);
             }
         }
     }
