@@ -48,6 +48,7 @@ class DisplayOneShip extends JPanel{
         }
         if(mapMessage.size()==0){
             defaultList.addElement("<empty>");
+            listDeroulante.setSelectedValue("<empty>",false);
         }else{
             for (Message msg:mapMessage.values()) {
                 defaultList.addElement(msg.getDecode().getUTCString());
