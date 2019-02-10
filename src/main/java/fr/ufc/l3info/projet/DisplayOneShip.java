@@ -90,12 +90,12 @@ class DisplayOneShip extends JPanel{
             @Override
             public void stateChanged(ChangeEvent e) {
                 String time=tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
-                map.reloadMap(trafic, ship.getMMSI(), mapMessage.get(time));
+                map.reloadMap(trafic, ship.getMMSI(), mapMessage.get(time),modif);
             }
         });
         tabbedPane.setSelectedIndex(0);
         String time = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
-        map.reloadMap(trafic, ship.getMMSI(), mapMessage.get(time));
+        map.reloadMap(trafic, ship.getMMSI(), mapMessage.get(time),modif);
     }
 
     //listener

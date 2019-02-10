@@ -208,10 +208,11 @@ public class Carte extends JPanel implements JMapViewerEventListener{
     }
 
     /**
-     * print a ship with his old position
-     * @param vessel Ship 
+     * print a ship with his old position and modified position
+     * @param vessel Ship
+     * @param isSelected boolean
      */
-    private void printShip(Ship vessel,boolean isSelected){
+    private void printShipUnmodified(Ship vessel,boolean isSelected){
         Coordinate lastKnownCoordinate=new Coordinate(vessel.getLastKnownMessage().getDecode().getLatitude(),vessel.getLastKnownMessage().getDecode().getLongitude());
        for (Message message : vessel.getMessages().values()) {
            Coordinate coordinate = new Coordinate(message.getDecode().getLatitude(), message.getDecode().getLongitude());
@@ -222,7 +223,6 @@ public class Carte extends JPanel implements JMapViewerEventListener{
                } else {
                    position.setBackColor(currentSelectedShipColor);
                }
-               System.out.println("select : lat: "+coordinate.getLat()+" lon: "+ coordinate.getLon());
            }else{
                if (lastKnownCoordinate.equals(coordinate)) {
                    position.setBackColor(otherLastMessageReceiveColor);
@@ -237,22 +237,78 @@ public class Carte extends JPanel implements JMapViewerEventListener{
                 MapMarkerDot modifiedPosition = new MapMarkerDot(message.getDecode().getLatitude(), message.getDecode().getLongitude());
                 modifiedPosition.setBackColor(modifiedMessageColor);
                 myMap.addMapMarker(modifiedPosition);
-                System.out.println("modif : lat: "+message.getDecode().getLatitude()+" lon: "+ message.getDecode().getLongitude());
+            }
+        }
+    }
+
+    /**
+     * print a ship modified position with his position
+     * @param vessel Ship
+     * @param isSelected boolean
+     */
+    private void printShipModified(Ship vessel,boolean isSelected){
+        if(vessel.getLastKnownModifiedMessage()==null){
+            System.out.println(vessel);
+        }
+        Coordinate lastKnownModifiedCoordinate=new Coordinate(vessel.getLastKnownModifiedMessage().getDecode().getLatitude(),vessel.getLastKnownModifiedMessage().getDecode().getLongitude());
+        Coordinate lastKnownCoordinate=new Coordinate(vessel.getLastKnownMessage().getDecode().getLatitude(),vessel.getLastKnownMessage().getDecode().getLongitude());
+        for (Message message : vessel.getModifiedMessage().values()) {
+            Coordinate coordinate = new Coordinate(message.getDecode().getLatitude(), message.getDecode().getLongitude());
+            MapMarkerDot position = new MapMarkerDot(coordinate.getLat(), coordinate.getLon());
+            if(isSelected) {
+                if (lastKnownModifiedCoordinate.equals(coordinate)) {
+                    position.setBackColor(modifiedMessageColor);
+                } else {
+                    position.setBackColor(modifiedMessageColor);
+                }
+            }else{
+                if (lastKnownModifiedCoordinate.equals(coordinate)) {
+                    position.setBackColor(modifiedMessageColor);
+                } else {
+                    position.setBackColor(modifiedMessageColor);
+                }
+            }
+            myMap.addMapMarker(position);
+        }
+        if(isSelected) {
+            for (Message message : vessel.getMessages().values()) {
+                Coordinate coordinate = new Coordinate(message.getDecode().getLatitude(), message.getDecode().getLongitude());
+                MapMarkerDot position = new MapMarkerDot(coordinate);
+                if (lastKnownCoordinate.equals(coordinate)) {
+                    position.setBackColor(currentLastMessageRecieveColor);
+                } else {
+                    position.setBackColor(currentSelectedShipColor);
+                }
+                myMap.addMapMarker(position);
             }
         }
     }
 
     /**
      * print all ships
+     * @param trafic HashMap<String,Ship>
+     * @param ship Ship
+     * @param modif boolean
      */
-    private void printTrafic(HashMap<String,Ship> trafic,Ship ship){
-        if (trafic==null)
+    private void printTrafic(HashMap<String,Ship> trafic,Ship ship,boolean modif){
+        if (trafic.size()==0){
             return;
+        }
         for (Ship vessel:trafic.values()) {
-            if(vessel.equals(ship)){
-                printShip(vessel,true);
+            if(modif){
+                if(vessel.getModifiedMessage().size()!=0) {
+                    if (vessel.equals(ship)) {
+                        printShipModified(vessel, true);
+                    } else {
+                        printShipModified(vessel, false);
+                    }
+                }
             }else{
-                printShip(vessel,false);
+                if(vessel.equals(ship)){
+                    printShipUnmodified(vessel,true);
+                }else{
+                    printShipUnmodified(vessel,false);
+                }
             }
         }
     }
@@ -260,19 +316,21 @@ public class Carte extends JPanel implements JMapViewerEventListener{
     /**
      * Reload the map to display ship after import
      * @param trafic ArrayList<Message>
+     * @param modif boolean
      */
-    void reloadMap(HashMap<String,Ship> trafic,Ship ship){
+    void reloadMap(HashMap<String,Ship> trafic,Ship ship,boolean modif){
         myMap.removeAllMapMarkers();
-        printTrafic(trafic,ship);
+        printTrafic(trafic,ship,modif);
     }
 
     /**
      * Reload the map after MMSI select
      * @param trafic HashMap<String,Message>
      * @param MMSI String
+     * @param modif boolean
      */
-    void reloadMap(HashMap<String,Ship> trafic,String MMSI,Message msg){
-        this.reloadMap(trafic,trafic.get(MMSI));
+    void reloadMap(HashMap<String,Ship> trafic,String MMSI,Message msg,boolean modif){
+        this.reloadMap(trafic,trafic.get(MMSI),modif);
         MapMarkerDot ship;
         if (msg==null){
             ship=new MapMarkerDot(trafic.get(MMSI).getLastKnownMessage().getDecode().getLatitude(),trafic.get(MMSI).getLastKnownMessage().getDecode().getLongitude());
@@ -286,9 +344,10 @@ public class Carte extends JPanel implements JMapViewerEventListener{
      * Reload the map after select ship on map
      * @param trafic ArrayList<Message>
      * @param coordinate Coordinate
+     * @param modif boolean
      */
-    void reloadMap(HashMap<String,Ship> trafic,Coordinate coordinate){
-        this.reloadMap(trafic, (Ship) null);
+    void reloadMap(HashMap<String,Ship> trafic,Coordinate coordinate,boolean modif){
+        this.reloadMap(trafic, (Ship) null,modif);
         MapMarkerDot ship=new MapMarkerDot(coordinate);
         setSelectedShip(ship);
     }

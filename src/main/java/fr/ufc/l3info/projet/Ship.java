@@ -41,6 +41,10 @@ class Ship {
         return messages.get(messages.lastKey());
     }
 
+    Message getLastKnownModifiedMessage() {
+        return modifiedMessage.get(modifiedMessage.lastKey());
+    }
+
     /**
      * null value for a string or 1,000,000 for a double mean no modification.
      */

@@ -141,7 +141,7 @@ class Fenetre {
      * reload the map after import raw AIS
      */
     private void reloadMap(){
-        map.reloadMap(menuBar.getShips(),(Ship)null);
+        map.reloadMap(menuBar.getShips(),(Ship)null,modifMsgSelection);
     }
 
     /**
@@ -185,9 +185,10 @@ class Fenetre {
                     displaySelectedShip.affichage(map,menuBar.getShips(),allSelectedShip,modifMsgSelection);
                     displaySelectedShip.getPanel().revalidate();
                     displaySelectedShip.getPanel().updateUI();
-                    map.reloadMap(menuBar.getShips(),mmsi,(Message) null); // centre la map sur le navire selectionné
-
                     menuDeroulant.getChoiceDisplayedMessage().addItemListener(selectMessage(allSelectedShip));
+                    map.reloadMap(menuBar.getShips(),mmsi,(Message) null,modifMsgSelection); // centre la map sur le navire selectionné
+
+
                 }
 
             }
@@ -353,6 +354,7 @@ class Fenetre {
                             displaySelectedShip.getPanel().updateUI();
                             break;
                     }
+                    reloadMap();
                 }
             }
         };
@@ -373,7 +375,7 @@ class Fenetre {
 
                             //System.out.println("souris "+point+"\nship :"+point1);
                             if ((point.x-(int)coordinate.getLon()<=20)&&(point.y-(int)coordinate.getLat()<=20)) {
-                                map.reloadMap(menuBar.getShips(), coordinate);
+                                map.reloadMap(menuBar.getShips(), coordinate,modifMsgSelection);
                                 return;
                             }
                         }

@@ -102,7 +102,7 @@ class DisplaySelectedShip extends JPanel {
             public void stateChanged(ChangeEvent e) {
                 String mmsi=tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
                 Ship ship=trafic.get(mmsi);
-                map.reloadMap(trafic,ship.getMMSI(),ship.getMessages().get( mmsi));
+                map.reloadMap(trafic,ship.getMMSI(),ship.getMessages().get( mmsi),modif);
 
             }
         });
