@@ -58,8 +58,8 @@ class DisplaySelectedShip extends JPanel {
      * @param trafic HashMap<String ,Ship>
      * @param selectedShip HashMap<String ,Ship>
      */
-    void affichage( Carte map,HashMap<String ,Ship> trafic,HashMap<String ,Ship> selectedShip){
-        reload(map,trafic,selectedShip);
+    void affichage( Carte map,HashMap<String ,Ship> trafic,HashMap<String ,Ship> selectedShip,boolean modif){
+        reload(map,trafic,selectedShip,modif);
    }
 
     /**
@@ -68,25 +68,28 @@ class DisplaySelectedShip extends JPanel {
      * @param trafic HashMap<String ,Ship>
      * @param selectedShip HashMap<String ,Ship>
      */
-    private void reload(final Carte map, final HashMap<String ,Ship> trafic, HashMap<String ,Ship> selectedShip){
+    private void reload(final Carte map, final HashMap<String ,Ship> trafic, HashMap<String ,Ship> selectedShip,final boolean modif){
        info.removeAll();
        final JTabbedPane tabbedPane=new JTabbedPane();
        for(final Ship vessel:selectedShip.values()) {
            final String mmsi= vessel.getLastKnownMessage().getDecode().getMMSI();
 
-           final DisplayOneShip displayOneShip=new DisplayOneShip(vessel);
+           final DisplayOneShip displayOneShip=new DisplayOneShip(vessel,modif);
            tabbedPane.addTab(mmsi,displayOneShip.getInfo());
            displayOneShip.getListDeroulante().addListSelectionListener(new ListSelectionListener() {
                @Override
                public void valueChanged(ListSelectionEvent e) {
                    if(!e.getValueIsAdjusting()){
+                       if(displayOneShip.getListDeroulante().getSelectedValue().toString().equals("<empty>")){
+                           return;
+                       }
                        List allMessage = displayOneShip.getListDeroulante().getSelectedValuesList();
                        HashMap<String ,Message> allSelectedMessage=new HashMap<>();
                        for(Object msgTime:allMessage){
                            String time=msgTime.toString();
                            allSelectedMessage.put(vessel.getMessages().get(time).getDecode().getMMSI(),vessel.getMessages().get(time));
                        }
-                       displayOneShip.reload(map,trafic,allSelectedMessage,vessel);
+                       displayOneShip.reload(map,trafic,allSelectedMessage,vessel,modif);
                        displayOneShip.getInfo().updateUI();
                        displayOneShip.getInfo().revalidate();
                    }

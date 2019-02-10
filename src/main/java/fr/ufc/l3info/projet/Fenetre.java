@@ -20,6 +20,7 @@ class Fenetre {
     private Menu menuBar;
     private MenuDeroulant menuDeroulant;
     private DisplaySelectedShip displaySelectedShip;
+    private boolean modifMsgSelection=false;
 
     private int defaultsizeW=1000;
     private int defaultsizeH=1000;
@@ -117,6 +118,7 @@ class Fenetre {
         menuDeroulant = new MenuDeroulant();
         menuDeroulant.getListDeroulante().addListSelectionListener(addSelectListener());
 
+
         // creation de la partie modification des message AIS en bas
         displaySelectedShip = new DisplaySelectedShip();
 
@@ -176,14 +178,16 @@ class Fenetre {
                         return;
                     }
                     List allShip = menuDeroulant.getListDeroulante().getSelectedValuesList();
-                    HashMap<String ,Ship> allSelectedShip=new HashMap<>();
+                    final HashMap<String ,Ship> allSelectedShip=new HashMap<>();
                     for(Object vessel:allShip){
                         allSelectedShip.put(menuBar.getShip((String)vessel).getMMSI(),menuBar.getShip((String)vessel));
                     }
-                    displaySelectedShip.affichage(map,menuBar.getShips(),allSelectedShip);
+                    displaySelectedShip.affichage(map,menuBar.getShips(),allSelectedShip,modifMsgSelection);
                     displaySelectedShip.getPanel().revalidate();
                     displaySelectedShip.getPanel().updateUI();
                     map.reloadMap(menuBar.getShips(),mmsi,(Message) null); // centre la map sur le navire selectionné
+
+                    menuDeroulant.getChoiceDisplayedMessage().addItemListener(selectMessage(allSelectedShip));
                 }
 
             }
@@ -319,6 +323,37 @@ class Fenetre {
             @Override
             public void windowDeactivated(WindowEvent e) {
 
+            }
+        };
+    }
+
+    /**
+     * for choice to display Unmodified message or modified message
+     * @param allSelectedShip HashMap<String ,Ship>
+     * @return ItemListener
+     */
+    private ItemListener selectMessage(final HashMap<String ,Ship> allSelectedShip){
+        return new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(e.getStateChange()== ItemEvent.SELECTED){
+                    Object item=e.getItem();
+                    switch (item.toString()){
+                        case "Modified":
+                            modifMsgSelection=true;
+                            displaySelectedShip.affichage(map,menuBar.getShips(),allSelectedShip,modifMsgSelection);
+                            displaySelectedShip.getPanel().revalidate();
+                            displaySelectedShip.getPanel().updateUI();
+                            break;
+                        case "Unmodified":
+                        default:
+                            modifMsgSelection=false;
+                            displaySelectedShip.affichage(map,menuBar.getShips(),allSelectedShip,modifMsgSelection);
+                            displaySelectedShip.getPanel().revalidate();
+                            displaySelectedShip.getPanel().updateUI();
+                            break;
+                    }
+                }
             }
         };
     }

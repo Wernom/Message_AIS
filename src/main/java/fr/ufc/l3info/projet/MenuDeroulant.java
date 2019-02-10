@@ -3,6 +3,10 @@ package fr.ufc.l3info.projet;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 class MenuDeroulant extends JPanel {
     /*
@@ -10,6 +14,7 @@ class MenuDeroulant extends JPanel {
      */
     private JPanel panel;
     private JComboBox<String> possibilitiesModifications;
+    private JComboBox<String> choiceDisplayedMessage;
     private JList listDeroulante;
     private DefaultListModel<String> defaultList;
 
@@ -18,11 +23,9 @@ class MenuDeroulant extends JPanel {
      */
     MenuDeroulant() {
         panel = new JPanel(new BorderLayout());
-        add(panel,BorderLayout.CENTER);
-        add(panel,BorderLayout.SOUTH);
         panel.setPreferredSize(new Dimension(125,0));
         initList();
-        initPossibilities();
+        initChoicesList();
     }
 
     /**
@@ -45,6 +48,15 @@ class MenuDeroulant extends JPanel {
         panel.add(scrollPane,BorderLayout.CENTER);
     }
 
+    private void initChoicesList(){
+        initPossibilities();
+        initchoiceDisplayedMessage();
+        JPanel choicePanel=new JPanel(new GridLayout(2,0));
+        choicePanel.add(possibilitiesModifications);
+        choicePanel.add(choiceDisplayedMessage);
+        panel.add(choicePanel,BorderLayout.SOUTH);
+    }
+
     /**
      * initialize list of possibilities
      */
@@ -56,7 +68,16 @@ class MenuDeroulant extends JPanel {
         border = BorderFactory.createTitledBorder(border,"Modification type :");
         possibilitiesModifications.setBorder(border);
         possibilitiesModifications.setSelectedIndex(0);
-        panel.add(possibilitiesModifications,BorderLayout.SOUTH);
+    }
+
+    private void initchoiceDisplayedMessage(){
+        String[] possibilities={"Unmodified","Modified"};
+        choiceDisplayedMessage=new JComboBox<>(possibilities);
+        Border border ;
+        border = BorderFactory.createEmptyBorder();
+        border = BorderFactory.createTitledBorder(border,"Message Displayed :");
+        choiceDisplayedMessage.setBorder(border);
+        choiceDisplayedMessage.setSelectedIndex(0);
     }
 
     /**
@@ -81,10 +102,17 @@ class MenuDeroulant extends JPanel {
     }
 
     /**
-     * @return JComboBox
+     * @return JComboBox<String>
      */
-    public JComboBox getPossibilitiesModifications() {
+    JComboBox getPossibilitiesModifications() {
         return possibilitiesModifications;
+    }
+
+    /**
+     * @return JComboBox<String>
+     */
+    JComboBox<String> getChoiceDisplayedMessage() {
+        return choiceDisplayedMessage;
     }
 }
 

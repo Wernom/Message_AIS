@@ -47,10 +47,12 @@ class DisplayOneMessage extends JPanel {
      * Constructor
      * @param message Message
      */
-    DisplayOneMessage(Message message){
-        setTimeIntervalPanel(message);
+    DisplayOneMessage(Message message,boolean modif){
+        if(modif){
+            setTimeIntervalPanel(message);
+            info.add(timeIntervalPanel,BorderLayout.NORTH);
+        }
         setDisplay(message);
-        info.add(timeIntervalPanel,BorderLayout.NORTH);
         info.add(display,BorderLayout.CENTER);
     }
 
