@@ -109,8 +109,11 @@ class DisplayOneMessage extends JPanel {
         MessageDecode vessel = message.getDecode();
         JLabel AISraw=new JLabel(" Raw AIS : "+message.getAis().getRawData()); // display raw data
         display.add(AISraw,BorderLayout.NORTH);
-
         JPanel panelValue=new JPanel(new GridLayout(0,4));
+        if(modificationType.equals("Propagation")){
+            panelValue.setLayout(new BorderLayout());
+        }
+
         JScrollPane scrollPane=new JScrollPane(panelValue);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -287,7 +290,7 @@ class DisplayOneMessage extends JPanel {
     }
 
     /**
-     * Save information modification for one selected vessel
+     * Save information in hard modification for one selected vessel
      * @param ship Ship
      */
     void saveModificationHardOne(Ship ship) {
@@ -315,6 +318,10 @@ class DisplayOneMessage extends JPanel {
         PopUp.information(info.getParent().getParent(),"Modification done !");
     }
 
+    /**
+     * Save information in propagation modification for one selected vessel
+     * @param ship Ship
+     */
     void saveModificationPropagationOne(Ship ship){
         ship.speedModificationAffectPosition(getDoubleToAppliedModification(speedOverGroundText.getText()),
                 getIntToAppliedModification(hourFrom.getText()),

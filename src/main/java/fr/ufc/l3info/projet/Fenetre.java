@@ -366,17 +366,11 @@ class Fenetre {
                 if(e.getStateChange()== ItemEvent.SELECTED){
                     Object item=e.getItem();
                     selectorModification=item.toString();
-                    switch (selectorModification){
-                        case "Propagation":
-                            displaySelectedShip.affichage(map,menuBar.getShips(),allSelectedShip,selectorModification,modifMsgSelection);
-                            displaySelectedShip.getPanel().revalidate();
-                            displaySelectedShip.getPanel().updateUI();
-                            break;
-                        case "Hard":
-                        default:
-                            break;
-                    }
+                    displaySelectedShip.affichage(map,menuBar.getShips(),allSelectedShip,selectorModification,modifMsgSelection);
+                    displaySelectedShip.getPanel().revalidate();
+                    displaySelectedShip.getPanel().updateUI();
                 }
+
             }
         };
     }
