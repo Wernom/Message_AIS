@@ -72,7 +72,7 @@ class DisplaySelectedShip extends JPanel {
        info.removeAll();
        final JTabbedPane tabbedPane=new JTabbedPane();
        for(final Ship vessel:selectedShip.values()) {
-           final String mmsi= vessel.getLastKnownMessage().getDecode().getMMSI();
+           final String mmsi= vessel.getMMSI();
 
            final DisplayOneShip displayOneShip=new DisplayOneShip(vessel,modif);
            tabbedPane.addTab(mmsi,displayOneShip.getInfo());
@@ -81,6 +81,7 @@ class DisplaySelectedShip extends JPanel {
                public void valueChanged(ListSelectionEvent e) {
                    if(!e.getValueIsAdjusting()){
                        if(displayOneShip.getListDeroulante().getSelectedValue().toString().equals("<empty>")){
+                           // do something ?
                            return;
                        }
                        List allMessage = displayOneShip.getListDeroulante().getSelectedValuesList();
@@ -89,7 +90,7 @@ class DisplaySelectedShip extends JPanel {
                            String time=msgTime.toString();
                            allSelectedMessage.put(vessel.getMessages().get(time).getDecode().getMMSI(),vessel.getMessages().get(time));
                        }
-                       displayOneShip.reload(map,trafic,allSelectedMessage,vessel,modif);
+                       displayOneShip.reload(map,trafic,allSelectedMessage,vessel,modif); // centrage map
                        displayOneShip.getInfo().updateUI();
                        displayOneShip.getInfo().revalidate();
                    }
@@ -99,10 +100,10 @@ class DisplaySelectedShip extends JPanel {
        info.add(tabbedPane,BorderLayout.CENTER);
         tabbedPane.addChangeListener(new ChangeListener() {
             @Override
-            public void stateChanged(ChangeEvent e) {
+public void stateChanged(ChangeEvent e) {
                 String mmsi=tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
                 Ship ship=trafic.get(mmsi);
-                map.reloadMap(trafic,ship.getMMSI(),ship.getMessages().get( mmsi),modif);
+                map.reloadMap(trafic,ship.getMMSI(),ship.getMessages().get( mmsi),modif); // centrage map
 
             }
         });

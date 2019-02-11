@@ -41,17 +41,22 @@ class DisplayOneShip extends JPanel{
         listDeroulante.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         listDeroulante.setLayoutOrientation(JList.VERTICAL);
         TreeMap<String, Message> mapMessage;
+        String selection;
         if(modif) {
             mapMessage = ship.getModifiedMessage();
+            selection=ship.getLastKnownModifiedMessage().getDecode().getUTCString();
         }else{
             mapMessage =ship.getMessages();
+            selection=ship.getLastKnownMessage().getDecode().getUTCString();
         }
         if(mapMessage.size()==0){
             defaultList.addElement("<empty>");
+            listDeroulante.setSelectedValue("<empty>",false);
         }else{
             for (Message msg:mapMessage.values()) {
                 defaultList.addElement(msg.getDecode().getUTCString());
             }
+            listDeroulante.setSelectedValue(selection,false);
         }
         JScrollPane scrollPane=new JScrollPane(listDeroulante);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
