@@ -256,11 +256,12 @@ public class Carte extends JPanel implements JMapViewerEventListener{
             Coordinate coordinate = new Coordinate(message.getDecode().getLatitude(), message.getDecode().getLongitude());
             MapMarkerDot position = new MapMarkerDot(coordinate.getLat(), coordinate.getLon());
             if(isSelected) {
-                if (lastKnownModifiedCoordinate.equals(coordinate)) {
+                position.setBackColor(modifiedMessageColor);
+               /* if (lastKnownModifiedCoordinate.equals(coordinate)) {
                     position.setBackColor(modifiedMessageColor);
                 } else {
                     position.setBackColor(modifiedMessageColor);
-                }
+                }*/
             }else{
                 if (lastKnownModifiedCoordinate.equals(coordinate)) {
                     position.setBackColor(modifiedMessageColor);

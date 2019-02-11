@@ -29,7 +29,7 @@ class MenuDeroulant extends JPanel {
     }
 
     /**
-     * initialize lis of ship
+     * initialize list of ship
      */
     private void initList() {
         defaultList=new DefaultListModel<>();
@@ -48,6 +48,9 @@ class MenuDeroulant extends JPanel {
         panel.add(scrollPane,BorderLayout.CENTER);
     }
 
+    /**
+     * initialize lis of possibilities for modification
+     */
     private void initChoicesList(){
         initPossibilities();
         initchoiceDisplayedMessage();
