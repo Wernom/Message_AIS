@@ -6,6 +6,8 @@ import java.awt.*;
 
 class DisplayOneMessage extends JPanel {
 
+    private Message messageRaw;
+
     // ais info
     private JTextField messageTypeText;
     private JTextField repeatIndicatorText;
@@ -49,29 +51,29 @@ class DisplayOneMessage extends JPanel {
      * @param modif boolean
      */
     DisplayOneMessage(Message message,String modificationType,boolean modif){
+        this.messageRaw=message;
         if(!modif){
-            setTimeIntervalPanel(message);
+            setTimeIntervalPanel();
             info.add(timeIntervalPanel,BorderLayout.NORTH);
         }
-        setDisplay(message,modificationType,modif);
+        setDisplay(modificationType,modif);
         info.add(display,BorderLayout.CENTER);
     }
 
     /**
      * Create panel for periode modification
-     * @param msg Message
      */
-    private void setTimeIntervalPanel(Message msg){
+    private void setTimeIntervalPanel(){
         int nbColumns=4;
         hourFrom.setColumns(nbColumns);
         minuteFrom.setColumns(nbColumns);
         hourTo.setColumns(nbColumns);
         minuteTo.setColumns(nbColumns);
 
-        hourFrom.setText(Integer.toString(msg.getDecode().getHour()));
-        minuteFrom.setText(Integer.toString(msg.getDecode().getMinute()));
-        hourTo.setText(Integer.toString(msg.getDecode().getHour()));
-        minuteTo.setText(Integer.toString(msg.getDecode().getMinute()));
+        hourFrom.setText(Integer.toString(messageRaw.getDecode().getHour()));
+        minuteFrom.setText(Integer.toString(messageRaw.getDecode().getMinute()));
+        hourTo.setText(Integer.toString(messageRaw.getDecode().getHour()));
+        minuteTo.setText(Integer.toString(messageRaw.getDecode().getMinute()));
 
         createTimeDisplay("From :",hourFrom,minuteFrom);
         createTimeDisplay("To :",hourTo,minuteTo);
@@ -97,17 +99,15 @@ class DisplayOneMessage extends JPanel {
 
     /**
      * generate display of ship information
-     * @param message Message AIS data
      * @param modif boolean
      */
-    private void setDisplay(Message message,String modificationType,boolean modif){
+    private void setDisplay(String modificationType,boolean modif){
         display.removeAll();
         add(display,BorderLayout.NORTH);
         add(display,BorderLayout.CENTER);
         add(display,BorderLayout.SOUTH);
 
-        MessageDecode vessel = message.getDecode();
-        JLabel AISraw=new JLabel(" Raw AIS : "+message.getAis().getRawData()); // display raw data
+        JLabel AISraw=new JLabel(" Raw AIS : "+messageRaw.getAis().getRawData()); // display raw data
         display.add(AISraw,BorderLayout.NORTH);
         JPanel panelValue=new JPanel(new GridLayout(0,4));
         if(modificationType.equals("Propagation")){
@@ -120,127 +120,125 @@ class DisplayOneMessage extends JPanel {
 
         switch(modificationType) {
             case "Propagation":
-                setDisplayForPropagationModification(panelValue,vessel,modif);
+                setDisplayForPropagationModification(panelValue,modif);
                 break;
             case "Hard":
             default:
-                setDisplayForHardModification(panelValue,vessel,modif);
+                setDisplayForHardModification(panelValue,modif);
                  break;
         }
 
         display.add(scrollPane,BorderLayout.CENTER);
         if(!modif) {
-            display.add(initButton((vessel == null) ? "GhostShip" : vessel.getUTCString()), BorderLayout.SOUTH);
+            display.add(initButton((messageRaw.getDecode() == null) ? "GhostShip" : messageRaw.getDecode().getUTCString()), BorderLayout.SOUTH);
         }
     }
 
     /**
      * set the display for hard modification
      * @param panelValue JPanel
-     * @param vessel MessageDecode
      * @param modif boolean
      */
-    private void setDisplayForHardModification(JPanel panelValue,MessageDecode vessel,boolean modif){
+    private void setDisplayForHardModification(JPanel panelValue,boolean modif){
         // messageType
         JLabel messageTypeLabel = new JLabel("Message Type");
-        messageTypeText = new JTextField((vessel == null) ? "" : vessel.getMessageType());
+        messageTypeText = new JTextField((messageRaw.getDecode() == null) ? "" : messageRaw.getDecode().getMessageType());
         panelValue.add(initPanelValue(messageTypeLabel, messageTypeText, modif));
 
         //repeatIndicator
         JLabel repeatIndicatorLabel = new JLabel("Repeat Indicator");
-        repeatIndicatorText = new JTextField((vessel == null) ? "" : vessel.getRepeatIndicator());
+        repeatIndicatorText = new JTextField((messageRaw.getDecode() == null) ? "" : messageRaw.getDecode().getRepeatIndicator());
         panelValue.add(initPanelValue(repeatIndicatorLabel, repeatIndicatorText, modif));
 
         // MMSI
         JLabel MMSILabel = new JLabel("MMSI");
-        MMSIText = new JTextField((vessel == null) ? "" : vessel.getMMSI());
+        MMSIText = new JTextField((messageRaw.getDecode() == null) ? "" : messageRaw.getDecode().getMMSI());
         panelValue.add(initPanelValue(MMSILabel, MMSIText, modif));
 
 
         // navigationStatus
         JLabel navigationStatusLabel = new JLabel("Navigation Status");
-        navigationStatusText = new JTextField((vessel == null) ? "" : vessel.getNavigationStatus());
+        navigationStatusText = new JTextField((messageRaw.getDecode() == null) ? "" : messageRaw.getDecode().getNavigationStatus());
         panelValue.add(initPanelValue(navigationStatusLabel, navigationStatusText, modif));
 
         //rateOverTurn
         JLabel rateOverTurnLabel = new JLabel("Rate Over Turn");
-        rateOverTurnText = new JTextField(vessel == null ? "" : String.valueOf(vessel.getRateOverTurn()));
+        rateOverTurnText = new JTextField(messageRaw.getDecode() == null ? "" : String.valueOf(messageRaw.getDecode().getRateOverTurn()));
         panelValue.add(initPanelValue(rateOverTurnLabel, rateOverTurnText, modif));
 
         // speedOverGround
-        setDisplayForPropagationModification(panelValue,vessel,modif);
+        setDisplayForPropagationModification(panelValue,modif);
 
         // positiontionAccuracy
         JLabel positiontionAccuracyLabel = new JLabel("Position Accuracy");
-        positiontionAccuracyText = new JTextField((vessel == null) ? "" : vessel.getPositiontionAccuracy());
+        positiontionAccuracyText = new JTextField((messageRaw.getDecode() == null) ? "" : messageRaw.getDecode().getPositiontionAccuracy());
         panelValue.add(initPanelValue(positiontionAccuracyLabel, positiontionAccuracyText, modif));
 
         // longitude
         JLabel longitudeLabel = new JLabel("Longitude");
-        longitudeText = new JTextField((vessel == null) ? "" : String.valueOf(vessel.getLongitude()));
+        longitudeText = new JTextField((messageRaw.getDecode() == null) ? "" : String.valueOf(messageRaw.getDecode().getLongitude()));
         panelValue.add(initPanelValue(longitudeLabel, longitudeText, modif));
 
         // latitude
         JLabel latitudeLabel = new JLabel("Latitude");
-        latitudeText = new JTextField((vessel == null) ? "" : String.valueOf(vessel.getLatitude()));
+        latitudeText = new JTextField((messageRaw.getDecode() == null) ? "" : String.valueOf(messageRaw.getDecode().getLatitude()));
         panelValue.add(initPanelValue(latitudeLabel, latitudeText, modif));
 
         //courseOverGround
         JLabel courseOverGroudLabel = new JLabel("Course Over Ground");
-        courseOverGroudText = new JTextField((vessel == null) ? "" : String.valueOf(vessel.getCourseOverGroud()));
+        courseOverGroudText = new JTextField((messageRaw.getDecode() == null) ? "" : String.valueOf(messageRaw.getDecode().getCourseOverGroud()));
         panelValue.add(initPanelValue(courseOverGroudLabel, courseOverGroudText, modif));
 
         // trueHeading
         JLabel trueHeadingLabel = new JLabel("True Heading");
-        trueHeadingText = new JTextField((vessel == null) ? "" : vessel.getTrueHeading());
+        trueHeadingText = new JTextField((messageRaw.getDecode() == null) ? "" : messageRaw.getDecode().getTrueHeading());
         panelValue.add(initPanelValue(trueHeadingLabel, trueHeadingText, modif));
 
         // timeStamp
         JLabel timeStampLabel = new JLabel("Time Stamp");
-        timeStampText = new JTextField((vessel == null) ? "" : vessel.getTimeStamp());
+        timeStampText = new JTextField((messageRaw.getDecode() == null) ? "" : messageRaw.getDecode().getTimeStamp());
         panelValue.add(initPanelValue(timeStampLabel, timeStampText, modif));
 
         // maneuverIndicator
         JLabel maneuverIndicatorLabel = new JLabel("Maneuver Indicator");
-        maneuverIndicatorText = new JTextField((vessel == null) ? "" : vessel.getManeuverIndicator());
+        maneuverIndicatorText = new JTextField((messageRaw.getDecode() == null) ? "" : messageRaw.getDecode().getManeuverIndicator());
         panelValue.add(initPanelValue(maneuverIndicatorLabel, maneuverIndicatorText, modif));
 
         // spare
         JLabel spareLabel = new JLabel("Spare");
-        spareText = new JTextField((vessel == null) ? "" : vessel.getSpare());
+        spareText = new JTextField((messageRaw.getDecode() == null) ? "" : messageRaw.getDecode().getSpare());
         panelValue.add(initPanelValue(spareLabel, spareText, modif));
 
         // RAIMflag
         JLabel RAIMflagLabel = new JLabel("RAIM Flag");
-        RAIMflagText = new JTextField((vessel == null) ? "" : vessel.getRAIMflag());
+        RAIMflagText = new JTextField((messageRaw.getDecode() == null) ? "" : messageRaw.getDecode().getRAIMflag());
         panelValue.add(initPanelValue(RAIMflagLabel, RAIMflagText, modif));
 
         // radioStatus
         JLabel radioStatusLabel = new JLabel("Radio Status");
-        radioStatusText = new JTextField((vessel == null) ? "" : vessel.getRadioStatus());
+        radioStatusText = new JTextField((messageRaw.getDecode() == null) ? "" : messageRaw.getDecode().getRadioStatus());
         panelValue.add(initPanelValue(radioStatusLabel, radioStatusText, modif));
 
         // hour
         JLabel hourLabel = new JLabel("Hour");
-        hoursText = new JTextField((vessel == null) ? "" : String.valueOf(vessel.getHour()));
+        hoursText = new JTextField((messageRaw.getDecode() == null) ? "" : String.valueOf(messageRaw.getDecode().getHour()));
         panelValue.add(initPanelValue(hourLabel, hoursText, modif));
 
         // minutes
         JLabel minuteLabel = new JLabel("Minute");
-        minutesText = new JTextField((vessel == null) ? "" : String.valueOf(vessel.getMinute()));
+        minutesText = new JTextField((messageRaw.getDecode() == null) ? "" : String.valueOf(messageRaw.getDecode().getMinute()));
         panelValue.add(initPanelValue(minuteLabel, minutesText, modif));
     }
 
     /**
      * set the display for propagation modification
      * @param panelValue JPanel
-     * @param vessel MessageDecode
      * @param modif boolean
      */
-    private void setDisplayForPropagationModification(JPanel panelValue,MessageDecode vessel,boolean modif){
+    private void setDisplayForPropagationModification(JPanel panelValue,boolean modif){
         // speedOverGround
         JLabel speedOverGroundLabel = new JLabel("Speed Over Ground");
-        speedOverGroundText = new JTextField((vessel == null) ? "" : String.valueOf(vessel.getSpeedOverGround()));
+        speedOverGroundText = new JTextField((messageRaw.getDecode() == null) ? "" : String.valueOf(messageRaw.getDecode().getSpeedOverGround()));
         panelValue.add(initPanelValue(speedOverGroundLabel, speedOverGroundText, modif));
     }
 
@@ -294,26 +292,26 @@ class DisplayOneMessage extends JPanel {
      * @param ship Ship
      */
     void saveModificationHardOne(Ship ship) {
-        ship.staticRangeModification(repeatIndicatorText.getText(),
-                navigationStatusText.getText(),
-                getDoubleToAppliedModification(rateOverTurnText.getText()),
-                getDoubleToAppliedModification(speedOverGroundText.getText()),
-                positiontionAccuracyText.getText(),
-                getDoubleToAppliedModification(longitudeText.getText()),
-                getDoubleToAppliedModification(latitudeText.getText()),
-                getDoubleToAppliedModification(courseOverGroudText.getText()),
-                trueHeadingText.getText(),
-                timeStampText.getText(),
-                maneuverIndicatorText.getText(),
-                spareText.getText(),
-                RAIMflagText.getText(),
-                radioStatusText.getText(),
-                getIntToAppliedModification(hoursText.getText()),
-                getIntToAppliedModification(minutesText.getText()),
-                getIntToAppliedModification(hourFrom.getText()),
-                getIntToAppliedModification(minuteFrom.getText()),
-                getIntToAppliedModification(hourTo.getText()),
-                getIntToAppliedModification(minuteTo.getText())
+        ship.staticRangeModification(getStringToAppliedModification(repeatIndicatorText.getText(),messageRaw.getDecode().getRepeatIndicator()),
+            getStringToAppliedModification(navigationStatusText.getText(),messageRaw.getDecode().getNavigationStatus()),
+            getDoubleToAppliedModification(rateOverTurnText.getText(),messageRaw.getDecode().getRateOverTurn()),
+            getDoubleToAppliedModification(speedOverGroundText.getText(),messageRaw.getDecode().getSpeedOverGround()),
+            getStringToAppliedModification(positiontionAccuracyText.getText(),messageRaw.getDecode().getPositiontionAccuracy()),
+            getDoubleToAppliedModification(longitudeText.getText(),messageRaw.getDecode().getLongitude()),
+            getDoubleToAppliedModification(latitudeText.getText(),messageRaw.getDecode().getLatitude()),
+            getDoubleToAppliedModification(courseOverGroudText.getText(),messageRaw.getDecode().getCourseOverGroud()),
+            getStringToAppliedModification(trueHeadingText.getText(),messageRaw.getDecode().getTrueHeading()),
+            getStringToAppliedModification(timeStampText.getText(),messageRaw.getDecode().getTimeStamp()),
+            getStringToAppliedModification(maneuverIndicatorText.getText(),messageRaw.getDecode().getManeuverIndicator()),
+            getStringToAppliedModification(spareText.getText(),messageRaw.getDecode().getSpare()),
+            getStringToAppliedModification(RAIMflagText.getText(),messageRaw.getDecode().getRAIMflag()),
+            getStringToAppliedModification(radioStatusText.getText(),messageRaw.getDecode().getRadioStatus()),
+            getIntToAppliedModification(hoursText.getText(),messageRaw.getDecode().getHour()),
+            getIntToAppliedModification(minutesText.getText(),messageRaw.getDecode().getMinute()),
+            getIntToAppliedModification(hourFrom.getText(),1000000),
+            getIntToAppliedModification(minuteFrom.getText(),1000000),
+            getIntToAppliedModification(hourTo.getText(),1000000),
+            getIntToAppliedModification(minuteTo.getText(),1000000)
         );
         PopUp.information(info.getParent().getParent(),"Modification done !");
     }
@@ -323,11 +321,11 @@ class DisplayOneMessage extends JPanel {
      * @param ship Ship
      */
     void saveModificationPropagationOne(Ship ship){
-        ship.speedModificationAffectPosition(getDoubleToAppliedModification(speedOverGroundText.getText()),
-                getIntToAppliedModification(hourFrom.getText()),
-                getIntToAppliedModification(minuteFrom.getText()),
-                getIntToAppliedModification(hourTo.getText()),
-                getIntToAppliedModification(minuteTo.getText()));
+        ship.speedModificationAffectPosition(getDoubleToAppliedModification(speedOverGroundText.getText(),messageRaw.getDecode().getSpeedOverGround()),
+                getIntToAppliedModification(hourFrom.getText(),1000000),
+                getIntToAppliedModification(minuteFrom.getText(),1000000),
+                getIntToAppliedModification(hourTo.getText(),1000000),
+                getIntToAppliedModification(minuteTo.getText(),1000000));
         PopUp.information(info.getParent().getParent(),"Modification done !");
     }
 
@@ -336,9 +334,9 @@ class DisplayOneMessage extends JPanel {
      * @param text String
      * @return int
      */
-    private int getIntToAppliedModification(String text){
+    private int getIntToAppliedModification(String text,int test){
         int defaultValue=1000000;
-        return (text==null)?defaultValue:Integer.parseInt(text);
+        return text.equals(Integer.toString(test))?defaultValue:Integer.parseInt(text);
     }
 
     /**
@@ -346,9 +344,14 @@ class DisplayOneMessage extends JPanel {
      * @param text String
      * @return double
      */
-    private double getDoubleToAppliedModification(String text){
+    private double getDoubleToAppliedModification(String text,double test){
         double defaultValue=1000000;
-        return (text==null)?defaultValue:Double.parseDouble(text);
+        return text.equals(Double.toString(test))?defaultValue:Double.parseDouble(text);
+    }
+
+    private String getStringToAppliedModification(String text,String test){
+        String defaultValue=null;
+        return text.equals(test)?defaultValue:text;
     }
 
     /**
