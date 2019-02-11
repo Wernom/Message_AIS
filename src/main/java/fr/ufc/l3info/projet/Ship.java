@@ -101,6 +101,89 @@ class Ship {
         }
     }
 
+    private double knotToMPH(double speedOverGround) {
+        double conversionFactor = 1.15078;
+        return speedOverGround * conversionFactor;
+    }
+
+    void speedModificationAffectPosition(double newSpeedOverGround, int hourFrom, int minuteFrom, int hourTo, int minuteTo) {
+        int timeFrom = hourFrom * 100 + minuteFrom;
+        int timeTo = hourTo * 100 + minuteTo;
+        double earthRadiusM = 6371000;
+        double offcetX = 0;
+        double offcetY = 0;
+        double offcetZ = 0;
+        for (Map.Entry<String, Message> data : this.messages.entrySet()) {
+            int timeMessage = data.getValue().getDecode().getHour() * 100 + data.getValue().getDecode().getMinute();
+            Message modifiedMessage = new Message(data.getValue().getAis().getRawData());
+            if (timeMessage >= timeFrom && timeMessage <= timeTo) {
+                //Calcultion of coordinate x, y, z from the current message;
+                double x1, y1, z1;
+                x1 = earthRadiusM * Math.sin(Math.PI - data.getValue().getDecode().getLatitude()) * Math.cos(data.getValue().getDecode().getLongitude());
+                y1 = earthRadiusM * Math.sin(Math.PI - data.getValue().getDecode().getLatitude()) * Math.sin(data.getValue().getDecode().getLongitude());
+                z1 = earthRadiusM * Math.cos(Math.PI - data.getValue().getDecode().getLatitude());
+
+                //Calcultion of coordinate x, y, z from the next message;
+                Message nextMessage = this.messages.higherEntry(data.getKey()).getValue();
+                double x2, y2, z2;
+                x2 = earthRadiusM * Math.sin(Math.PI - nextMessage.getDecode().getLatitude()) * Math.cos(nextMessage.getDecode().getLongitude());
+                y2 = earthRadiusM * Math.sin(Math.PI - nextMessage.getDecode().getLatitude()) * Math.sin(nextMessage.getDecode().getLongitude());
+                z2 = earthRadiusM * Math.cos(Math.PI - nextMessage.getDecode().getLatitude());
+
+
+                //Calculation of speed vector.
+                double normeOM = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2) + Math.pow(z2 - z1, 2));
+                double unitVectorX = (x2 - x1) / normeOM;
+                double unitVectorY = (y2 - y1) / normeOM;
+                double unitVectorZ = (z2 - z1) / normeOM;
+                //Calculation of dt(hour) ->  difference of the emission time of the previous message and current
+                double dt = (data.getValue().getDecode().getHour() + data.getValue().getDecode().getMinute() / 60.0) -
+                        (nextMessage.getDecode().getHour() + nextMessage.getDecode().getMinute() / 60.0);
+
+
+                //Calculation of the new next message position.
+                double newX, newY, newZ;
+                offcetX += this.knotToMPH(newSpeedOverGround) * unitVectorX * dt;
+                offcetY += this.knotToMPH(newSpeedOverGround) * unitVectorY * dt;
+                offcetZ += this.knotToMPH(newSpeedOverGround) * unitVectorZ * dt;
+                newX = x1 + offcetX;
+                newY = y1 + offcetY;
+                newZ = z1 + offcetZ;
+
+                //Calculation of the new longitude and latitude.
+                addModifiedMessage(earthRadiusM, modifiedMessage, newX, newY, newZ);
+                
+            } else if (timeMessage > timeTo) {
+
+                double x1 = earthRadiusM * Math.sin(Math.PI - data.getValue().getDecode().getLatitude()) * Math.cos(data.getValue().getDecode().getLongitude());
+                double y1 = earthRadiusM * Math.sin(Math.PI - data.getValue().getDecode().getLatitude()) * Math.sin(data.getValue().getDecode().getLongitude());
+                double z1 = earthRadiusM * Math.cos(Math.PI - data.getValue().getDecode().getLatitude());
+
+                double newX = x1 + offcetX;
+                double newY = y1 + offcetY;
+                double newZ = z1 + offcetZ;
+
+                addModifiedMessage(earthRadiusM, modifiedMessage, newX, newY, newZ);
+            }
+        }
+    }
+
+    private void addModifiedMessage(double earthRadiusM, Message modifiedMessage, double newX, double newY, double newZ) {
+        double newLatitude = Math.PI / 2 - Math.acos(newZ / earthRadiusM);
+        double newLongitude;
+        if (newY >= 0) {
+            newLongitude = Math.acos(newX / Math.sqrt(newX * newX + newY * newY));
+        } else {
+            newLongitude = 2 * Math.PI - Math.acos(newX / Math.sqrt(newX * newX + newY * newY));
+        }
+
+        modifiedMessage.getDecode().setLatitude(newLatitude);
+        modifiedMessage.getDecode().setLongitude(newLongitude);
+
+        modifiedMessage.encode();
+        this.modifiedMessage.put(modifiedMessage.getDecode().getUTCString(), modifiedMessage);
+    }
+
     String toStringMessage() {
         StringBuilder res = new StringBuilder();
         for (Map.Entry<String, Message> data : this.messages.entrySet()) {
