@@ -190,9 +190,6 @@ class Fenetre {
                     displaySelectedShip.getPanel().updateUI();
                     menuDeroulant.getChoiceDisplayedMessage().addItemListener(selectMessage(allSelectedShip));
                     menuDeroulant.getPossibilitiesModifications().addItemListener(selectionModification(allSelectedShip));
-                    map.reloadMap(menuBar.getShips(),mmsi,(Message) null,modifMsgSelection); // centre la map sur le navire selectionné
-
-
                 }
 
             }
