@@ -70,13 +70,16 @@ class DisplaySelectedShip extends JPanel {
            displayOneShip.getListDeroulante().addListSelectionListener(selectTimeMessageList(map,trafic,displayOneShip,allSelectedMessage,vessel,modificationSelector,modif));
        }
        info.add(tabbedPane,BorderLayout.CENTER);
+        String mmsi=tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
+        Ship ship=trafic.get(mmsi);
+       tabbedPane.setSelectedComponent(tabbedPane.getComponentAt(0));
+        map.reloadMap(trafic,ship.getMMSI(),ship.getMessages().get( mmsi),modif); // centrage map when select ship in list
         tabbedPane.addChangeListener(new ChangeListener() {
             @Override
 public void stateChanged(ChangeEvent e) {
                 String mmsi=tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
                 Ship ship=trafic.get(mmsi);
-                map.reloadMap(trafic,ship.getMMSI(),ship.getMessages().get( mmsi),modif); // centrage map
-
+                map.reloadMap(trafic,ship.getMMSI(),ship.getMessages().get( mmsi),modif); // centrage map when select ship in tab
             }
         });
    }
