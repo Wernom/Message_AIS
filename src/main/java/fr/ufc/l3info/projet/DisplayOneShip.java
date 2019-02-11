@@ -43,7 +43,7 @@ class DisplayOneShip extends JPanel{
     private void initList(Ship ship,boolean modif) {
         defaultList=new DefaultListModel<>();
         listDeroulante = new JList<>(defaultList);
-        listDeroulante.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        listDeroulante.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         listDeroulante.setLayoutOrientation(JList.VERTICAL);
         TreeMap<String, Message> mapMessage=new TreeMap<>();
         String selection;
