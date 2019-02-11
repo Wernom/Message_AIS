@@ -20,9 +20,10 @@ class DisplayOneShip extends JPanel{
     /**
      * constructor
      */
-    DisplayOneShip(Ship vessel,boolean modif){
+    DisplayOneShip( Carte map, HashMap<String,Ship> trafic, HashMap<String, Message> selectedMessage,Ship vessel,String modificationSelector,boolean modif){
         initDisplay();
         initList(vessel,modif);
+        affichage(map,trafic,selectedMessage,vessel,modificationSelector,modif);
     }
 
     private void initDisplay(){
@@ -85,15 +86,26 @@ class DisplayOneShip extends JPanel{
         }else{
             mapMessage =ship.getMessages();
         }
-        for(final Message vessel:selectedMessage.values()) {
+        if(selectedMessage.size()!=0) {
+            for (final Message vessel : selectedMessage.values()) {
 
-            DisplayOneMessage displayOneMessage = new DisplayOneMessage(vessel,modificationSelector, modif);
-            displayOneMessage.getApplySingle().addActionListener(addApplySingleListener(map, trafic, selectedMessage, ship, displayOneMessage,modificationSelector, modif));
-            displayOneMessage.getCancelSingle().addActionListener(addCancelAllListener(map, trafic, selectedMessage, ship,modificationSelector, modif));
-            //displayOneMessage.getCancelAll().addActionListener(addCancelAllListener(map,trafic,selectedMessage,ship));
-            //displayOneMessage.getApplyAll().addActionListener(addApplyAllListener(map,trafic,selectedMessage,ship,displayOneMessage));
-            tabbedPane.addTab(vessel.getDecode().getUTCString(), displayOneMessage.getDisplay());
+                DisplayOneMessage displayOneMessage = new DisplayOneMessage(vessel, modificationSelector, modif);
+                displayOneMessage.getApplySingle().addActionListener(addApplySingleListener(map, trafic, selectedMessage, ship, displayOneMessage, modificationSelector, modif));
+                displayOneMessage.getCancelSingle().addActionListener(addCancelAllListener(map, trafic, selectedMessage, ship, modificationSelector, modif));
+                //displayOneMessage.getCancelAll().addActionListener(addCancelAllListener(map,trafic,selectedMessage,ship));
+                //displayOneMessage.getApplyAll().addActionListener(addApplyAllListener(map,trafic,selectedMessage,ship,displayOneMessage));
+                tabbedPane.addTab(vessel.getDecode().getUTCString(), displayOneMessage.getDisplay());
 
+            }
+        }else{
+            if(mapMessage.size()!=0) {
+                DisplayOneMessage displayOneMessage = new DisplayOneMessage(mapMessage.get(mapMessage.lastKey()), modificationSelector, modif);
+                displayOneMessage.getApplySingle().addActionListener(addApplySingleListener(map, trafic, selectedMessage, ship, displayOneMessage, modificationSelector, modif));
+                displayOneMessage.getCancelSingle().addActionListener(addCancelAllListener(map, trafic, selectedMessage, ship, modificationSelector, modif));
+                //displayOneMessage.getCancelAll().addActionListener(addCancelAllListener(map,trafic,selectedMessage,ship));
+                //displayOneMessage.getApplyAll().addActionListener(addApplyAllListener(map,trafic,selectedMessage,ship,displayOneMessage));
+                tabbedPane.addTab(mapMessage.get(mapMessage.lastKey()).getDecode().getUTCString(), displayOneMessage.getDisplay());
+            }
         }
         tabPan.add(tabbedPane);
         tabbedPane.addChangeListener(new ChangeListener() {
@@ -103,9 +115,12 @@ class DisplayOneShip extends JPanel{
                 map.reloadMap(trafic, ship.getMMSI(), mapMessage.get(time),modif);
             }
         });
-        tabbedPane.setSelectedIndex(0);
+        if(mapMessage.size()!=0) {
+            tabbedPane.setSelectedIndex(0);
+
         String time = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
         map.reloadMap(trafic, ship.getMMSI(), mapMessage.get(time),modif);
+        }
     }
 
     //listener
@@ -129,7 +144,7 @@ class DisplayOneShip extends JPanel{
             }
         };
     }
-
+/*
     /**
      * create an ActionListener for applyAll Button
      * @return ActionListener

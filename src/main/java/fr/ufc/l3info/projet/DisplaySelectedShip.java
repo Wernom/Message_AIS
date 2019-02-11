@@ -75,8 +75,8 @@ class DisplaySelectedShip extends JPanel {
        final JTabbedPane tabbedPane=new JTabbedPane();
        for(final Ship vessel:selectedShip.values()) {
            final String mmsi= vessel.getMMSI();
-
-           final DisplayOneShip displayOneShip=new DisplayOneShip(vessel,modif);
+           final HashMap<String ,Message> allSelectedMessage=new HashMap<>();
+           final DisplayOneShip displayOneShip=new DisplayOneShip(map,trafic,allSelectedMessage,vessel,modificationSelector,modif );
            tabbedPane.addTab(mmsi,displayOneShip.getInfo());
            displayOneShip.getListDeroulante().addListSelectionListener(new ListSelectionListener() {
                @Override
@@ -87,7 +87,7 @@ class DisplaySelectedShip extends JPanel {
                            return;
                        }
                        List allMessage = displayOneShip.getListDeroulante().getSelectedValuesList();
-                       HashMap<String ,Message> allSelectedMessage=new HashMap<>();
+
                        if(allMessage.size()==0) {
                            for (Object msgTime : allMessage) {
                                String time = msgTime.toString();
