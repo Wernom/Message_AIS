@@ -117,14 +117,29 @@ class Ship {
         double offcetY = 0;
         double offcetZ = 0;
         for (Map.Entry<String, Message> data : this.messages.entrySet()) {
+            if (this.messages.higherEntry(data.getKey()) == null)continue;
             int timeMessage = data.getValue().getDecode().getHour() * 100 + data.getValue().getDecode().getMinute();
-            Message modifiedMessage = new Message(data.getValue().getAis().getRawData());
+            Message modifiedMessage = new Message(this.messages.higherEntry(data.getKey()).getValue().getAis().getRawData());
             if (timeMessage >= timeFrom && timeMessage <= timeTo) {
                 //Calcultion of coordinate x, y, z from the current message;
                 double x1, y1, z1;
                 x1 = earthRadiusM * Math.sin(Math.PI - data.getValue().getDecode().getLatitude()) * Math.cos(data.getValue().getDecode().getLongitude());
                 y1 = earthRadiusM * Math.sin(Math.PI - data.getValue().getDecode().getLatitude()) * Math.sin(data.getValue().getDecode().getLongitude());
                 z1 = earthRadiusM * Math.cos(Math.PI - data.getValue().getDecode().getLatitude());
+                System.out.println("x1 = " + x1 + ", y1 = " + y1 + ", z1 = " + z1);
+
+                double newLatitude = Math.PI / 2 - Math.acos(z1 / earthRadiusM);
+                double newLongitude;
+                if (y1 >= 0) {
+                    newLongitude = Math.acos(x1/ Math.sqrt(x1 * x1 + y1 * y1));
+                } else {
+
+                    newLongitude = 2 * Math.PI - Math.acos(x1 / Math.sqrt(x1 * x1 + y1 * y1));
+                }
+
+                System.out.println("lat = " + newLatitude + " lon = " + newLongitude);
+
+
 
                 //Calcultion of coordinate x, y, z from the next message;
                 Message nextMessage = this.messages.higherEntry(data.getKey()).getValue();
@@ -132,6 +147,7 @@ class Ship {
                 x2 = earthRadiusM * Math.sin(Math.PI - nextMessage.getDecode().getLatitude()) * Math.cos(nextMessage.getDecode().getLongitude());
                 y2 = earthRadiusM * Math.sin(Math.PI - nextMessage.getDecode().getLatitude()) * Math.sin(nextMessage.getDecode().getLongitude());
                 z2 = earthRadiusM * Math.cos(Math.PI - nextMessage.getDecode().getLatitude());
+                System.out.println("x2 = " + x2 + ", y2 = " + y2+ ", z2 = " + z2);
 
 
                 //Calculation of speed vector.
@@ -149,22 +165,24 @@ class Ship {
                 offcetX += this.knotToMPH(newSpeedOverGround) * unitVectorX * dt;
                 offcetY += this.knotToMPH(newSpeedOverGround) * unitVectorY * dt;
                 offcetZ += this.knotToMPH(newSpeedOverGround) * unitVectorZ * dt;
-                newX = x1 + offcetX;
-                newY = y1 + offcetY;
-                newZ = z1 + offcetZ;
+                newX = x2 + offcetX;
+                newY = y2 + offcetY;
+                newZ = z2 + offcetZ;
 
                 //Calculation of the new longitude and latitude.
                 addModifiedMessage(earthRadiusM, modifiedMessage, newX, newY, newZ);
                 
             } else if (timeMessage > timeTo) {
 
-                double x1 = earthRadiusM * Math.sin(Math.PI - data.getValue().getDecode().getLatitude()) * Math.cos(data.getValue().getDecode().getLongitude());
-                double y1 = earthRadiusM * Math.sin(Math.PI - data.getValue().getDecode().getLatitude()) * Math.sin(data.getValue().getDecode().getLongitude());
-                double z1 = earthRadiusM * Math.cos(Math.PI - data.getValue().getDecode().getLatitude());
+                Message nextMessage = this.messages.higherEntry(data.getKey()).getValue();
 
-                double newX = x1 + offcetX;
-                double newY = y1 + offcetY;
-                double newZ = z1 + offcetZ;
+                double x2 = earthRadiusM * Math.sin(Math.PI - nextMessage.getDecode().getLatitude()) * Math.cos(nextMessage.getDecode().getLongitude());
+                double y2 = earthRadiusM * Math.sin(Math.PI - nextMessage.getDecode().getLatitude()) * Math.sin(nextMessage.getDecode().getLongitude());
+                double z2 = earthRadiusM * Math.cos(Math.PI - nextMessage.getDecode().getLatitude());
+
+                double newX = x2 + offcetX;
+                double newY = y2 + offcetY;
+                double newZ = z2 + offcetZ;
 
                 addModifiedMessage(earthRadiusM, modifiedMessage, newX, newY, newZ);
             }
