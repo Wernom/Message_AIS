@@ -61,21 +61,28 @@ class MenuDeroulant extends JPanel {
      * initialize list of possibilities
      */
     private void initPossibilities(){
-        String[] possibilities={"Hard","Propagation"};
+        String defaultValue= "Hard";
+        String[] possibilities={defaultValue,"Propagation"};
         possibilitiesModifications=new JComboBox<>(possibilities);
         Border border ;
         border = BorderFactory.createEmptyBorder();
         border = BorderFactory.createTitledBorder(border,"Modification type :");
+        possibilitiesModifications.setSelectedItem(defaultValue);
         possibilitiesModifications.setBorder(border);
         possibilitiesModifications.setSelectedIndex(0);
     }
 
+    /**
+     * initialize type of displaying message
+     */
     private void initchoiceDisplayedMessage(){
+        String defaultValue= "Unmodified";
         String[] possibilities={"Unmodified","Modified"};
         choiceDisplayedMessage=new JComboBox<>(possibilities);
         Border border ;
         border = BorderFactory.createEmptyBorder();
         border = BorderFactory.createTitledBorder(border,"Message Displayed :");
+        possibilitiesModifications.setSelectedItem(defaultValue);
         choiceDisplayedMessage.setBorder(border);
         choiceDisplayedMessage.setSelectedIndex(0);
     }

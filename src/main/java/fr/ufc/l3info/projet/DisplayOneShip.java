@@ -40,24 +40,29 @@ class DisplayOneShip extends JPanel{
         listDeroulante = new JList<>(defaultList);
         listDeroulante.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         listDeroulante.setLayoutOrientation(JList.VERTICAL);
-        TreeMap<String, Message> mapMessage;
+        TreeMap<String, Message> mapMessage=new TreeMap<>();
         String selection;
-        if(modif) {
-            mapMessage = ship.getModifiedMessage();
-            selection=ship.getLastKnownModifiedMessage().getDecode().getUTCString();
-        }else{
-            mapMessage =ship.getMessages();
-            selection=ship.getLastKnownMessage().getDecode().getUTCString();
-        }
-        if(mapMessage.size()==0){
-            defaultList.addElement("<empty>");
-            listDeroulante.setSelectedValue("<empty>",false);
-        }else{
-            for (Message msg:mapMessage.values()) {
-                defaultList.addElement(msg.getDecode().getUTCString());
+
+            if (modif) {
+                if(ship.getModifiedMessage().size()!=0) {
+                    mapMessage = ship.getModifiedMessage();
+                    selection = ship.getLastKnownModifiedMessage().getDecode().getUTCString();
+                }else{
+                    selection="<empty>";
+                }
+            } else {
+                mapMessage = ship.getMessages();
+                selection = ship.getLastKnownMessage().getDecode().getUTCString();
             }
-            listDeroulante.setSelectedValue(selection,false);
-        }
+            if(mapMessage.size()==0){
+                defaultList.addElement("<empty>");
+                listDeroulante.setSelectedValue("<empty>",false);
+            }else{
+                for (Message msg:mapMessage.values()) {
+                    defaultList.addElement(msg.getDecode().getUTCString());
+                }
+                listDeroulante.setSelectedValue(selection,false);
+            }
         JScrollPane scrollPane=new JScrollPane(listDeroulante);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -65,13 +70,13 @@ class DisplayOneShip extends JPanel{
         listPan.add(scrollPane);
     }
 
-    void reload(Carte map,HashMap<String,Ship> trafic, HashMap<String ,Message> selectedMessage,Ship ship,boolean modif){
+    void reload(Carte map,HashMap<String,Ship> trafic, HashMap<String ,Message> selectedMessage,Ship ship,String modificationSelector,boolean modif){
         tabPan.removeAll();
-        affichage(map,trafic,selectedMessage,ship,modif);
+        affichage(map,trafic,selectedMessage,ship, modificationSelector,modif);
 
     }
 
-    private void affichage(final Carte map, final HashMap<String,Ship> trafic, HashMap<String, Message> selectedMessage, final Ship ship,final boolean modif){
+    private void affichage(final Carte map, final HashMap<String,Ship> trafic, HashMap<String, Message> selectedMessage, final Ship ship,String modificationSelector,final boolean modif){
 
         final JTabbedPane tabbedPane=new JTabbedPane();
         final TreeMap<String, Message> mapMessage;
@@ -82,9 +87,9 @@ class DisplayOneShip extends JPanel{
         }
         for(final Message vessel:selectedMessage.values()) {
 
-            DisplayOneMessage displayOneMessage = new DisplayOneMessage(vessel, modif);
-            displayOneMessage.getApplySingle().addActionListener(addApplySingleListener(map, trafic, selectedMessage, ship, displayOneMessage, modif));
-            displayOneMessage.getCancelSingle().addActionListener(addCancelAllListener(map, trafic, selectedMessage, ship, modif));
+            DisplayOneMessage displayOneMessage = new DisplayOneMessage(vessel,modificationSelector, modif);
+            displayOneMessage.getApplySingle().addActionListener(addApplySingleListener(map, trafic, selectedMessage, ship, displayOneMessage,modificationSelector, modif));
+            displayOneMessage.getCancelSingle().addActionListener(addCancelAllListener(map, trafic, selectedMessage, ship,modificationSelector, modif));
             //displayOneMessage.getCancelAll().addActionListener(addCancelAllListener(map,trafic,selectedMessage,ship));
             //displayOneMessage.getApplyAll().addActionListener(addApplyAllListener(map,trafic,selectedMessage,ship,displayOneMessage));
             tabbedPane.addTab(vessel.getDecode().getUTCString(), displayOneMessage.getDisplay());
@@ -106,13 +111,19 @@ class DisplayOneShip extends JPanel{
     //listener
     /**
      * create an ActionListener for cancelAll Button
+     * @param map Carte
+     * @param trafic  HashMap<String,Ship>
+     * @param selectedMessage HashMap<String ,Message>
+     * @param ship Ship
+     * @param modificationSelector String
+     * @param modif boolean
      * @return ActionListener
      */
-    private ActionListener addCancelAllListener(final Carte map,final HashMap<String,Ship> trafic,final HashMap<String ,Message> selectedMessage,final Ship ship,final boolean modif){
+    private ActionListener addCancelAllListener(final Carte map,final HashMap<String,Ship> trafic,final HashMap<String ,Message> selectedMessage,final Ship ship,final String modificationSelector,final boolean modif){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                reload(map,trafic,selectedMessage,ship,modif);
+                reload(map,trafic,selectedMessage,ship,modificationSelector,modif);
                 info.revalidate();
                 info.updateUI();
             }
@@ -134,17 +145,33 @@ class DisplayOneShip extends JPanel{
             }
         };
     }/
+*/
 
     /**
      * create an ActionListener for applySingle Button
+     * @param map Carte
+     * @param trafic  HashMap<String,Ship>
+     * @param selectedMessage HashMap<String ,Message>
+     * @param ship Ship
+     * @param displayOneMessage DisplayOneMessage
+     * @param modificationSelector String
+     * @param modif boolean
      * @return ActionListener
      */
-    private ActionListener addApplySingleListener(final Carte map,final HashMap<String,Ship> trafic,final HashMap<String ,Message> selectedMessage,final Ship ship,final DisplayOneMessage displayOneMessage,final boolean modif){
+    private ActionListener addApplySingleListener(final Carte map,final HashMap<String,Ship> trafic,final HashMap<String ,Message> selectedMessage,final Ship ship,final DisplayOneMessage displayOneMessage,final String modificationSelector,final boolean modif){
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                displayOneMessage.saveModificationOne(ship);
-                reload(map,trafic,selectedMessage,ship,modif);
+                switch(modificationSelector){
+                    case "Propagation":
+                        displayOneMessage.saveModificationPropagationOne(ship);
+                        break;
+                    case "Hard":
+                    default:
+                        displayOneMessage.saveModificationHardOne(ship);
+                        break;
+                }
+                reload(map,trafic,selectedMessage,ship,modificationSelector,modif);
                 info.revalidate();
                 info.updateUI();
             }

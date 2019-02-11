@@ -58,8 +58,8 @@ class DisplaySelectedShip extends JPanel {
      * @param trafic HashMap<String ,Ship>
      * @param selectedShip HashMap<String ,Ship>
      */
-    void affichage( Carte map,HashMap<String ,Ship> trafic,HashMap<String ,Ship> selectedShip,boolean modif){
-        reload(map,trafic,selectedShip,modif);
+    void affichage( Carte map,HashMap<String ,Ship> trafic,HashMap<String ,Ship> selectedShip, String modificationSelector,boolean modif){
+        reload(map,trafic,selectedShip,modificationSelector,modif);
    }
 
     /**
@@ -67,8 +67,10 @@ class DisplaySelectedShip extends JPanel {
      * @param map Carte
      * @param trafic HashMap<String ,Ship>
      * @param selectedShip HashMap<String ,Ship>
+     * @param modificationSelector String
+     * @param modif boolean
      */
-    private void reload(final Carte map, final HashMap<String ,Ship> trafic, HashMap<String ,Ship> selectedShip,final boolean modif){
+    private void reload(final Carte map, final HashMap<String ,Ship> trafic, HashMap<String ,Ship> selectedShip,final String modificationSelector,final boolean modif){
        info.removeAll();
        final JTabbedPane tabbedPane=new JTabbedPane();
        for(final Ship vessel:selectedShip.values()) {
@@ -86,11 +88,16 @@ class DisplaySelectedShip extends JPanel {
                        }
                        List allMessage = displayOneShip.getListDeroulante().getSelectedValuesList();
                        HashMap<String ,Message> allSelectedMessage=new HashMap<>();
-                       for(Object msgTime:allMessage){
-                           String time=msgTime.toString();
-                           allSelectedMessage.put(vessel.getMessages().get(time).getDecode().getMMSI(),vessel.getMessages().get(time));
+                       if(allMessage.size()==0) {
+                           for (Object msgTime : allMessage) {
+                               String time = msgTime.toString();
+                               allSelectedMessage.put(vessel.getMMSI(), vessel.getMessages().get(time));
+                           }
+                       }else{
+                           String time=displayOneShip.getListDeroulante().getSelectedValue().toString();
+                           allSelectedMessage.put(vessel.getMMSI(), vessel.getMessages().get(time));
                        }
-                       displayOneShip.reload(map,trafic,allSelectedMessage,vessel,modif); // centrage map
+                       displayOneShip.reload(map,trafic,allSelectedMessage,vessel,modificationSelector,modif); // centrage map
                        displayOneShip.getInfo().updateUI();
                        displayOneShip.getInfo().revalidate();
                    }

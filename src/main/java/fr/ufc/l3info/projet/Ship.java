@@ -42,6 +42,9 @@ class Ship {
     }
 
     Message getLastKnownModifiedMessage() {
+        if(modifiedMessage.size()==0){
+            return null;
+        }
         return modifiedMessage.get(modifiedMessage.lastKey());
     }
 

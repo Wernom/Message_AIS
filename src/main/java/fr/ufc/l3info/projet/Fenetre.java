@@ -21,6 +21,7 @@ class Fenetre {
     private MenuDeroulant menuDeroulant;
     private DisplaySelectedShip displaySelectedShip;
     private boolean modifMsgSelection=false;
+    private String selectorModification="Hard";
 
     private int defaultsizeW=1000;
     private int defaultsizeH=1000;
@@ -182,10 +183,11 @@ class Fenetre {
                     for(Object vessel:allShip){
                         allSelectedShip.put(menuBar.getShip((String)vessel).getMMSI(),menuBar.getShip((String)vessel));
                     }
-                    displaySelectedShip.affichage(map,menuBar.getShips(),allSelectedShip,modifMsgSelection);
+                    displaySelectedShip.affichage(map,menuBar.getShips(),allSelectedShip,selectorModification,modifMsgSelection);
                     displaySelectedShip.getPanel().revalidate();
                     displaySelectedShip.getPanel().updateUI();
                     menuDeroulant.getChoiceDisplayedMessage().addItemListener(selectMessage(allSelectedShip));
+                    menuDeroulant.getPossibilitiesModifications().addItemListener(selctionModification(allSelectedShip));
                     map.reloadMap(menuBar.getShips(),mmsi,(Message) null,modifMsgSelection); // centre la map sur le navire selectionné
 
 
@@ -342,19 +344,38 @@ class Fenetre {
                     switch (item.toString()){
                         case "Modified":
                             modifMsgSelection=true;
-                            displaySelectedShip.affichage(map,menuBar.getShips(),allSelectedShip,modifMsgSelection);
-                            displaySelectedShip.getPanel().revalidate();
-                            displaySelectedShip.getPanel().updateUI();
                             break;
                         case "Unmodified":
                         default:
                             modifMsgSelection=false;
-                            displaySelectedShip.affichage(map,menuBar.getShips(),allSelectedShip,modifMsgSelection);
+                            break;
+                    }
+                    displaySelectedShip.affichage(map,menuBar.getShips(),allSelectedShip,selectorModification,modifMsgSelection);
+                    displaySelectedShip.getPanel().revalidate();
+                    displaySelectedShip.getPanel().updateUI();
+                    reloadMap();
+                }
+            }
+        };
+    }
+
+    private ItemListener selctionModification(final HashMap<String ,Ship> allSelectedShip){
+        return new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                if(e.getStateChange()== ItemEvent.SELECTED){
+                    Object item=e.getItem();
+                    selectorModification=item.toString();
+                    switch (selectorModification){
+                        case "Propagation":
+                            displaySelectedShip.affichage(map,menuBar.getShips(),allSelectedShip,selectorModification,modifMsgSelection);
                             displaySelectedShip.getPanel().revalidate();
                             displaySelectedShip.getPanel().updateUI();
                             break;
+                        case "Hard":
+                        default:
+                            break;
                     }
-                    reloadMap();
                 }
             }
         };
