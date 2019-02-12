@@ -15,7 +15,7 @@ import java.util.List;
 
 class Fenetre {
 
-    private JFrame fenetre=new JFrame();
+    private JFrame fenetre=new JFrame("AIS-Project");
     private Carte map;
     private Menu menuBar;
     private MenuDeroulant menuDeroulant;
@@ -25,13 +25,15 @@ class Fenetre {
     private Boolean testSelectModification=false;
     private Boolean testSelectMessageType=false;
 
-    private int defaultsizeW=1000;
-    private int defaultsizeH=1000;
+    private Dimension sizeScreen;
 
     /**
      * constructor of display
      */
     Fenetre(){
+        sizeScreen=Toolkit.getDefaultToolkit().getScreenSize();
+        int defaultsizeH=sizeScreen.height*3/4;
+        int defaultsizeW=sizeScreen.width*3/4;
         menuBar = new Menu();
 
         menuBar.getMenuItem().addActionListener(importListener());
@@ -107,7 +109,7 @@ class Fenetre {
         fenetre.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         fenetre.addWindowListener(addWindowEvent());
         fenetre.setSize(defaultsizeW, defaultsizeH);
-        fenetre.setMinimumSize(new Dimension(defaultsizeW,defaultsizeH));
+        fenetre.setMinimumSize(new Dimension((int)(defaultsizeW/1.2),(int)(defaultsizeH)));
 
         // creation de la carte
         map = new Carte();
@@ -137,8 +139,6 @@ class Fenetre {
 
 
     //----------------
-
-
 
     /**
      * reload the map after import raw AIS
