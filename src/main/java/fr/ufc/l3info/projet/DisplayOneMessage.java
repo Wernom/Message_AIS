@@ -35,10 +35,8 @@ class DisplayOneMessage extends JPanel {
     private JTextField minuteTo=new JTextField();
 
     // button
-    private JButton applyAll=new JButton();
-    private JButton cancelAll=new JButton();
-    private JButton applySingle =new JButton();
-    private JButton cancelSingle=new JButton();
+    private JButton apply =new JButton("Apply");
+    private JButton cancel=new JButton("Cancel");
 
     // panel
     private JPanel timeIntervalPanel=new JPanel();
@@ -133,9 +131,9 @@ class DisplayOneMessage extends JPanel {
         }
 
         display.add(scrollPane,BorderLayout.CENTER);
-        if(!modif) {
-            display.add(initButton((messageRaw.getDecode() == null) ? "GhostShip" : messageRaw.getDecode().getUTCString()), BorderLayout.SOUTH);
-        }
+
+        display.add(initButton(), BorderLayout.SOUTH);
+
     }
 
     /**
@@ -264,30 +262,19 @@ class DisplayOneMessage extends JPanel {
 
     /**
      * setup cancel and validate modification button
-     * @param mmsi String
      * @return JPanel
      */
-    private JPanel initButton(String mmsi){
+    private JPanel initButton(){
         JPanel panelButton=new JPanel();
 
-        // set text
-       // applyAll.setText("Apply (all)");
-        //cancelAll.setText("Cancel (all)");
-        applySingle.setText("Apply ("+mmsi+")");
-        cancelSingle.setText("Cancel ("+mmsi+")");
-
         // color font
-        cancelAll.setForeground(new Color(139, 0, 0));
-        applyAll.setForeground(new Color(0, 114, 57));
-        cancelSingle.setForeground(new Color(139, 0, 0));
-        applySingle.setForeground(new Color(0, 114, 57));
+        cancel.setForeground(new Color(139, 0, 0));
+        apply.setForeground(new Color(0, 114, 57));
 
 
         // add to panel
-        //panelButton.add(cancelAll);
-        //panelButton.add(applyAll);
-        panelButton.add(cancelSingle);
-        panelButton.add(applySingle);
+        panelButton.add(cancel);
+        panelButton.add(apply);
         return panelButton;
     }
 
@@ -361,29 +348,15 @@ class DisplayOneMessage extends JPanel {
     /**
      * @return JButton
      */
-    JButton getApplySingle() {
-        return applySingle;
+    JButton getApply() {
+        return apply;
     }
 
     /**
      * @return JButton
      */
-    JButton getCancelSingle() {
-        return cancelSingle;
-    }
-
-    /**
-     * @return JButton
-     */
-    JButton getApplyAll() {
-        return applyAll;
-    }
-
-    /**
-     * @return JButton
-     */
-    JButton getCancelAll() {
-        return cancelAll;
+    JButton getCancel() {
+        return cancel;
     }
 
     /**

@@ -61,7 +61,7 @@ class DisplaySelectedShip extends JPanel {
      * @param modificationSelector String
      * @param modif boolean
      */
-    void affichage(final Carte map, final HashMap<String ,Ship> trafic, HashMap<String ,Ship> selectedShip,final String modificationSelector,final boolean modif){
+    void affichage( Carte map,  HashMap<String ,Ship> trafic, HashMap<String ,Ship> selectedShip, String modificationSelector, boolean modif){
        info.removeAll();
        final JTabbedPane tabbedPane=new JTabbedPane();
        for( Ship vessel:selectedShip.values()) {
@@ -76,26 +76,27 @@ class DisplaySelectedShip extends JPanel {
         tabbedPane.setSelectedComponent(tabbedPane.getComponentAt(0));
         String mmsi=tabbedPane.getTitleAt(0);
         Ship ship=trafic.get(mmsi);
-        if(!modif) {// centrage map when select ship in tab
-            map.reloadMap(trafic,new Coordinate(ship.getLastKnownMessage().getDecode().getLatitude(), ship.getLastKnownMessage().getDecode().getLongitude()),modif);
-        }else if (ship.getModifiedMessage().size() != 0){
-            map.reloadMap(trafic,new Coordinate(ship.getLastKnownModifiedMessage().getDecode().getLatitude(), ship.getLastKnownModifiedMessage().getDecode().getLongitude()),modif);
-        }
-        tabbedPane.addChangeListener(new ChangeListener() {
-            @Override
-public void stateChanged(ChangeEvent e) {
-                String mmsi=tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
-                Ship ship=trafic.get(mmsi);
-                if(!modif) {// centrage map when select ship in tab
-                    map.reloadMap(trafic,new Coordinate(ship.getLastKnownMessage().getDecode().getLatitude(), ship.getLastKnownMessage().getDecode().getLongitude()),modif);
-                }else if (ship.getModifiedMessage().size() != 0){
-                    map.reloadMap(trafic,new Coordinate(ship.getLastKnownModifiedMessage().getDecode().getLatitude(), ship.getLastKnownModifiedMessage().getDecode().getLongitude()),modif);
-                }
-            }
-        });
+        centrageMap(map,trafic,ship,modif);
+        tabbedPane.addChangeListener(centerMapListener(map,trafic,tabbedPane,modif));
    }
 
     /**
+     * centre la map sur le navirre selectionné
+     * @param map Carte
+     * @param trafic HashMap<String ,Ship>
+     * @param ship Ship
+     * @param modif boolean
+     */
+   private void centrageMap(Carte map,HashMap<String ,Ship> trafic,Ship ship,boolean modif){
+       if(!modif) {// centrage map when select ship in tab
+           map.reloadMap(trafic,new Coordinate(ship.getLastKnownMessage().getDecode().getLatitude(), ship.getLastKnownMessage().getDecode().getLongitude()),modif);
+       }else if (ship.getModifiedMessage().size() != 0){
+           map.reloadMap(trafic,new Coordinate(ship.getLastKnownModifiedMessage().getDecode().getLatitude(), ship.getLastKnownModifiedMessage().getDecode().getLongitude()),modif);
+       }
+   }
+
+    /**
+     * select the message on the list
      * @param map Carte
      * @param trafic HashMap<String ,Ship>
      * @param displayOneShip DisplayOneShip
@@ -115,7 +116,6 @@ public void stateChanged(ChangeEvent e) {
                         return;
                     }
                     List allMessage = displayOneShip.getListDeroulante().getSelectedValuesList();
-                    System.out.println(allMessage.size());
                     if(allMessage.size()!=0) {
                         for (Object msgTime : allMessage) {
                             String time = msgTime.toString();
@@ -125,7 +125,7 @@ public void stateChanged(ChangeEvent e) {
                         String time=displayOneShip.getListDeroulante().getSelectedValue().toString();
                         allSelectedMessage.put(vessel.getMMSI(), vessel.getMessages().get(time));
                     }
-                    displayOneShip.affichage(map,trafic,allSelectedMessage,vessel,modificationSelector,modif); // centrage map
+                    displayOneShip.reload(map,trafic,allSelectedMessage,vessel,modificationSelector,modif); // centrage map
                     displayOneShip.getInfo().updateUI();
                     displayOneShip.getInfo().revalidate();
                 }
@@ -133,5 +133,23 @@ public void stateChanged(ChangeEvent e) {
         };
     }
 
+    /**
+     * center the map on the selected ship
+     * @param map Carte
+     * @param trafic HashMap<String ,Ship>
+     * @param tabbedPane JTabbedPane
+     * @param modif boolean
+     * @return ChangeListener
+     */
+    private ChangeListener centerMapListener(final Carte map,final HashMap<String ,Ship> trafic,final JTabbedPane tabbedPane,final boolean modif){
+        return new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                String mmsi=tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
+                Ship ship=trafic.get(mmsi);
+                centrageMap(map,trafic,ship,modif);
+            }
+        };
+    }
 
 }

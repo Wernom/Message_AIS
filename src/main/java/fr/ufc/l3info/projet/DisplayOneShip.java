@@ -3,8 +3,6 @@ package fr.ufc.l3info.projet;
 
 import javax.swing.*;
 import javax.swing.border.Border;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -79,6 +77,22 @@ class DisplayOneShip extends JPanel{
     }
 
     /**
+     * reload info message after selection
+     * @param map Carte
+     * @param trafic  HashMap<String,Ship>
+     * @param selectedMessage  HashMap<String, Message>
+     * @param vessel Ship
+     * @param modificationSelector String
+     * @param modif boolean
+     */
+    void reload(Carte map, HashMap<String,Ship> trafic, HashMap<String, Message> selectedMessage,Ship vessel,String modificationSelector,boolean modif){
+        tabPan.removeAll();
+        affichage(map,trafic,selectedMessage,vessel,modificationSelector,modif);
+        tabPan.revalidate();
+        tabPan.updateUI();
+    }
+
+    /**
      * display info of one ship
      * @param map Carte
      * @param trafic HashMap<String,Ship>
@@ -87,7 +101,7 @@ class DisplayOneShip extends JPanel{
      * @param modificationSelector String
      * @param modif boolean
      */
-    void affichage(final Carte map, final HashMap<String,Ship> trafic, HashMap<String, Message> selectedMessage, final Ship ship,String modificationSelector,final boolean modif){
+    private void affichage(final Carte map, final HashMap<String, Ship> trafic, HashMap<String, Message> selectedMessage, final Ship ship, String modificationSelector, final boolean modif){
 
         final JTabbedPane tabbedPane=new JTabbedPane();
         final TreeMap<String, Message> mapMessage;
@@ -100,34 +114,30 @@ class DisplayOneShip extends JPanel{
             for (final Message vessel : selectedMessage.values()) {
 
                 DisplayOneMessage displayOneMessage = new DisplayOneMessage(vessel, modificationSelector, modif);
-                displayOneMessage.getApplySingle().addActionListener(addApplySingleListener(map, trafic, selectedMessage, ship, displayOneMessage, modificationSelector, modif));
-                displayOneMessage.getCancelSingle().addActionListener(addCancelAllListener(map, trafic, selectedMessage, ship, modificationSelector, modif));
-                //displayOneMessage.getCancelAll().addActionListener(addCancelAllListener(map,trafic,selectedMessage,ship));
-                //displayOneMessage.getApplyAll().addActionListener(addApplyAllListener(map,trafic,selectedMessage,ship,displayOneMessage));
-                tabbedPane.addTab(vessel.getDecode().getUTCString(), displayOneMessage.getDisplay());
+                displayOneMessage.getApply().addActionListener(addApplySingleListener(map, trafic, selectedMessage, ship, displayOneMessage, modificationSelector, modif));
+                displayOneMessage.getCancel().addActionListener(addCancelAllListener(map, trafic, selectedMessage, ship, modificationSelector, modif));
 
+                tabbedPane.addTab(vessel.getDecode().getUTCString(), displayOneMessage.getDisplay());
             }
         }else{
             if(mapMessage.size()!=0) {
                 DisplayOneMessage displayOneMessage = new DisplayOneMessage(mapMessage.get(mapMessage.lastKey()), modificationSelector, modif);
-                displayOneMessage.getApplySingle().addActionListener(addApplySingleListener(map, trafic, selectedMessage, ship, displayOneMessage, modificationSelector, modif));
-                displayOneMessage.getCancelSingle().addActionListener(addCancelAllListener(map, trafic, selectedMessage, ship, modificationSelector, modif));
-                //displayOneMessage.getCancelAll().addActionListener(addCancelAllListener(map,trafic,selectedMessage,ship));
-                //displayOneMessage.getApplyAll().addActionListener(addApplyAllListener(map,trafic,selectedMessage,ship,displayOneMessage));
+                displayOneMessage.getApply().addActionListener(addApplySingleListener(map, trafic, selectedMessage, ship, displayOneMessage, modificationSelector, modif));
+                displayOneMessage.getCancel().addActionListener(addCancelAllListener(map, trafic, selectedMessage, ship, modificationSelector, modif));
+
                 tabbedPane.addTab(mapMessage.get(mapMessage.lastKey()).getDecode().getUTCString(), displayOneMessage.getDisplay());
             }
         }
         tabPan.add(tabbedPane);
-        tabbedPane.addChangeListener(new ChangeListener() {
+        /*tabbedPane.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 String time=tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
                 map.reloadMap(trafic, ship.getMMSI(), mapMessage.get(time),modif);
             }
-        });
-        if(mapMessage.size()!=0) {
-            tabbedPane.setSelectedIndex(0);
-            String time = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
+        });*/
+        if(mapMessage.size()>0 && tabbedPane.getTabCount()>0) {
+            String time = tabbedPane.getTitleAt(0);
             map.reloadMap(trafic, ship.getMMSI(), mapMessage.get(time),modif);
         }
     }
@@ -153,23 +163,6 @@ class DisplayOneShip extends JPanel{
             }
         };
     }
-/*
-    /**
-     * create an ActionListener for applyAll Button
-     * @return ActionListener
-     */
-   /* private ActionListener addApplyAllListener(final Carte map,final HashMap<String,Ship> trafic,final HashMap<String ,Message> selectedMessage,final Ship ship, final DisplayOneMessage displayOneMessage){
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                saveModificationAll(selectedMessage,ship,displayOneMessage);
-                reload(map,trafic,selectedMessage,ship);
-                info.revalidate();
-                info.updateUI();
-            }
-        };
-    }/
-*/
 
     /**
      * create an ActionListener for applySingle Button
@@ -201,16 +194,6 @@ class DisplayOneShip extends JPanel{
             }
         };
     }
-
-//modification save
-    ///**
-    // * Save information modification for all selected vessel
-    // */
-   /* private void saveModificationAll(HashMap<String ,Message> selectedMessage,final Ship ship,final DisplayOneMessage displayOneMessage){
-        for(Message vessel:selectedMessage.values()) {
-            displayOneMessage.saveModificationOne(ship);
-        }
-    }*/
 
     /**
      * @return JList
