@@ -1,6 +1,8 @@
 package fr.ufc.l3info.projet;
 
 
+import org.openstreetmap.gui.jmapviewer.Coordinate;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
@@ -51,17 +53,6 @@ class DisplaySelectedShip extends JPanel {
    }
 
 //displayer
-
-    /**
-     * display all tabs of selected ship
-     * @param map Carte
-     * @param trafic HashMap<String ,Ship>
-     * @param selectedShip HashMap<String ,Ship>
-     */
-    void affichage( Carte map,HashMap<String ,Ship> trafic,HashMap<String ,Ship> selectedShip, String modificationSelector,boolean modif){
-        reload(map,trafic,selectedShip,modificationSelector,modif);
-   }
-
     /**
      * reload information after validation or cancel
      * @param map Carte
@@ -70,53 +61,77 @@ class DisplaySelectedShip extends JPanel {
      * @param modificationSelector String
      * @param modif boolean
      */
-    private void reload(final Carte map, final HashMap<String ,Ship> trafic, HashMap<String ,Ship> selectedShip,final String modificationSelector,final boolean modif){
+    void affichage(final Carte map, final HashMap<String ,Ship> trafic, HashMap<String ,Ship> selectedShip,final String modificationSelector,final boolean modif){
        info.removeAll();
        final JTabbedPane tabbedPane=new JTabbedPane();
-       for(final Ship vessel:selectedShip.values()) {
-           final String mmsi= vessel.getMMSI();
-           final HashMap<String ,Message> allSelectedMessage=new HashMap<>();
-           final DisplayOneShip displayOneShip=new DisplayOneShip(map,trafic,allSelectedMessage,vessel,modificationSelector,modif );
+       for( Ship vessel:selectedShip.values()) {
+           String mmsi= vessel.getMMSI();
+           HashMap<String ,Message> allSelectedMessage=new HashMap<>();
+           DisplayOneShip displayOneShip=new DisplayOneShip(map,trafic,allSelectedMessage,vessel,modificationSelector,modif );
            tabbedPane.addTab(mmsi,displayOneShip.getInfo());
-           displayOneShip.getListDeroulante().addListSelectionListener(new ListSelectionListener() {
-               @Override
-               public void valueChanged(ListSelectionEvent e) {
-                   if(!e.getValueIsAdjusting()){
-                       if(displayOneShip.getListDeroulante().getSelectedValue().toString().equals("<empty>")){
-                           // do something ?
-                           return;
-                       }
-                       List allMessage = displayOneShip.getListDeroulante().getSelectedValuesList();
-
-                       if(allMessage.size()==0) {
-                           for (Object msgTime : allMessage) {
-                               String time = msgTime.toString();
-                               allSelectedMessage.put(vessel.getMMSI(), vessel.getMessages().get(time));
-                           }
-                       }else{
-                           String time=displayOneShip.getListDeroulante().getSelectedValue().toString();
-                           allSelectedMessage.put(vessel.getMMSI(), vessel.getMessages().get(time));
-                       }
-                       displayOneShip.reload(map,trafic,allSelectedMessage,vessel,modificationSelector,modif); // centrage map
-                       displayOneShip.getInfo().updateUI();
-                       displayOneShip.getInfo().revalidate();
-                   }
-               }
-           });
+           displayOneShip.getListDeroulante().addListSelectionListener(selectTimeMessageList(map,trafic,displayOneShip,allSelectedMessage,vessel,modificationSelector,modif));
        }
        info.add(tabbedPane,BorderLayout.CENTER);
+
+        tabbedPane.setSelectedComponent(tabbedPane.getComponentAt(0));
+        String mmsi=tabbedPane.getTitleAt(0);
+        Ship ship=trafic.get(mmsi);
+        if(!modif) {// centrage map when select ship in tab
+            map.reloadMap(trafic,new Coordinate(ship.getLastKnownMessage().getDecode().getLatitude(), ship.getLastKnownMessage().getDecode().getLongitude()),modif);
+        }else{
+            map.reloadMap(trafic,new Coordinate(ship.getLastKnownModifiedMessage().getDecode().getLatitude(), ship.getLastKnownModifiedMessage().getDecode().getLongitude()),modif);
+        }
         tabbedPane.addChangeListener(new ChangeListener() {
             @Override
 public void stateChanged(ChangeEvent e) {
                 String mmsi=tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
                 Ship ship=trafic.get(mmsi);
-                map.reloadMap(trafic,ship.getMMSI(),ship.getMessages().get( mmsi),modif); // centrage map
-
+                if(!modif) {// centrage map when select ship in tab
+                    map.reloadMap(trafic,new Coordinate(ship.getLastKnownMessage().getDecode().getLatitude(), ship.getLastKnownMessage().getDecode().getLongitude()),modif);
+                }else{
+                    map.reloadMap(trafic,new Coordinate(ship.getLastKnownModifiedMessage().getDecode().getLatitude(), ship.getLastKnownModifiedMessage().getDecode().getLongitude()),modif);
+                }
             }
         });
    }
 
-
+    /**
+     * @param map Carte
+     * @param trafic HashMap<String ,Ship>
+     * @param displayOneShip DisplayOneShip
+     * @param allSelectedMessage HashMap<String ,Message>
+     * @param vessel Ship
+     * @param modificationSelector String
+     * @param modif boolean
+     * @return ListSelectionListener
+     */
+    private  ListSelectionListener selectTimeMessageList(final Carte map, final HashMap<String ,Ship> trafic,final DisplayOneShip displayOneShip,final HashMap<String ,Message> allSelectedMessage,final Ship vessel,final String modificationSelector,final boolean modif){
+        return new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if(!e.getValueIsAdjusting()){
+                    if(displayOneShip.getListDeroulante().getSelectedValue().toString().equals("<empty>")){
+                        // do something ?
+                        return;
+                    }
+                    List allMessage = displayOneShip.getListDeroulante().getSelectedValuesList();
+                    System.out.println(allMessage.size());
+                    if(allMessage.size()!=0) {
+                        for (Object msgTime : allMessage) {
+                            String time = msgTime.toString();
+                            allSelectedMessage.put(vessel.getMMSI(), vessel.getMessages().get(time));
+                        }
+                    }else{
+                        String time=displayOneShip.getListDeroulante().getSelectedValue().toString();
+                        allSelectedMessage.put(vessel.getMMSI(), vessel.getMessages().get(time));
+                    }
+                    displayOneShip.affichage(map,trafic,allSelectedMessage,vessel,modificationSelector,modif); // centrage map
+                    displayOneShip.getInfo().updateUI();
+                    displayOneShip.getInfo().revalidate();
+                }
+            }
+        };
+    }
 
 
 }

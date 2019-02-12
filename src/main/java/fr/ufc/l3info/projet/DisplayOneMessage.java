@@ -121,10 +121,14 @@ class DisplayOneMessage extends JPanel {
         switch(modificationType) {
             case "Propagation":
                 setDisplayForPropagationModification(panelValue,modif);
+
                 break;
             case "Hard":
             default:
                 setDisplayForHardModification(panelValue,modif);
+                MMSIText.setEditable(false);
+                hoursText.setEditable(false);
+                minutesText.setEditable(false);
                  break;
         }
 

@@ -2,6 +2,7 @@ package fr.ufc.l3info.projet;
 
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
@@ -26,6 +27,9 @@ class DisplayOneShip extends JPanel{
         affichage(map,trafic,selectedMessage,vessel,modificationSelector,modif);
     }
 
+    /**
+     * initialize display of info for one ship
+     */
     private void initDisplay(){
         add(info,BorderLayout.WEST);
         add(info,BorderLayout.CENTER);
@@ -39,7 +43,7 @@ class DisplayOneShip extends JPanel{
     private void initList(Ship ship,boolean modif) {
         defaultList=new DefaultListModel<>();
         listDeroulante = new JList<>(defaultList);
-        listDeroulante.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+        listDeroulante.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         listDeroulante.setLayoutOrientation(JList.VERTICAL);
         TreeMap<String, Message> mapMessage=new TreeMap<>();
         String selection;
@@ -67,17 +71,23 @@ class DisplayOneShip extends JPanel{
         JScrollPane scrollPane=new JScrollPane(listDeroulante);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        Border border;
+        border = BorderFactory.createEtchedBorder();
+        scrollPane.setBorder(border);
         listPan.setPreferredSize(new Dimension(60,0));
         listPan.add(scrollPane);
     }
 
-    void reload(Carte map,HashMap<String,Ship> trafic, HashMap<String ,Message> selectedMessage,Ship ship,String modificationSelector,boolean modif){
-        tabPan.removeAll();
-        affichage(map,trafic,selectedMessage,ship, modificationSelector,modif);
-
-    }
-
-    private void affichage(final Carte map, final HashMap<String,Ship> trafic, HashMap<String, Message> selectedMessage, final Ship ship,String modificationSelector,final boolean modif){
+    /**
+     * display info of one ship
+     * @param map Carte
+     * @param trafic HashMap<String,Ship>
+     * @param selectedMessage HashMap<String, Message>
+     * @param ship Ship
+     * @param modificationSelector String
+     * @param modif boolean
+     */
+    void affichage(final Carte map, final HashMap<String,Ship> trafic, HashMap<String, Message> selectedMessage, final Ship ship,String modificationSelector,final boolean modif){
 
         final JTabbedPane tabbedPane=new JTabbedPane();
         final TreeMap<String, Message> mapMessage;
@@ -117,9 +127,8 @@ class DisplayOneShip extends JPanel{
         });
         if(mapMessage.size()!=0) {
             tabbedPane.setSelectedIndex(0);
-
-        String time = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
-        map.reloadMap(trafic, ship.getMMSI(), mapMessage.get(time),modif);
+            String time = tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
+            map.reloadMap(trafic, ship.getMMSI(), mapMessage.get(time),modif);
         }
     }
 
@@ -138,7 +147,7 @@ class DisplayOneShip extends JPanel{
         return new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                reload(map,trafic,selectedMessage,ship,modificationSelector,modif);
+                affichage(map,trafic,selectedMessage,ship,modificationSelector,modif);
                 info.revalidate();
                 info.updateUI();
             }
@@ -186,7 +195,7 @@ class DisplayOneShip extends JPanel{
                         displayOneMessage.saveModificationHardOne(ship);
                         break;
                 }
-                reload(map,trafic,selectedMessage,ship,modificationSelector,modif);
+                affichage(map,trafic,selectedMessage,ship,modificationSelector,modif);
                 info.revalidate();
                 info.updateUI();
             }

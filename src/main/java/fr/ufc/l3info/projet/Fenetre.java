@@ -22,6 +22,8 @@ class Fenetre {
     private DisplaySelectedShip displaySelectedShip;
     private boolean modifMsgSelection=false;
     private String selectorModification="Hard";
+    private Boolean testSelectModification=false;
+    private Boolean testSelectMessageType=false;
 
     private int defaultsizeW=1000;
     private int defaultsizeH=1000;
@@ -187,10 +189,7 @@ class Fenetre {
                     displaySelectedShip.getPanel().revalidate();
                     displaySelectedShip.getPanel().updateUI();
                     menuDeroulant.getChoiceDisplayedMessage().addItemListener(selectMessage(allSelectedShip));
-                    menuDeroulant.getPossibilitiesModifications().addItemListener(selctionModification(allSelectedShip));
-                    map.reloadMap(menuBar.getShips(),mmsi,(Message) null,modifMsgSelection); // centre la map sur le navire selectionné
-
-
+                    menuDeroulant.getPossibilitiesModifications().addItemListener(selectionModification(allSelectedShip));
                 }
 
             }
@@ -340,37 +339,53 @@ class Fenetre {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if(e.getStateChange()== ItemEvent.SELECTED){
-                    Object item=e.getItem();
-                    switch (item.toString()){
-                        case "Modified":
-                            modifMsgSelection=true;
-                            break;
-                        case "Unmodified":
-                        default:
-                            modifMsgSelection=false;
-                            break;
+                    if(!testSelectMessageType) {
+                        testSelectMessageType=true;
+                        Object item = e.getItem();
+                        switch (item.toString()) {
+                            case "Modified":
+                                modifMsgSelection = true;
+                                break;
+                            case "Unmodified":
+                            default:
+                                modifMsgSelection = false;
+                                break;
+                        }
+                        displaySelectedShip.affichage(map, menuBar.getShips(), allSelectedShip, selectorModification, modifMsgSelection);
+                        displaySelectedShip.getPanel().revalidate();
+                        displaySelectedShip.getPanel().updateUI();
+                        reloadMap();
                     }
-                    displaySelectedShip.affichage(map,menuBar.getShips(),allSelectedShip,selectorModification,modifMsgSelection);
-                    displaySelectedShip.getPanel().revalidate();
-                    displaySelectedShip.getPanel().updateUI();
-                    reloadMap();
+                }
+                if(e.getStateChange()== ItemEvent.DESELECTED){
+                    testSelectMessageType=false;
                 }
             }
         };
     }
 
-    private ItemListener selctionModification(final HashMap<String ,Ship> allSelectedShip){
+    /**
+     * set ItemListener for hard or propagation modification
+     * @param allSelectedShip HashMap<String ,Ship>
+     * @return ItemListener
+     */
+    private ItemListener selectionModification(final HashMap<String ,Ship> allSelectedShip){
         return new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if(e.getStateChange()== ItemEvent.SELECTED){
-                    Object item=e.getItem();
-                    selectorModification=item.toString();
-                    displaySelectedShip.affichage(map,menuBar.getShips(),allSelectedShip,selectorModification,modifMsgSelection);
-                    displaySelectedShip.getPanel().revalidate();
-                    displaySelectedShip.getPanel().updateUI();
+                    if(!testSelectModification) {
+                        testSelectModification = true;
+                        Object item = e.getItem();
+                        selectorModification = item.toString();
+                        displaySelectedShip.affichage(map, menuBar.getShips(), allSelectedShip, selectorModification, modifMsgSelection);
+                        displaySelectedShip.getPanel().revalidate();
+                        displaySelectedShip.getPanel().updateUI();
+                    }
                 }
-
+                if(e.getStateChange()== ItemEvent.DESELECTED){
+                    testSelectModification=false;
+                }
             }
         };
     }
