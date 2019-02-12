@@ -78,7 +78,7 @@ class DisplaySelectedShip extends JPanel {
         Ship ship=trafic.get(mmsi);
         if(!modif) {// centrage map when select ship in tab
             map.reloadMap(trafic,new Coordinate(ship.getLastKnownMessage().getDecode().getLatitude(), ship.getLastKnownMessage().getDecode().getLongitude()),modif);
-        }else{
+        }else if (ship.getModifiedMessage().size() != 0){
             map.reloadMap(trafic,new Coordinate(ship.getLastKnownModifiedMessage().getDecode().getLatitude(), ship.getLastKnownModifiedMessage().getDecode().getLongitude()),modif);
         }
         tabbedPane.addChangeListener(new ChangeListener() {
@@ -88,7 +88,7 @@ public void stateChanged(ChangeEvent e) {
                 Ship ship=trafic.get(mmsi);
                 if(!modif) {// centrage map when select ship in tab
                     map.reloadMap(trafic,new Coordinate(ship.getLastKnownMessage().getDecode().getLatitude(), ship.getLastKnownMessage().getDecode().getLongitude()),modif);
-                }else{
+                }else if (ship.getModifiedMessage().size() != 0){
                     map.reloadMap(trafic,new Coordinate(ship.getLastKnownModifiedMessage().getDecode().getLatitude(), ship.getLastKnownModifiedMessage().getDecode().getLongitude()),modif);
                 }
             }
