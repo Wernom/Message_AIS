@@ -32,7 +32,7 @@ class Fenetre {
      */
     Fenetre(){
         sizeScreen=Toolkit.getDefaultToolkit().getScreenSize();
-        int defaultsizeH=sizeScreen.height*3/4;
+        int defaultsizeH=sizeScreen.height*7/8;
         int defaultsizeW=sizeScreen.width*3/4;
         menuBar = new Menu();
 
