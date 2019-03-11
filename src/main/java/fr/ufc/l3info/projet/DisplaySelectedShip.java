@@ -1,8 +1,5 @@
 package fr.ufc.l3info.projet;
 
-
-import org.openstreetmap.gui.jmapviewer.Coordinate;
-
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
@@ -112,7 +109,6 @@ class DisplaySelectedShip extends JPanel {
             public void valueChanged(ListSelectionEvent e) {
                 if(!e.getValueIsAdjusting()){
                     if(displayOneShip.getListDeroulante().getSelectedValue().toString().equals("<empty>")){
-                        // do something ?
                         return;
                     }
                     List allMessage = displayOneShip.getListDeroulante().getSelectedValuesList();

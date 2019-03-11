@@ -1,9 +1,5 @@
 package fr.ufc.l3info.projet;
 
-
-import org.openstreetmap.gui.jmapviewer.Coordinate;
-import org.openstreetmap.gui.jmapviewer.interfaces.MapMarker;
-
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -109,14 +105,14 @@ class Fenetre {
         fenetre.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         fenetre.addWindowListener(addWindowEvent());
         fenetre.setSize(defaultsizeW, defaultsizeH);
-        fenetre.setMinimumSize(new Dimension((int)(defaultsizeW/1.2),(int)(defaultsizeH)));
+        fenetre.setMinimumSize(new Dimension((int)(defaultsizeW/1.2),(defaultsizeH)));
 
         // creation de la carte
         map = new Carte();
 
         //!\\ TRAVAUX EN COURS //!\\ cf fonction selectShipOnMap()
         //listener pour la selection des navire via la map
-        map.getMyMap().addMouseListener(selectShipOnMap());
+       // map.getMyMap().addMouseListener(selectShipOnMap());
 
 
         // creation du menu deroulant (liste bateau) a gauche
@@ -390,8 +386,11 @@ class Fenetre {
         };
     }
 
-    //*\\ Traveaux en cours //!\\
-    private MouseListener selectShipOnMap(){
+    /*
+    /**
+     * listener pour sélectionner un navire en cliquant sur sa représentation graphique (non fonctionnel)
+     **/
+   /* private MouseListener selectShipOnMap(){
         return new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -434,8 +433,9 @@ class Fenetre {
             }
         };
     }
-
+*/
 }
+
 class PopUp{
     static void warning(Component component,String label){
         JOptionPane onImport=new JOptionPane(label,JOptionPane.WARNING_MESSAGE);

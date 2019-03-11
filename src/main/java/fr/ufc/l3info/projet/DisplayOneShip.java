@@ -129,13 +129,6 @@ class DisplayOneShip extends JPanel{
             }
         }
         tabPan.add(tabbedPane);
-        /*tabbedPane.addChangeListener(new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent e) {
-                String time=tabbedPane.getTitleAt(tabbedPane.getSelectedIndex());
-                map.reloadMap(trafic, ship.getMMSI(), mapMessage.get(time),modif);
-            }
-        });*/
         if(mapMessage.size()>0 && tabbedPane.getTabCount()>0) {
             String time = tabbedPane.getTitleAt(0);
             map.reloadMap(trafic, ship.getMMSI(), mapMessage.get(time),modif);

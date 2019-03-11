@@ -257,11 +257,6 @@ public class Carte extends JPanel implements JMapViewerEventListener{
             MapMarkerDot position = new MapMarkerDot(coordinate.getLat(), coordinate.getLon());
             if(isSelected) {
                 position.setBackColor(modifiedMessageColor);
-               /* if (lastKnownModifiedCoordinate.equals(coordinate)) {
-                    position.setBackColor(modifiedMessageColor);
-                } else {
-                    position.setBackColor(modifiedMessageColor);
-                }*/
             }else{
                 if (lastKnownModifiedCoordinate.equals(coordinate)) {
                     position.setBackColor(modifiedMessageColor);
@@ -365,6 +360,10 @@ public class Carte extends JPanel implements JMapViewerEventListener{
         updateZoomParameters();
     }
 
+    /**
+     * center the map by click on the ship on the map
+     * @param coordinate Coordinate
+     */
     void centerOnSelectedmessage(Coordinate coordinate){
         MapMarkerDot ship=new MapMarkerDot(coordinate);
         setSelectedShip(ship);
@@ -377,6 +376,9 @@ public class Carte extends JPanel implements JMapViewerEventListener{
         return panel;
     }
 
+    /**
+     * @return JMapViewer
+     */
     JMapViewer getMyMap() {
         return myMap;
     }
